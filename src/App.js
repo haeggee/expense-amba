@@ -6,6 +6,7 @@ import Home from './Home';
 import Overview from './Overview';
 import Profileview from './Profileview';
 
+
 class App extends React.Component {
 	render() {
 		return (	
@@ -16,7 +17,7 @@ class App extends React.Component {
 			  <Route exact path='/overview' component={Overview}/>
 			  <Route exact path='/profileview' component={Profileview}/>
 			</Switch>
-	      	        </BrowserRouter>		
+			</BrowserRouter>
 		    </div>
 		  );
 	}
