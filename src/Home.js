@@ -5,6 +5,7 @@ import Header from './GUI/HeaderComponent'
 import HomeWhiteMat from "./GUI/HomeWhiteMat";
 import Button from "./GUI/ButtonComponent";
 import LogoComponent from "./GUI/LogoComponent";
+import HomeDisplayText from "./GUI/HomeDisplayText";
 
 class Home extends React.Component {
   render() {
@@ -13,10 +14,11 @@ class Home extends React.Component {
           <header>
             { Header() }
           </header>
-            <div style={{position: 'absolute'}}>
+            <div style={{position: 'absolute', height: '100vh'}}>
                 <img width={'100%'} alt={"Home illustration"} src={require("./GUI/imgs/home-illustration.jpg")} />
                 {HomeWhiteMat()}
                 {LogoComponent()}
+                {HomeDisplayText()}
             </div>
 
         </div>

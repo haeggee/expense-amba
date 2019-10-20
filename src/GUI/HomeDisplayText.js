@@ -8,11 +8,11 @@
 import React from "react";
 
 const HomeDisplayText = () => (
-  <svg viewBox="0 0 803 218">
+  <svg viewBox="0 0 803 218" style={{position: 'absolute', right: '20%', top:'25%', width: '35%'}}>
     <defs>
-      <style>{".a{fill:#fff;font-size:90px;font-family:Verdana;}"}</style>
+      <style>{".displayTextA{fill:#fff;font-size:90px;font-family:Verdana;}"}</style>
     </defs>
-    <text className="a" transform="translate(0 90)">
+    <text className="displayTextA" transform="translate(0 90)">
       <tspan x={0} y={0}>
         {"The breeze "}
       </tspan>

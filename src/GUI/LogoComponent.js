@@ -8,34 +8,32 @@
 import React from "react";
 
 const LogoComponent = () => (
-  <svg viewBox="0 0 81.389 62" width={265} style={{position: 'absolute'}}>
+  <svg viewBox="0 0 418.691 385.689" width={'20%'} style={{position: 'absolute', left: '20%', top: '20%'}}>
     <defs>
-      <style>
-        {".logoA{fill:rgba(231,238,247,0.9);}" +
-        ".logoB{fill:#fff;}" +
-        ".logoC{fill:#344b72;}"}
-      </style>
+      <style>{".logoA{fill:#e7eef7;}.logoB{fill:#fff;}.logoC{fill:#344b72;}"}</style>
     </defs>
-    <rect
-      className="logoA"
-      width={68.557}
-      height={55.557}
-      rx={10}
-      transform="translate(0 6.165)"
-    />
-    <path
-      className="logoB"
-      d="M884.416,631.926l34.773-34.159-.312,25.969,9.3-9.133.393-32.46-32.492-.158-9.3,9.133,25.992.127L878,625.4Z"
-      transform="translate(-847.179 -569.952)"
-    />
-    <path
-      className="logoC"
-      d="M721.128,382.987,686.377,417.17l.311-25.987-9.292,9.14L677,432.806l32.471.158,9.292-9.14-25.976-.128,34.751-34.183Z"
-      transform="translate(-671.468 -382.987)"
-    />
+    <g transform="translate(-633 -382.987)">
+      <g transform="translate(633 382.987)">
+        <rect
+          className="logoA"
+          width={353}
+          height={353}
+          rx={10}
+          transform="translate(0 31.689)"
+        />
+        <path
+          className="logoB"
+          d="M911.014,838.9,1089.9,663.175l-1.6,133.593,47.83-46.985,2.021-166.985L971,581.984l-47.83,46.985,133.714.656L878,805.349Z"
+          transform="translate(-719.455 -453.21)"
+        />
+        <path
+          className="logoC"
+          d="M903.994,382.987,725.222,558.835l1.6-133.687-47.8,47.018L677,639.27l167.044.814,47.8-47.018-133.631-.656L936.99,416.562Z"
+          transform="translate(-648.528 -382.987)"
+        />
+      </g>
+    </g>
   </svg>
 );
-
-
 
 export default LogoComponent;
