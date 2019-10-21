@@ -7,6 +7,7 @@ import LogoComponent from "./GUI/LogoComponent";
 import InputComponent from "./GUI/InputComponent";
 import {CustomButton, EmptyHeader} from "./GUI/Theme";
 import CustomCard from "./GUI/CustomCard"
+import Box from "@material-ui/core/box";
 
 // themes and styles class
 const themes = makeStyles({
@@ -29,7 +30,10 @@ export function Accountsview(props) {
 			<CustomCard prompt="Email" readonly={false}/>
 			<CustomCard prompt="Password" readonly={false}/>
 			
-			<CustomButton className={className.buttons}>Edit</CustomButton>
+			<Box flexDirection="row">
+				<CustomButton className={className.buttons}>Edit</CustomButton>
+				<CustomButton className={className.buttons}>Done</CustomButton>
+			</Box>
 		</div>
 	);
 }
