@@ -79,6 +79,26 @@ export function CustomHeader(props) {
     )
 }
 
+export function EmptyHeader() {
+
+    return(
+        <ThemeProvider theme={theme}>
+            <AppBar position={'static'} style={{flexGrow: 1}}>
+                <Toolbar>
+                    <SvgIcon>
+                        {LogoComponent()}
+                    </SvgIcon>
+                    <Typography style={{flexGrow: 1}}>
+                        <Box fontFamily={'mistral'} fontSize={'h4.fontSize'} marginLeft={'10px'}>
+                            AM.BA
+                        </Box>
+                    </Typography>
+                </Toolbar>
+            </AppBar>
+        </ThemeProvider>
+    )
+}
+
 /*
 This is the default button to use for the project.
 Sample usage: <CustomButton> Text on the Button </CustomButton>
