@@ -9,6 +9,9 @@ import Button from "@material-ui/core/Button";
 import {Typography} from "@material-ui/core";
 import Box from "@material-ui/core/Box";
 
+/*
+    This is defines major colors/fonts we are using in this project.
+ */
 const theme = createMuiTheme({
     palette: {
         primary: {
@@ -30,12 +33,32 @@ const theme = createMuiTheme({
             "Mistral",
             "Verdana"
         ].join(','),
+    },
+    mixins: {
+        toolbar:{
+            minHeight: 40
+        }
     }
 
 });
 
-export function CustomHeader(props) {
+/*
+    This is the header element that will appear in all web pages.
+    Sample usage: <CustomHeader loggedIn={false} /> when user haven't logged in.
+                    loggedIn is default to be true.
 
+ */
+export function CustomHeader(props) {
+    let buttonText;
+    if (props.loggedIn === false) {
+        buttonText = 'Register/Login'
+    }
+    else {
+        buttonText = 'My Account'
+    }
+
+    console.log(props.loggedIn);
+    console.log(buttonText);
     return(
         <ThemeProvider theme={theme}>
             <AppBar position={'static'} style={{flexGrow: 1}}>
@@ -48,7 +71,7 @@ export function CustomHeader(props) {
                             AM.BA
                         </Box>
                     </Typography>
-                    <CustomButton>Login/Register</CustomButton>
+                    <CustomButton> {buttonText} </CustomButton>
                 </Toolbar>
             </AppBar>
         </ThemeProvider>
@@ -56,12 +79,16 @@ export function CustomHeader(props) {
     )
 }
 
+/*
+This is the default button to use for the project.
+Sample usage: <CustomButton> Text on the Button </CustomButton>
+ */
 export function CustomButton(props) {
 
     return(
         <div>
             <ThemeProvider theme={theme} >
-                <Button variant={"contained"} color={"primary"}>
+                <Button variant={"contained"} color={"primary"} style={{textTransform: 'none'}}>
                     {props.children}
                 </Button>
             </ThemeProvider>
