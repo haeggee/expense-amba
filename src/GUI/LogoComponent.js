@@ -8,7 +8,7 @@
 import React from "react";
 
 const LogoComponent = () => (
-  <svg viewBox="0 0 418.691 385.689" width={'20%'} style={{position: 'absolute', left: '20%', top: '20%'}}>
+  <svg viewBox="0 0 418.691 385.689">
     <defs>
       <style>{".logoA{fill:#e7eef7;}.logoB{fill:#fff;}.logoC{fill:#344b72;}"}</style>
     </defs>

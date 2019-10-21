@@ -1,23 +1,24 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import Header from './GUI/HeaderComponent'
 import HomeWhiteMat from "./GUI/HomeWhiteMat";
-import Button from "./GUI/ButtonComponent";
 import LogoComponent from "./GUI/LogoComponent";
 import HomeDisplayText from "./GUI/HomeDisplayText";
+import {CustomHeader} from "./GUI/Theme";
 
 class Home extends React.Component {
   render() {
     return (
         <div>
           <header>
-            { Header() }
+            { CustomHeader() }
           </header>
             <div style={{position: 'absolute', height: '100vh'}}>
                 <img width={'100%'} alt={"Home illustration"} src={require("./GUI/imgs/home-illustration.jpg")} />
                 {HomeWhiteMat()}
-                {LogoComponent()}
+                <div style={{position: 'absolute', left: '20%', top: '20%', width: '20%'}}>
+                    {LogoComponent()}
+                </div>
                 {HomeDisplayText()}
             </div>
 

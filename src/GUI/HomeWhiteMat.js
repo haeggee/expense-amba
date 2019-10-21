@@ -19,7 +19,7 @@ const HomeWhiteMat = () => (
         gradientUnits="objectBoundingBox"
       >
         <stop offset={0} stopColor="#f5f5f5" stopOpacity={0} />
-        <stop offset={0.682} stopColor="#fff" stopOpacity={0.953} />
+        <stop offset={0.9} stopColor="#fff" />
         <stop offset={1} stopColor="#fff" />
       </linearGradient>
     </defs>
