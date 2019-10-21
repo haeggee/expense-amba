@@ -79,6 +79,9 @@ export function CustomHeader(props) {
     )
 }
 
+/*
+Same as above but without any buttons.
+*/
 export function EmptyHeader() {
 
     return(
@@ -102,13 +105,16 @@ export function EmptyHeader() {
 /*
 This is the default button to use for the project.
 Sample usage: <CustomButton> Text on the Button </CustomButton>
+Classname can also be added to provide margins, padding, etc.
+To do so do <CustomButton className={the-class-name}>
  */
 export function CustomButton(props) {
-
+	const className = props.className
+	console.log(className)
     return(
         <div>
             <ThemeProvider theme={theme} >
-                <Button variant={"contained"} color={"primary"} style={{textTransform: 'none'}}>
+                <Button variant={"contained"} color={"primary"} className={className} style={{textTransform: 'none'}}>
                     {props.children}
                 </Button>
             </ThemeProvider>

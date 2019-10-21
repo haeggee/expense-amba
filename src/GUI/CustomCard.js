@@ -7,6 +7,7 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 
+// Style for Card.
 const cardStyle = makeStyles({
   card: {
 	marginLeft: 40,
@@ -15,12 +16,16 @@ const cardStyle = makeStyles({
   },
 });
 
+/*
+A custom card that has a text prompt/label, as well as a TextField.
+The prompt can be set via prompt="text". The TextField can be set to be editable by doing readonly={false}.
+*/
 export function CustomCard(props) {
 	const classes = cardStyle();
 	const prompt = props.prompt
 	const readonly = props.readonly
 	
-	
+	// Make TextField not editable.
 	if (readonly == true) {
 		return (
 		<Card className={classes.card} raised="true">
