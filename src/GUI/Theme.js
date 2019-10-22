@@ -42,6 +42,7 @@ const theme = createMuiTheme({
 
 });
 
+
 /*
     This is the header element that will appear in all web pages.
     Sample usage: <CustomHeader loggedIn={false} /> when user haven't logged in.

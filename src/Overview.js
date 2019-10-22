@@ -5,15 +5,43 @@ import ButtonComponent from "./GUI/ButtonComponent";
 import LogoComponent from "./GUI/LogoComponent";
 import InputComponent from "./GUI/InputComponent";
 import {CustomButton, CustomHeader} from "./GUI/Theme";
+import PaymentDialog from "./GUI/PaymentDialog";
+
 
 class Overview extends React.Component {
-  render() {
-    return (
-        <div>
-          <CustomHeader />
+	
+	state = {
+		// whether or not to open the payments dialog popup
+		openPayments: false
+	};
+	
+	/* 
+	Handles whenever payment button is clicked to open dialog to make payment.
+	*/
+	openPaymentsDialog = () => {
+		this.setState({
+			openPayments: true
+		})
+	};
+	
+	/* 
+	Handles closing dialog when Dialog requests it.
+	*/
+	closePaymentsDialog = () => {
+		this.setState({
+			openPayments: false
+		})
+	};
+	
+	render() {
+		return (
+			<div>
+				<CustomHeader />
+				<CustomButton clickHandler={this.openPaymentsDialog}>Make payment</CustomButton>
+				<PaymentDialog open={this.state.openPayments} closeHandler={this.closePaymentsDialog} />
+			</div>
+		);
 
-        </div>
-    );
-  }
+	}
 }
 export default Overview;
