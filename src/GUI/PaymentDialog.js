@@ -24,7 +24,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
-import ControlledOpenSelect from "./control"
+
 
 /*
 Some styles for this part only
