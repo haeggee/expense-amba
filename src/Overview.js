@@ -37,7 +37,10 @@ class Overview extends React.Component {
 		return (
 			<div>
 				<CustomHeader />
+				
+				{/* position this button anywhere you want. It also doesnt matter where you put the dialog because it is fullscreen.*/}
 				<CustomButton clickHandler={this.openPaymentsDialog}>Make payment</CustomButton>
+				{/* Pass in handler that closes Dialog when the Dialog requests it. */}
 				<PaymentDialog open={this.state.openPayments} closeHandler={this.closePaymentsDialog} />
 			</div>
 		);
