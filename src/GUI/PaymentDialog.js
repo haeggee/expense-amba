@@ -17,6 +17,14 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import TextField from '@material-ui/core/TextField';
+import {CustomButton, CustomHeader} from "./Theme";
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+
+
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import ControlledOpenSelect from "./control"
 
 /*
 Some styles for this part only
@@ -32,9 +40,10 @@ const useStyles = makeStyles(theme => ({
 	card: {
 		marginLeft: 40,
 		marginRight: 40,
-		marginTop: 20
 	},
+	
 }));
+
 
 /*
 Animation for opening dialog.
@@ -43,6 +52,9 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
+/*
+Tab for paying bills.
+*/
 function PayBill(props) {
 	const index = props.index
 	const value = props.value
@@ -60,26 +72,75 @@ function PayBill(props) {
 				<h4>Memo</h4>
 				<TextField fullWidth variant="outlined" />
 			</CardContent>
+			<CardContent>
+				<CustomButton >Accept</CustomButton>
+			</CardContent>
 		</Card>
 	)
 }
 
+/*
+Tab for paying person. Has Autocomplete features to select people.
+*/
 function PayPerson(props) {
 	const index = props.index
-	const value = props.value
+	const v = props.value
+	
+	// When user selects person from the menu, display it on the text input.
+    const [name, setName] = React.useState('');
+	//open and close menu
+    const [open, setOpen] = React.useState(false);
+
+    const handleChange = event => {
+        setName(event.target.value);
+    };
+
+    const handleClose = () => {
+		setOpen(false);
+    };
+
+    const handleOpen = () => {
+		setOpen(true);
+    };
+	
 	return (
-		<Card className={useStyles().card} role="tabpanel" raised="true" hidden={value !== index}>
+		<Card className={useStyles().card} role="tabpanel" raised="true" hidden={v !== index}>
 			<CardContent>
 				<h4>Payment Amount</h4>
 				<TextField fullWidth variant="outlined" />
 			</CardContent>
 			<CardContent>
 				<h4>Payment to</h4>
-				<TextField fullWidth variant="outlined" />
+				
+				<form autoComplete="off">
+
+					<FormControl fullWidth>
+						<InputLabel htmlFor="demo-controlled-open-select">Name</InputLabel>
+						<Select
+							open={open}
+							onClose={handleClose}
+							onOpen={handleOpen}
+							value={name}
+							onChange={handleChange}
+							inputProps={{
+							name: 'name',
+							id: 'demo-controlled-open-select',
+						}}>
+							<MenuItem value=""><em>None</em></MenuItem>
+							<MenuItem value={1}>Joe</MenuItem>
+							<MenuItem value={2}>Bob</MenuItem>
+							<MenuItem value={3}>ad</MenuItem>
+						</Select>
+					</FormControl>
+				</form>
+				
 			</CardContent>
 			<CardContent>
 				<h4>Memo</h4>
 				<TextField fullWidth variant="outlined" />
+			</CardContent>
+			<CardContent>
+				<CustomButton >Accept</CustomButton>
 			</CardContent>
 		</Card>
 	)
