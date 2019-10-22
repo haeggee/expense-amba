@@ -107,14 +107,15 @@ This is the default button to use for the project.
 Sample usage: <CustomButton> Text on the Button </CustomButton>
 Classname can also be added to provide margins, padding, etc.
 To do so do <CustomButton className={the-class-name}>
+Click handlers can also be assigned via setting clickHandler={}
  */
 export function CustomButton(props) {
 	const className = props.className
-	console.log(className)
+	const clickHandler = props.clickHandler
     return(
         
 		<ThemeProvider theme={theme} >
-			<Button variant={"contained"} color={"primary"} className={className} style={{textTransform: 'none'}}>
+			<Button variant={"contained"} color={"primary"} className={className} onClick={clickHandler} style={{textTransform: 'none'}}>
 				{props.children}
 			</Button>
 		</ThemeProvider>

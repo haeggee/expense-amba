@@ -22,29 +22,19 @@ The prompt can be set via prompt="text". The TextField can be set to be editable
 */
 export function AccountsCard(props) {
 	const classes = cardStyle();
-	const prompt = props.prompt
-	const readonly = props.readonly
+	const title = props.title
+	const editable = props.editable
+	const value = props.value
+	const type = props.type
 	
-	// Make TextField not editable.
-	if (readonly == true) {
-		return (
+	return (
 		<Card className={classes.card} raised="true">
 			<CardContent>
-				<h4>{ prompt }</h4>
-				<TextField disabled={true} variant="outlined"/>
+				<h4>{ title }</h4>
+				<TextField disabled={!editable} type={type} fullWidth defaultValue={value} variant="outlined" />
 			</CardContent>
 		</Card>
-		)
-	} else {
-		return (
-		<Card className={classes.card} raised="true">
-			<CardContent>
-				<h4>{ prompt }</h4>
-				<TextField disabled={false} variant="outlined"/>
-			</CardContent>
-		</Card>
-		)
-	}
+	)
 }
 
 

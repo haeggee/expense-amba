@@ -11,11 +11,16 @@ import Box from "@material-ui/core/box";
 
 // themes and styles class
 const themes = makeStyles({
-	buttons: {
+	editbutton: {
 		marginLeft: '40px',
 		marginTop: '40px',
 	},
+	donebutton: {
+		marginLeft: '20px',
+		marginTop: '40px',
+	},
 });
+
 
 /*
 View that shows account info for the user.
@@ -23,17 +28,31 @@ View that shows account info for the user.
 export function Accountsview(props) {
 	const className = themes()
 	
+	const [values, setValues] = React.useState({
+		editable: false,
+		editButtonText: "Edit"
+	});
+	
+	const handleEditClick = () => {
+		if (values.editable == false) {
+			setValues({editable: true, editButtonText: "Save"})
+		} else {
+			setValues({editable: false, editButtonText: "Edit"})
+		}
+	};
+	
+
 	return (
 		<div>
 			<EmptyHeader />
-			<AccountsCard prompt="Username" readonly={false}/>
-			<AccountsCard prompt="Name" readonly={false}/>
-			<AccountsCard prompt="Email" readonly={false}/>
-			<AccountsCard prompt="Password" readonly={false}/>
+			<AccountsCard title="Username" value="n00bm@ster69" editable={values.editable}/>
+			<AccountsCard title="Name" value="Donald Trump" editable={values.editable}/>
+			<AccountsCard title="Email" value="DJT@gmail.com" editable={values.editable}/>
+			<AccountsCard title="Password" value="password" type="password" editable={values.editable}/>
 			
 			<Box flexDirection="row">
-				<CustomButton className={className.buttons}>Edit</CustomButton>
-				<CustomButton className={className.buttons}>Done</CustomButton>
+				<CustomButton className={className.editbutton} clickHandler={handleEditClick}>{values.editButtonText}</CustomButton>
+				<CustomButton className={className.donebutton} >Done</CustomButton>
 			</Box>
 		</div>
 	);
