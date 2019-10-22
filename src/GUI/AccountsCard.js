@@ -20,7 +20,7 @@ const cardStyle = makeStyles({
 A custom card that has a text prompt/label, as well as a TextField.
 The prompt can be set via prompt="text". The TextField can be set to be editable by doing readonly={false}.
 */
-export function CustomCard(props) {
+export function AccountsCard(props) {
 	const classes = cardStyle();
 	const prompt = props.prompt
 	const readonly = props.readonly
@@ -48,5 +48,5 @@ export function CustomCard(props) {
 }
 
 
-export default CustomCard;
+export default AccountsCard;
 

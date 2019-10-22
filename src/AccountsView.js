@@ -6,13 +6,14 @@ import Button from "@material-ui/core/button";
 import LogoComponent from "./GUI/LogoComponent";
 import InputComponent from "./GUI/InputComponent";
 import {CustomButton, EmptyHeader} from "./GUI/Theme";
-import CustomCard from "./GUI/CustomCard"
+import AccountsCard from "./GUI/AccountsCard"
 import Box from "@material-ui/core/box";
 
 // themes and styles class
 const themes = makeStyles({
 	buttons: {
-		margin: '40px',
+		marginLeft: '40px',
+		marginTop: '40px',
 	},
 });
 
@@ -25,10 +26,10 @@ export function Accountsview(props) {
 	return (
 		<div>
 			<EmptyHeader />
-			<CustomCard prompt="Username" readonly={false}/>
-			<CustomCard prompt="Name" readonly={false}/>
-			<CustomCard prompt="Email" readonly={false}/>
-			<CustomCard prompt="Password" readonly={false}/>
+			<AccountsCard prompt="Username" readonly={false}/>
+			<AccountsCard prompt="Name" readonly={false}/>
+			<AccountsCard prompt="Email" readonly={false}/>
+			<AccountsCard prompt="Password" readonly={false}/>
 			
 			<Box flexDirection="row">
 				<CustomButton className={className.buttons}>Edit</CustomButton>
