@@ -2,12 +2,12 @@ import React from 'react';
 import './App.css';
 import { makeStyles } from '@material-ui/core/styles';
 import Header from './GUI/HeaderComponent';
-import Button from "@material-ui/core/button";
+import Button from "@material-ui/core/Button";
 import LogoComponent from "./GUI/LogoComponent";
 import InputComponent from "./GUI/InputComponent";
 import {CustomButton, EmptyHeader} from "./GUI/Theme";
 import AccountsCard from "./GUI/AccountsCard"
-import Box from "@material-ui/core/box";
+import Box from "@material-ui/core/Box";
 
 // themes and styles class
 const themes = makeStyles({
@@ -34,7 +34,7 @@ export function Accountsview(props) {
 	});
 	
 	const handleEditClick = () => {
-		if (values.editable == false) {
+		if (values.editable === false) {
 			setValues({editable: true, editButtonText: "Save"})
 		} else {
 			setValues({editable: false, editButtonText: "Edit"})
