@@ -112,13 +112,13 @@ export function CustomButton(props) {
 	const className = props.className
 	console.log(className)
     return(
-        <div>
-            <ThemeProvider theme={theme} >
-                <Button variant={"contained"} color={"primary"} className={className} style={{textTransform: 'none'}}>
-                    {props.children}
-                </Button>
-            </ThemeProvider>
-        </div>
+        
+		<ThemeProvider theme={theme} >
+			<Button variant={"contained"} color={"primary"} className={className} style={{textTransform: 'none'}}>
+				{props.children}
+			</Button>
+		</ThemeProvider>
+        
     )
 }
 
