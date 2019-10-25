@@ -9,12 +9,7 @@ import {CustomButton, CustomHeader} from "./GUI/Theme";
 import PaymentDialog from "./GUI/PaymentDialog";
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import Avatar from '@material-ui/core/Avatar';
-
+import GroupList from './GroupList';
 
 const useStyles = makeStyles(theme => ({
         gridcontainer: {
@@ -33,7 +28,19 @@ export function Overview (props) {
     // openPayments indicates whether or not to open the payments dialog popup
    
     const [openPayments, setopenPayments] = React.useState(false);
+    
+    // list of current members of the systems, here we should get the data from the server later
+    
+    const members = [{name: "Alice"}, {name: "Bob"}, {name: "James"}]
 
+    // groups as a state variable for the list
+
+    const [groups, setGroups] = React.useState(
+            [{name: 'Family',
+              groupMembers: members},
+             {name: 'Team 42',
+              groupMembers: [members[0], members[1]]}
+            ]);
 	
 	/* 
 	Handles whenever payment button is clicked to open dialog to make payment.
@@ -59,22 +66,9 @@ export function Overview (props) {
                     <Grid item xs={3}>
                         <Paper className={classes.paper}>
                             <h3>Your groups</h3>
-                            <List component="nav">
-                                <ListItem button>
-                                    <ListItemIcon>
-                                        <Avatar>F</Avatar>
-                                    </ListItemIcon>
-                                    <ListItemText primary="Family"/>
-                                </ListItem>
-                                
-                                <ListItem button>
-                                    <ListItemIcon>
-                                        <Avatar>TE</Avatar>
-                                    </ListItemIcon>
-                                    <ListItemText primary="Team 42"/>
-                                </ListItem>
-                             </List>
-                             <CustomButton>Create new group</CustomButton>
+                            <GroupList
+                                groups={groups}
+                            />    
                         </Paper>
                     </Grid>
                     <Grid item xs={9}>
