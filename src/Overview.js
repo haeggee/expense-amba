@@ -33,7 +33,7 @@ export function Overview (props) {
     
     const members = [{name: "Alice"}, {name: "Bob"}, {name: "James"}]
 
-    // groups as a state variable for the list
+    // groups as a state variable for the list, will later be fetched from server
 
     const [groups, setGroups] = React.useState(
             [{name: 'Family',
@@ -55,7 +55,8 @@ export function Overview (props) {
 	const closePaymentsDialog = () => {
 		setopenPayments(false)
 	};
-	
+
+    // the styles for the components    
 	const classes = useStyles();
 
 	return (
