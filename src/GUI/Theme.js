@@ -1,13 +1,14 @@
 import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
-import {ThemeProvider} from "@material-ui/styles";
+import {ThemeProvider} from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import SvgIcon from "@material-ui/core/SvgIcon/SvgIcon";
 import LogoComponent from "./LogoComponent";
-import React from "react";
+import React, {useState} from "react"
 import Button from "@material-ui/core/Button";
 import {Typography} from "@material-ui/core";
 import Box from "@material-ui/core/Box";
+import {Link} from "react-router-dom"
 
 /*
     This is defines major colors/fonts we are using in this project.
@@ -24,12 +25,18 @@ const theme = createMuiTheme({
             grey: '#B5B5B5',
             white: '#FFFFFF',
             blue: '#156EC0'
+        },
+        background: {
+            paper: '#1cc4e8'
+        },
+        text: {
+            primary: '#FFFFFF'
         }
     },
     typography: {
         fontFamily: [
-            "Arial",
             "Open Sans",
+            "Arial",
             "Mistral",
             "Verdana"
         ].join(','),
@@ -51,27 +58,35 @@ const theme = createMuiTheme({
  */
 export function CustomHeader(props) {
     let buttonText;
+    let flag;
+
     if (props.loggedIn === false) {
-        buttonText = 'Register/Login'
+        buttonText = 'Register/Login';
+        flag = false
     }
     else {
-        buttonText = 'My Account'
+        buttonText = 'My Account';
+        flag = true
     }
 
-    console.log(props.loggedIn);
-    console.log(buttonText);
+    let [loggedIn, setLoggedIn] = useState(flag)
+
     return(
         <ThemeProvider theme={theme}>
-            <AppBar position={'static'} style={{flexGrow: 1}}>
+            <AppBar position={'static'} flexGrow={1}>
                 <Toolbar>
                     <SvgIcon>
                         {LogoComponent()}
                     </SvgIcon>
-                    <Typography style={{flexGrow: 1}}>
-                        <Box fontFamily={'mistral'} fontSize={'h4.fontSize'} marginLeft={'10px'}>
-                            AM.BA
-                        </Box>
-                    </Typography>
+                    <Box fontFamily={'mistral'} fontSize={'h4.fontSize'} marginLeft={'10px'} flexGrow={1}>
+                        AM.BA
+                    </Box>
+                    <Link to={loggedIn?'/overview':'/'} style={{position: 'absolute'}}>
+                        <Box
+                             width={120}
+                             height={40}
+                        />
+                    </Link>
                     <CustomButton> {buttonText} </CustomButton>
                 </Toolbar>
             </AppBar>
@@ -83,25 +98,25 @@ export function CustomHeader(props) {
 /*
 Same as above but without any buttons.
 */
-export function EmptyHeader() {
-
-    return(
-        <ThemeProvider theme={theme}>
-            <AppBar position={'static'} style={{flexGrow: 1}}>
-                <Toolbar>
-                    <SvgIcon>
-                        {LogoComponent()}
-                    </SvgIcon>
-                    <Typography style={{flexGrow: 1}}>
-                        <Box fontFamily={'mistral'} fontSize={'h4.fontSize'} marginLeft={'10px'}>
-                            AM.BA
-                        </Box>
-                    </Typography>
-                </Toolbar>
-            </AppBar>
-        </ThemeProvider>
-    )
-}
+// export function EmptyHeader() {
+//
+//     return(
+//         <ThemeProvider theme={theme}>
+//             <AppBar style={{flexGrow: 1}}>
+//                 <Toolbar>
+//                     <SvgIcon>
+//                         {LogoComponent()}
+//                     </SvgIcon>
+//                     <Typography style={{flexGrow: 1}}>
+//                         <Box fontFamily={'mistral'} fontSize={'h4.fontSize'} marginLeft={'10px'}>
+//                             AM.BA
+//                         </Box>
+//                     </Typography>
+//                 </Toolbar>
+//             </AppBar>
+//         </ThemeProvider>
+//     )
+// }
 
 /*
 This is the default button to use for the project.
@@ -113,10 +128,11 @@ Click handlers can also be assigned via setting clickHandler={}
 export function CustomButton(props) {
 	const className = props.className
 	const clickHandler = props.clickHandler
+
     return(
         
 		<ThemeProvider theme={theme} >
-			<Button variant={"contained"} color={"primary"} className={className} onClick={clickHandler} style={{textTransform: 'none'}}>
+			<Button {...props} variant={"contained"} color={"primary"} className={className} onClick={clickHandler} style={{textTransform: 'none'}}>
 				{props.children}
 			</Button>
 		</ThemeProvider>

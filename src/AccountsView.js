@@ -5,7 +5,7 @@ import Header from './GUI/HeaderComponent';
 import Button from "@material-ui/core/Button";
 import LogoComponent from "./GUI/LogoComponent";
 import InputComponent from "./GUI/InputComponent";
-import {CustomButton, EmptyHeader} from "./GUI/Theme";
+import {CustomButton, CustomHeader, EmptyHeader} from "./GUI/Theme"
 import AccountsCard from "./GUI/AccountsCard"
 import Box from "@material-ui/core/Box";
 
@@ -44,7 +44,7 @@ export function Accountsview(props) {
 
 	return (
 		<div>
-			<EmptyHeader />
+			<CustomHeader loggedIn={true} />
 			<AccountsCard title="Username" value="n00bm@ster69" editable={values.editable}/>
 			<AccountsCard title="Name" value="Donald Trump" editable={values.editable}/>
 			<AccountsCard title="Email" value="DJT@gmail.com" editable={values.editable}/>
