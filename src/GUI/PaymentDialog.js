@@ -155,21 +155,23 @@ function a11yProps(index) {
 export default function PaymentDialog(props) {
 	const classes = useStyles();
 	
-	let open = props.open
+	const open = props.open
 	// Handler to notify when it is time to close the dialog.
-	let closeHandler = props.closeHandler
+	const closeHandler = props.closeHandler
 	
 	// which tab we are on
-	const [value, setValue] = React.useState(0);
+	const [tabIndex, setTabIndex] = React.useState(0);
 
 	// what to do when user clicks on new tab
-	const handleChange = (event, newValue) => {
-		setValue(newValue);
+	const handleChange = (event, newTabIndex) => {
+		setTabIndex(newTabIndex);
 	};
+    // what group we are looking at
+    const group = props.group;
 
     return (
 	<div>
-		<Dialog fullScreen open={open} onClose={closeHandler} TransitionComponent={Transition}>
+		<Dialog maxWidth="md" fullWidth={true} open={open} onClose={closeHandler} TransitionComponent={Transition}>
 			<ThemeProvider theme={theme}>
 				<AppBar className={classes.appBar}>
 				
@@ -178,14 +180,14 @@ export default function PaymentDialog(props) {
 							<CloseIcon />
 						</IconButton>
 						<Typography variant="h6" className={classes.title}>
-							Make Payment
+							Add a payment for: {group.name}
 						</Typography>
 						<Button color="inherit" onClick={closeHandler}>
 							Cancel
 						</Button>
 					</Toolbar>
 					
-					<Tabs centered value={value} onChange={handleChange} >
+					<Tabs centered value={tabIndex} onChange={handleChange} >
 						<Tab label="Bill payment" {...a11yProps(0)}/>
 						<Tab label="Payment to" {...a11yProps(1)}/>
 					</Tabs>
@@ -194,8 +196,8 @@ export default function PaymentDialog(props) {
 				
 			</ThemeProvider>
 			
-			<PayBill value={value} index={0}/>
-			<PayPerson value={value} index={1}/>
+			<PayBill value={tabIndex} index={0}/>
+			<PayPerson value={tabIndex} index={1}/>
 			
 		</Dialog>
 	</div>

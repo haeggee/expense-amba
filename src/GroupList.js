@@ -10,7 +10,7 @@ import {CustomButton, CustomHeader} from "./GUI/Theme";
 import {uid} from 'react-uid'; 
 
 export function GroupList (props) {
-    const {groups, index, handeListITemClick} = props;
+    const {groups, index, handeListItemClick} = props;
 
     return( 
       <div className='GroupList'>
@@ -20,8 +20,8 @@ export function GroupList (props) {
                    /* every list item needs a specific key to be identifiable, therefore use react uid */
                    <ListItem key={ uid(group)}
                              button
-                             selected={group.index === index}
-                             onClick={event => handeListITemClick(event, group.index)}
+                             selected={group.index === index} /* highlights selected group*/
+                             onClick={event => handeListItemClick(event, group.index)}
                    >
                        <ListItemIcon>
                         {/* use first two letters as short avatar left of name*/}

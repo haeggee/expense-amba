@@ -13,6 +13,8 @@ import GroupList from './GroupList';
 import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
 import ExpenseDiagram from './ExpenseDiagram';
+import Container from '@material-ui/core/Container';
+
 
 const useStyles = makeStyles(theme => ({
         gridcontainer: {
@@ -56,7 +58,8 @@ export function Overview (props) {
    
     // list of current members of the systems, here we should get the data from the server later
     
-    const members = [{name: "Alice"}, {name: "Bob"}, {name: "James"}]
+    const members = [{name: "Alice"}, {name: "Bob"}, {name: "James"}, {name: "Maria"}, {name: "Thomas"},
+                     {name: "Jennifer"}]
 
     // groups as a state variable for the list, will later be fetched from server
     // TODO: figure out how to represent expenses and who owes whom
@@ -64,8 +67,11 @@ export function Overview (props) {
             [{name: 'Family',
               index: 0,
               groupMembers: members},
-             {name: 'Team 42',
+             {name: 'TO',
               index: 1,
+              groupMembers: [members[2], members[3], members[4], members[5]]},
+            {name: 'Team 42',
+              index: 2,
               groupMembers: [members[0], members[1]]}
             ]);
 
@@ -76,7 +82,7 @@ export function Overview (props) {
 	
     /* Handles whenever another group is clicked */
     
-    const handeListITemClick = (event, index) => {
+    const handeListItemClick = (event, index) => {
        setSelectedIndex(index);
     };
 
@@ -86,39 +92,45 @@ export function Overview (props) {
 	return (
 			<div>
 				<CustomHeader />
-                <div className={classes.gridcontainer}>
-                <Grid container spacing = {2}>
-                    <Grid item xs={4}>
-                        <Paper className={classes.paperGroupList}>
-                            <h3>Your groups</h3>
-                            <GroupList
-                                groups={groups}
-                                index={selectedIndex}
-                                handeListITemClick={handeListITemClick}
-                             />
-                            <Divider/>
-                        <ListItem>
-                            <CustomButton>Create new group</CustomButton>
-                        </ListItem>
-                        </Paper>
-                    </Grid>
-                    <Grid item xs={8}>
-                        <Paper className={classes.paperGroupOverview}>
-                            <h3>{groups[selectedIndex].name} - Overview</h3>
-                            <ExpenseDiagram
-                                group={groups[selectedIndex]}
-                            />
-                            
-                            {/* position this button anywhere you want.
-                                It also doesnt matter where you put the dialog because it is fullscreen.*/}
-			            	<CustomButton clickHandler={openPaymentsDialog}>Add another payment</CustomButton>
-			            	{/* Pass in handler that closes Dialog when the Dialog requests it. */}
-			            	<PaymentDialog open={openPayments} closeHandler={closePaymentsDialog} />
-                        </Paper>
-                    </Grid>
-                </Grid>                
-				</div>
-			</div>
+                <Container maxWidth="lg">
+                    <div className={classes.gridcontainer}>
+                    <Grid container spacing = {2}>
+                    {/*left Grid that shows the grouplist*/}
+                       <Grid item xs={4}>
+                            <Paper className={classes.paperGroupList}>
+                                <h3>Your groups</h3>
+                                <GroupList
+                                    groups={groups}
+                                    index={selectedIndex}
+                                    handeListItemClick={handeListItemClick}
+                               />
+                                <Divider/>
+                            <ListItem>
+                                <CustomButton>Create new group</CustomButton>
+                            </ListItem>
+                            </Paper>
+                        </Grid>
+                        {/* right Grid that shows the overview and diagram */}
+                        <Grid item xs={8}>
+                            <Paper className={classes.paperGroupOverview}>
+                                <h3>{groups[selectedIndex].name} - Overview</h3>
+                                <ExpenseDiagram
+                                    group={groups[selectedIndex]}
+                                />
+                                
+                                {/* position this button anywhere you want. */}
+			                	<CustomButton clickHandler={openPaymentsDialog}>Add another payment</CustomButton>
+			                	{/* Pass in handler that closes Dialog when the Dialog requests it. */}
+			                	<PaymentDialog
+                                    open={openPayments}
+                                    closeHandler={closePaymentsDialog}
+                                   group={groups[selectedIndex]} />
+                            </Paper>
+                        </Grid>
+                    </Grid>                
+			    	</div>
+                </Container>            
+    		</div>
 		);
 
 	
