@@ -105,7 +105,7 @@ export function Overview(props) {
         [new Bill(0, "Uber", 20.0, new Date('2019-10-01'), members[0], members),
         new Bill(1, "Dinner", 35.0, new Date('2019-10-12'), members[1], [members[0], members[1], members[2]]),
         new Bill(2, "Movie tickets", 15.0, new Date('2019-10-25'), members[4], [members[4], members[5]])]
-    const groups = [new Group(0, "Family", members, billsGroup1), new Group(1, "TO", [members[2], members[3], members[4], members[5]]), new Group(2, "Team 42", [members[0], members[1]])]
+    const groups = [new Group(0, "Family", members, billsGroup1), new Group(1, "TO", [members[0], members[2], members[3], members[4], members[5]]), new Group(2, "Team 42", [members[0], members[1]])]
 
     /* END OF MOCK DATA ----------------------*/
 
