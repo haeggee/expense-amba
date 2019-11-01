@@ -26,10 +26,10 @@ const theme = createMuiTheme({
             blue: '#156EC0'
         },
         background: {
-            paper: '#1cc4e8'
+            paper: '#FFFFFF'
         },
         text: {
-            primary: '#FFFFFF'
+            primary: '#000000',
         }
     },
     typography: {

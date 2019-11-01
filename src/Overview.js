@@ -1,21 +1,15 @@
 import React from 'react';
 import './App.css';
-import { makeStyles } from '@material-ui/core/styles';
 import Header from './GUI/HeaderComponent';
 import ButtonComponent from "./GUI/ButtonComponent";
 import LogoComponent from "./GUI/LogoComponent";
 import InputComponent from "./GUI/InputComponent";
 import {CustomButton, CustomHeader} from "./GUI/Theme";
 import PaymentDialog from "./GUI/PaymentDialog";
-import Paper from '@material-ui/core/Paper';
-import Grid from '@material-ui/core/Grid';
 import GroupList from './GroupList';
-import Divider from '@material-ui/core/Divider';
-import ListItem from '@material-ui/core/ListItem';
+import {Box, Typography, AppBar, Tabs, Tab, Paper, Grid, Divider, ListItem, Container, Card, Button, Menu, MenuItem, makeStyles}
+from '@material-ui/core';
 import ExpenseDiagram from './ExpenseDiagram';
-import Container from '@material-ui/core/Container';
-import Card from '@material-ui/core/Card';
-
 
 const useStyles = makeStyles(theme => ({
         gridcontainer: {
@@ -27,17 +21,27 @@ const useStyles = makeStyles(theme => ({
 
         // the style for the left grouplist paper
         paperGroupList: {
-            padding: theme.spacing(2),
             color: theme.palette.text.secondary,
             background: '#FFFFFF'
         },
         // the style for the expense diagram paper
         paperGroupOverview: {
-           padding: theme.spacing(2),
            color: theme.palette.text.secondary,
            background: '#FFFFFF'
+        },
+        AppBar: {
+            position: 'relative'
+        },    
+        title: {
+    		marginLeft: theme.spacing(3),
+            marginTop: theme.spacing(1),
+            marginBottom: theme.spacing(1),
+	    	flex: 1,
+    	},
+        tabs: {
+            background: '#FFFFFF'
         }
-    }));
+}));
             
 const groupMembersString = function(group) {
     let text = group.groupMembers[0].name;
@@ -47,6 +51,13 @@ const groupMembersString = function(group) {
    return text;
 }        
            
+function a11yProps(index) {
+	return {
+		id: `scrollable-auto-tab-${index}`, 'aria-controls': `scrollable-auto-tabpanel-${index}`,
+	};
+}
+
+
 export function Overview (props) {
     /* MOCK DATA ----------------------------*/
     // list of current members of the systems, here we should get the data from the server later
@@ -104,35 +115,17 @@ export function Overview (props) {
        setSelectedIndex(index);
     };
 
-    /* the following are all functions and variables needed
-     * for the menu button to decide between bills or
-     * balances overview in the right grid
-     *
-     */
 
-    const [anchorE1, setAnchorE1] = React.useState(null);
-    // indicates whether the overview shows the balances (true) or the bills
-    const [balancesOrBills, setBalancesOrBills] = React.useState(true);
-    
-    // Handles whenever one wants to switch between balances or bills
-    const handleMenuClick = event => {
-        setAnchorE1(event.currentTarget);
-    }
-    
-    // functions to switch between balances or bills
-    const switchToBills = () => {
-        setBalancesOrBills(false);
-        setAnchorE1(null);
-    }
 
-    const switchToBalances = () => {
-        setBalancesOrBills(true);
-        setAnchorE1(null);
-    }
-    const closeMenu = () => {
-       setAnchorE1(null);
-    } 
-    // the styles for the components    
+    // which tab we are on
+	const [tabIndex, setTabIndex] = React.useState(0);
+
+	// what to do when user clicks on new tab
+	const handleChange = (event, newTabIndex) => {
+		setTabIndex(newTabIndex);
+	};
+    
+   // the styles for the components    
 	const classes = useStyles();
 
 	return (
@@ -146,7 +139,11 @@ export function Overview (props) {
                      {/*left Grid that shows the grouplist*/}
                        <Grid item xs={4}>
                             <Paper className={classes.paperGroupList}>
-                                <h3>Your groups</h3>
+                              	<AppBar className={classes.AppBar}>
+                             	<Typography variant="h6" className={classes.title}>
+                                      Your groups 
+                                </Typography>
+                                </AppBar>
                                 <GroupList
                                     groups={groups}
                                     index={selectedIndex}
@@ -165,11 +162,22 @@ export function Overview (props) {
                                
                         <Grid item xs={8}>
                             <Paper className={classes.paperGroupOverview}>
-                                <p><strong>{groups[selectedIndex].name}</strong> - 
-                                    <em> {groupMembersString(groups[selectedIndex])} </em>
-                                </p>
-                               
-                                <ExpenseDiagram
+                              	<AppBar className={classes.AppBar}>
+                             	    <Typography variant="h6" className={classes.title}>
+                                        <strong>{groups[selectedIndex].name}</strong> 
+                                        <Typography variant="subtitle1" justify='flex-end'> 
+                                            <em>Members:</em> {groupMembersString(groups[selectedIndex])} </Typography> 
+                                       
+                                </Typography>
+				                </AppBar>			
+			                	<Box display="flex" flexDirection="row-reverse">
+                                    <Tabs value={tabIndex} onChange={handleChange}>
+				        	   	        <Tab label="Balances" {...a11yProps(0)}/>
+					                	<Tab label="Bills" {...a11yProps(1)}/>
+				                	</Tabs>
+					            </Box>	
+                				
+	                        	<ExpenseDiagram
                                     group={groups[selectedIndex]}
                                 />
                                 
