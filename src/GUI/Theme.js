@@ -30,6 +30,7 @@ const theme = createMuiTheme({
         },
         text: {
             primary: '#000000',
+            third: '#5d87cf'
         }
     },
     typography: {

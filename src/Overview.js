@@ -43,6 +43,10 @@ const useStyles = makeStyles(theme => ({
         marginBottom: theme.spacing(1),
         marginLeft: theme.spacing(3),
         flex: 1
+    },
+    addButton: {
+        marginBottom: theme.spacing(2),
+        padding: theme.spacing(2)
     }
 }));
 /*  Returns a string of all the members of a group.
@@ -173,7 +177,7 @@ export function Overview(props) {
                                     handeListItemClick={handeListItemClick}
                                 />
                                 <Divider />
-                                <ListItem>
+                                <ListItem className={classes.addButton}>
                                     <CustomButton>Create new group</CustomButton>
                                 </ListItem>
                             </Paper>
@@ -213,7 +217,9 @@ export function Overview(props) {
                                     index={1}
                                 />
 
-                                <CustomButton clickHandler={openPaymentsDialog}>Add another payment</CustomButton>
+                                <Container className={classes.addButton}>
+                                    <CustomButton clickHandler={openPaymentsDialog}>Add another payment</CustomButton>
+                                </Container>
                                 {/* Pass in handler that closes Dialog when the Dialog requests it. */}
                                 <PaymentDialog
                                     open={openPayments}
