@@ -1,15 +1,16 @@
 import React from 'react';
+import ExpenseDiagram from './ExpenseDiagram';
+import { Container } from '@material-ui/core';
 
 
-export function ExpenseDiagram(props) {
-    const {group, value, index} = props; 
-    return (
-        <div>
-        {/* print list of group members*/}
-            <p></p>
-        </div>)
-
+export function Balances(props) {
+    const { group, value, index } = props;
+     return (
+        <Container role="tabpanel" hidden={index !== value}>
+            Balances
+        </Container>
+    )
 }
 
 
-export default ExpenseDiagram;
+export default Balances;

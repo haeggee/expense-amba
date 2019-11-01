@@ -1,16 +1,12 @@
 import React from 'react';
 import './App.css';
-import Header from './GUI/HeaderComponent';
-import ButtonComponent from "./GUI/ButtonComponent";
-import LogoComponent from "./GUI/LogoComponent";
-import InputComponent from "./GUI/InputComponent";
 import { CustomButton, CustomHeader } from "./GUI/Theme";
 import PaymentDialog from "./GUI/PaymentDialog";
 import GroupList from './GroupList';
 import { Box, Typography, AppBar, Tabs, Tab, Paper, Grid, Divider, ListItem, Container, Card, Button, Menu, MenuItem, makeStyles }
     from '@material-ui/core';
 import Balances from './Balances';
-
+import BillList from './BillList';
 
 
 
@@ -29,7 +25,7 @@ const useStyles = makeStyles(theme => ({
     },
     // the style for the expense diagram paper
     paperGroupOverview: {
-        color: theme.palette.text.secondary,
+        // color: theme.palette.text.secondary,
         background: '#FFFFFF'
     },
     AppBar: {
@@ -41,8 +37,10 @@ const useStyles = makeStyles(theme => ({
         marginBottom: theme.spacing(1),
         flex: 1,
     },
-    tabs: {
-        background: '#FFFFFF'
+    subtitle: {
+        marginBottom: theme.spacing(1),
+        marginLeft: theme.spacing(3),
+        flex: 1
     }
 }));
 
@@ -69,7 +67,6 @@ export function Overview(props) {
     { name: "Jennifer" }]
 
     const billsGroup1 = [{ title: 'Uber', amount: 15, date: new Date('2019-10-01'), from: members[0], to: members }]
-    console.log(billsGroup1[0].date)
 
 
     // groups as a state variable for the list, will later be fetched from server
@@ -130,7 +127,7 @@ index of the current group
     const [tabIndex, setTabIndex] = React.useState(0);
 
     // what to do when user clicks on new tab
-    const handleChange = (event, newTabIndex) => {
+    const handleTabChange = (event, newTabIndex) => {
         setTabIndex(newTabIndex);
     };
 
@@ -150,7 +147,7 @@ index of the current group
                             <Paper className={classes.paperGroupList}>
                                 <AppBar className={classes.AppBar}>
                                     <Typography variant="h6" className={classes.title}>
-                                        Your groups
+                                        <strong>Your groups</strong>
                                 </Typography>
                                 </AppBar>
                                 <GroupList
@@ -174,13 +171,14 @@ index of the current group
                                 <AppBar className={classes.AppBar}>
                                     <Typography variant="h6" className={classes.title}>
                                         <strong>{groups[selectedIndex].name}</strong>
-                                        <Typography variant="subtitle1" justify='flex-end'>
-                                            <em>Members:</em> {groupMembersString(groups[selectedIndex])} </Typography>
-
                                     </Typography>
+                                    <Typography variant="subtitle1" className={classes.subtitle}>
+                                            <em>Members:</em> {groupMembersString(groups[selectedIndex])}
+                                    </Typography>
+
                                 </AppBar>
                                 <Box display="flex" flexDirection="row-reverse">
-                                    <Tabs value={tabIndex} onChange={handleChange}>
+                                    <Tabs value={tabIndex} onChange={handleTabChange}>
                                         <Tab label="Balances" {...a11yProps(0)} />
                                         <Tab label="Bills" {...a11yProps(1)} />
                                     </Tabs>
@@ -188,8 +186,14 @@ index of the current group
 
                                 <Balances
                                     group={groups[selectedIndex]}
-                                    value={selectedIndex}
+                                    value={tabIndex}
                                     index={0}
+                                />
+
+                                <BillList
+                                    group={groups[selectedIndex]}
+                                    value={tabIndex}
+                                    index={1}
                                 />
 
                                 <CustomButton clickHandler={openPaymentsDialog}>Add another payment</CustomButton>
