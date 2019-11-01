@@ -5,16 +5,17 @@ Class that represents a specific group. Has information such as the group name, 
 export default class Group {
 	
 	/**
-	 * Creatse a new group.
+	 * Create a new group.
 	 * @param {groupID} The id of the group. Must be unique.
 	 * @param {name} The name of the group.
 	 * @param {members} Array of Users. 
+	 * @param {bills} Array of bills belonging to the group 
 	 */
-	constructor(groupID, name, members) {
+	constructor(groupID, name, members, bills) {
 		this.groupID = groupID
 		this.name = name
 		this.groupMembers = members
-		
+		this.bills = bills
 		// add more fields here later as needed
 	}
 	

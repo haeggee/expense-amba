@@ -7,8 +7,9 @@ import { Box, Typography, AppBar, Tabs, Tab, Paper, Grid, Divider, ListItem, Con
     from '@material-ui/core';
 import Balances from './Balances';
 import BillList from './BillList';
-import User from './User'
-import Group from './Group'
+import Bill from './Bills';
+import User from './User';
+import Group from './Group';
 
 
 const useStyles = makeStyles(theme => ({
@@ -44,7 +45,10 @@ const useStyles = makeStyles(theme => ({
         flex: 1
     }
 }));
-
+/*  Returns a string of all the members of a group.
+    @param {group} the group object
+    We assume a group has at least one member.
+*/
 const groupMembersString = function (group) {
     let text = group.groupMembers[0].name;
     for (let i = 1; i < group.groupMembers.length; i++) {
@@ -62,7 +66,7 @@ function a11yProps(index) {
 
 export function Overview(props) {
     /* MOCK DATA ----------------------------*/
-	
+
 	/*
     // list of current members of the systems, here we should get the data from the server later
 
@@ -93,12 +97,15 @@ export function Overview(props) {
         ]);
 
 	*/
-	
-	// A possible way of implementing it?
-	const members = [new User("Alice", "password", "Alice", "Alice.gmail.com"), new User("Bob", "password", "Bob", "Bob.gmail.com"), new User("James", "password", "James", "James.gmail.com"),
-	new User("Maria", "password", "Maria", "Maria.gmail.com"), new User("Thomas", "password", "Thomas", "Thomas.gmail.com"), new User("Jennifer", "password", "Jennifer", "Jennifer.gmail.com")]
-	
-	const groups = [new Group(0, "Family", members), new Group(1, "TO", [members[2], members[3], members[4], members[5]]), new Group(2, "Team 42", [members[0], members[1]])]
+
+    // A possible way of implementing it?
+    const members = [new User("Alice", "password", "Alice", "Alice.gmail.com"), new User("Bob", "password", "Bob", "Bob.gmail.com"), new User("James", "password", "James", "James.gmail.com"),
+    new User("Maria", "password", "Maria", "Maria.gmail.com"), new User("Thomas", "password", "Thomas", "Thomas.gmail.com"), new User("Jennifer", "password", "Jennifer", "Jennifer.gmail.com")]
+    const billsGroup1 =
+        [new Bill(0, "Uber", 20.0, new Date('2019-10-01'), members[0], members),
+        new Bill(1, "Dinner", 35.0, new Date('2019-10-12'), members[1], [members[0], members[1], members[2]]),
+        new Bill(2, "Movie tickets", 15.0, new Date('2019-10-25'), members[4], [members[4], members[5]])]
+    const groups = [new Group(0, "Family", members, billsGroup1), new Group(1, "TO", [members[2], members[3], members[4], members[5]]), new Group(2, "Team 42", [members[0], members[1]])]
 
     /* END OF MOCK DATA ----------------------*/
 
@@ -121,8 +128,8 @@ export function Overview(props) {
     };
 
     /*
-index of the current group
-*/
+    index of the current group
+    */
     const [selectedIndex, setSelectedIndex] = React.useState(0);
 
     /* Handles whenever another group is clicked */
@@ -158,7 +165,7 @@ index of the current group
                                 <AppBar className={classes.AppBar}>
                                     <Typography variant="h6" className={classes.title}>
                                         <strong>Your groups</strong>
-                                </Typography>
+                                    </Typography>
                                 </AppBar>
                                 <GroupList
                                     groups={groups}
@@ -183,7 +190,7 @@ index of the current group
                                         <strong>{groups[selectedIndex].name}</strong>
                                     </Typography>
                                     <Typography variant="subtitle1" className={classes.subtitle}>
-                                            <em>Members:</em> {groupMembersString(groups[selectedIndex])}
+                                        <em>Members:</em> {groupMembersString(groups[selectedIndex])}
                                     </Typography>
 
                                 </AppBar>

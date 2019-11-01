@@ -6,7 +6,7 @@ Also stores info on which group this user is in, etc.
 export default class User {
 	
 	/**
-	 * Creatse a new user.
+	 * Creates a new user.
 	 * @param {username} The username. This should be used as a unique identifier for this user.
 	 * @param {password} The password.
 	 * @param {name} The name of this user.
