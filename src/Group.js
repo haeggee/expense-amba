@@ -13,7 +13,7 @@ export default class Group {
 	constructor(groupID, name, members) {
 		this.groupID = groupID
 		this.name = name
-		this.members = members
+		this.groupMembers = members
 		
 		// add more fields here later as needed
 	}

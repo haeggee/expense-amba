@@ -7,7 +7,8 @@ import { Box, Typography, AppBar, Tabs, Tab, Paper, Grid, Divider, ListItem, Con
     from '@material-ui/core';
 import Balances from './Balances';
 import BillList from './BillList';
-
+import User from './User'
+import Group from './Group'
 
 
 const useStyles = makeStyles(theme => ({
@@ -61,6 +62,8 @@ function a11yProps(index) {
 
 export function Overview(props) {
     /* MOCK DATA ----------------------------*/
+	
+	/*
     // list of current members of the systems, here we should get the data from the server later
 
     const members = [{ name: "Alice" }, { name: "Bob" }, { name: "James" }, { name: "Maria" }, { name: "Thomas" },
@@ -89,6 +92,13 @@ export function Overview(props) {
         }
         ]);
 
+	*/
+	
+	// A possible way of implementing it?
+	const members = [new User("Alice", "password", "Alice", "Alice.gmail.com"), new User("Bob", "password", "Bob", "Bob.gmail.com"), new User("James", "password", "James", "James.gmail.com"),
+	new User("Maria", "password", "Maria", "Maria.gmail.com"), new User("Thomas", "password", "Thomas", "Thomas.gmail.com"), new User("Jennifer", "password", "Jennifer", "Jennifer.gmail.com")]
+	
+	const groups = [new Group(0, "Family", members), new Group(1, "TO", [members[2], members[3], members[4], members[5]]), new Group(2, "Team 42", [members[0], members[1]])]
 
     /* END OF MOCK DATA ----------------------*/
 
@@ -152,7 +162,7 @@ index of the current group
                                 </AppBar>
                                 <GroupList
                                     groups={groups}
-                                    index={selectedIndex}
+                                    groupID={selectedIndex}
                                     handeListItemClick={handeListItemClick}
                                 />
                                 <Divider />
