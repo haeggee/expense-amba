@@ -12,7 +12,8 @@ const cardStyle = makeStyles({
   card: {
 	marginLeft: 40,
 	marginRight: 40,
-	marginTop: 20
+	marginTop: 20,
+	width: '50%'
   },
 });
 

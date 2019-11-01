@@ -57,7 +57,7 @@ function PayBill(props) {
 	const index = props.index
 	const currentIndex = props.currentIndex
 	return (
-		<Card className={useStyles().card} role="tabpanel" raised="true" hidden={currentIndex !== index}>
+		<Card className={useStyles().card} role="tabpanel" hidden={currentIndex !== index}>
 			<CardContent>
 				<h4>Payment Amount</h4>
 				<TextField fullWidth variant="outlined" />
@@ -103,7 +103,7 @@ function PayPerson(props) {
 	};
 
 	return (
-		<Card className={useStyles().card} role="tabpanel" raised="true" hidden={currentIndex !== index}>
+		<Card className={useStyles().card} role="tabpanel"  hidden={currentIndex !== index}>
 			<CardContent>
 				<h4>Payment Amount</h4>
 				<TextField fullWidth variant="outlined" />

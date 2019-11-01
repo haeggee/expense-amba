@@ -95,25 +95,23 @@ export function CustomHeader(props) {
 /*
 Same as above but without any buttons.
 */
-// export function EmptyHeader() {
-//
-//     return(
-//         <ThemeProvider theme={theme}>
-//             <AppBar style={{flexGrow: 1}}>
-//                 <Toolbar>
-//                     <SvgIcon>
-//                         {LogoComponent()}
-//                     </SvgIcon>
-//                     <Typography style={{flexGrow: 1}}>
-//                         <Box fontFamily={'mistral'} fontSize={'h4.fontSize'} marginLeft={'10px'}>
-//                             AM.BA
-//                         </Box>
-//                     </Typography>
-//                 </Toolbar>
-//             </AppBar>
-//         </ThemeProvider>
-//     )
-// }
+export function EmptyHeader() {
+
+    return(
+        <AppBar position={'static'} flexGrow={1}>
+            <Toolbar>
+                <SvgIcon>
+                    {LogoComponent()}
+                </SvgIcon>
+                <Box fontFamily={'mistral'} fontSize={'h4.fontSize'} marginLeft={'10px'} flexGrow={1}>
+                    AM.BA
+                </Box>
+                
+                
+            </Toolbar>
+        </AppBar>
+    )
+}
 
 /*
 This is the default button to use for the project.

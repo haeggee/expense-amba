@@ -8,17 +8,18 @@ import InputComponent from "./GUI/InputComponent";
 import { CustomButton, CustomHeader, EmptyHeader } from "./GUI/Theme"
 import AccountsCard from "./GUI/AccountsCard"
 import Box from "@material-ui/core/Box";
+import Grid from "@material-ui/core/Grid"
 
 // themes and styles class
 const themes = makeStyles({
 	editbutton: {
-		marginLeft: '40px',
+		marginLeft: '00px',
 		marginTop: '40px',
 	},
 	donebutton: {
 		marginLeft: '20px',
 		marginTop: '40px',
-	},
+	}
 });
 
 
@@ -44,16 +45,30 @@ export function Accountsview(props) {
 
 	return (
 		<div>
-			<CustomHeader loggedIn={true} />
-			<AccountsCard title="Username" value="n00bm@ster69" editable={values.editable} />
-			<AccountsCard title="Name" value="Donald Trump" editable={values.editable} />
-			<AccountsCard title="Email" value="DJT@gmail.com" editable={values.editable} />
-			<AccountsCard title="Password" value="password" type="password" editable={values.editable} />
+			{/* Dont use the CustomHeader because it has a button for user to go to accounts screen. This IS the accounts screen! */}
+			<EmptyHeader />
+		
+			<Grid
+				container
+				spacing={0}
+				direction="column"
+				alignItems="center"
+				justify="center"
+				style={{ minHeight: '100vh' }}>
+				
+				
+				<h2>Account settings</h2>
+				<AccountsCard title="Username" value="n00bm@ster69" editable={values.editable} />
+				<AccountsCard title="Name" value="Donald Trump" editable={values.editable} />
+				<AccountsCard title="Email" value="DJT@gmail.com" editable={values.editable} />
+				<AccountsCard title="Password" value="password" type="password" editable={values.editable} />
 
-			<Box flexDirection="row">
-				<CustomButton className={className.editbutton} clickHandler={handleEditClick}>{values.editButtonText}</CustomButton>
-				<CustomButton className={className.donebutton} >Done</CustomButton>
-			</Box>
+				<Box flexDirection="row">
+					<CustomButton className={className.editbutton} clickHandler={handleEditClick}>{values.editButtonText}</CustomButton>
+					<CustomButton className={className.donebutton} >Done</CustomButton>
+				</Box>
+				
+			</Grid> 
 		</div>
 	);
 }
