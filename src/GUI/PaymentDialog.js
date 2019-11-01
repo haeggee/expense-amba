@@ -22,8 +22,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
-
-
+import { InputAdornment } from '@material-ui/core';
+import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
+import DateFnsUtils from '@date-io/date-fns'
 /*
 Some styles for this part only
 */
@@ -56,20 +57,53 @@ Tab for paying bills.
 function PayBill(props) {
 	const index = props.index
 	const currentIndex = props.currentIndex
+	const classes = useStyles()
+
+	const [billValues, setBillValues] = React.useState({
+		title: '',
+		amount: '',
+	})
+
+	const handleBillChange = prop => event => {
+		setBillValues({ ...setBillValues, [prop]: event.target.value });
+	}
+	const [selectedDate, setSelectedDate] = React.useState(new Date())
+
+	const handleDateChange = date => {
+		setSelectedDate(date);
+	}
+
 	return (
-		<Card className={useStyles().card} role="tabpanel" hidden={currentIndex !== index}>
+		<Card className={classes.card} role="tabpanel" hidden={currentIndex !== index}>
+			<CardContent>
+				<h4>Title</h4>
+				<TextField fullWidth variant="outlined"
+					value={billValues.title} onChange={handleBillChange('title')} />
+			</CardContent>
 			<CardContent>
 				<h4>Payment Amount</h4>
-				<TextField fullWidth variant="outlined" />
+				<TextField fullWidth variant="outlined"
+					type='number' value={billValues.amount} onChange={handleBillChange('amount')}
+					InputProps={{
+						startAdornment: <InputAdornment position="start">CAD$</InputAdornment>,
+					}} />
 			</CardContent>
 			<CardContent>
 				<h4>Date</h4>
-				<TextField fullWidth variant="outlined" />
+				<MuiPickersUtilsProvider utils={DateFnsUtils}>
+					<KeyboardDatePicker
+						disableToolbar
+						inputVariant="outlined"
+						fullWidth
+						variant="inline"
+						format="MM//dd/yyyy"
+						margin="normal"
+						value={selectedDate}
+						onChange={handleDateChange}
+					/>
+				</MuiPickersUtilsProvider>
 			</CardContent>
-			<CardContent>
-				<h4>Memo</h4>
-				<TextField fullWidth variant="outlined" />
-			</CardContent>
+
 			<CardContent>
 				<CustomButton >Accept</CustomButton>
 			</CardContent>
@@ -84,6 +118,7 @@ function PayPerson(props) {
 	const index = props.index
 	const currentIndex = props.currentIndex
 	const groupMembers = props.groupMembers
+	const classes = useStyles()
 
 	// When user selects person from the menu, display it on the text input.
 	const [name, setName] = React.useState('');
@@ -103,7 +138,7 @@ function PayPerson(props) {
 	};
 
 	return (
-		<Card className={useStyles().card} role="tabpanel"  hidden={currentIndex !== index}>
+		<Card className={classes.card} role="tabpanel" hidden={currentIndex !== index}>
 			<CardContent>
 				<h4>Payment Amount</h4>
 				<TextField fullWidth variant="outlined" />
@@ -121,14 +156,12 @@ function PayPerson(props) {
 							onOpen={handleOpen}
 							value={name}
 							onChange={handleChange}
-							>
-							
-							<MenuItem value=""><em>None</em></MenuItem>
-						
+						>
+
 							{groupMembers.map(member => (
-							<MenuItem value={member.name}>{member.name}</MenuItem>
+								<MenuItem value={member.name}>{member.name}</MenuItem>
 							))}
-							
+
 						</Select>
 					</FormControl>
 				</form>
@@ -194,7 +227,7 @@ export default function PaymentDialog(props) {
 
 
 				<PayBill currentIndex={tabIndex} index={0} />
-				<PayPerson currentIndex={tabIndex} index={1} groupMembers={group.groupMembers}/>
+				<PayPerson currentIndex={tabIndex} index={1} groupMembers={group.groupMembers} />
 
 			</Dialog>
 		</div>
