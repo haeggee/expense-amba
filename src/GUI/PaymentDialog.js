@@ -55,9 +55,9 @@ Tab for paying bills.
 */
 function PayBill(props) {
 	const index = props.index
-	const value = props.value
+	const currentIndex = props.currentIndex
 	return (
-		<Card className={useStyles().card} role="tabpanel" raised="true" hidden={value !== index}>
+		<Card className={useStyles().card} role="tabpanel" raised="true" hidden={currentIndex !== index}>
 			<CardContent>
 				<h4>Payment Amount</h4>
 				<TextField fullWidth variant="outlined" />
@@ -82,7 +82,8 @@ Tab for paying person. Has Autocomplete features to select people.
 */
 function PayPerson(props) {
 	const index = props.index
-	const v = props.value
+	const currentIndex = props.currentIndex
+	const groupMembers = props.groupMembers
 
 	// When user selects person from the menu, display it on the text input.
 	const [name, setName] = React.useState('');
@@ -102,7 +103,7 @@ function PayPerson(props) {
 	};
 
 	return (
-		<Card className={useStyles().card} role="tabpanel" raised="true" hidden={v !== index}>
+		<Card className={useStyles().card} role="tabpanel" raised="true" hidden={currentIndex !== index}>
 			<CardContent>
 				<h4>Payment Amount</h4>
 				<TextField fullWidth variant="outlined" />
@@ -120,14 +121,14 @@ function PayPerson(props) {
 							onOpen={handleOpen}
 							value={name}
 							onChange={handleChange}
-							inputProps={{
-								name: 'name',
-								id: 'demo-controlled-open-select',
-							}}>
+							>
+							
 							<MenuItem value=""><em>None</em></MenuItem>
-							<MenuItem value={1}>Joe</MenuItem>
-							<MenuItem value={2}>Bob</MenuItem>
-							<MenuItem value={3}>ad</MenuItem>
+						
+							{groupMembers.map(member => (
+							<MenuItem value={member.name}>{member.name}</MenuItem>
+							))}
+							
 						</Select>
 					</FormControl>
 				</form>
@@ -192,8 +193,8 @@ export default function PaymentDialog(props) {
 				</AppBar>
 
 
-				<PayBill value={tabIndex} index={0} />
-				<PayPerson value={tabIndex} index={1} />
+				<PayBill currentIndex={tabIndex} index={0} />
+				<PayPerson currentIndex={tabIndex} index={1} groupMembers={group.groupMembers}/>
 
 			</Dialog>
 		</div>
