@@ -14,28 +14,66 @@ import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
 import ExpenseDiagram from './ExpenseDiagram';
 import Container from '@material-ui/core/Container';
+import Card from '@material-ui/core/Card';
 
 
 const useStyles = makeStyles(theme => ({
         gridcontainer: {
             flexGrow: 1,
             padding: theme.spacing(2),
+            minHeight: 750,
+            background: '#FFFFFF'
         },
 
         // the style for the left grouplist paper
         paperGroupList: {
             padding: theme.spacing(2),
             color: theme.palette.text.secondary,
+            background: '#FFFFFF'
         },
         // the style for the expense diagram paper
         paperGroupOverview: {
            padding: theme.spacing(2),
            color: theme.palette.text.secondary,
+           background: '#FFFFFF'
         }
     }));
             
-	
+const groupMembersString = function(group) {
+    let text = group.groupMembers[0].name;
+    for (let i = 1; i < group.groupMembers.length; i++) {
+        text += ", " + group.groupMembers[i].name;
+    }
+   return text;
+}        
+           
 export function Overview (props) {
+    /* MOCK DATA ----------------------------*/
+    // list of current members of the systems, here we should get the data from the server later
+    
+    const members = [{name: "Alice"}, {name: "Bob"}, {name: "James"}, {name: "Maria"}, {name: "Thomas"},
+                     {name: "Jennifer"}]
+   
+    const billsGroup1 = [{title: 'Uber', amount: 15, date: new Date('2019-10-01'), from: members[0], to: members}]
+    console.log(billsGroup1[0].date) 
+
+
+    // groups as a state variable for the list, will later be fetched from server
+    // TODO: figure out how to represent expenses and who owes whom
+    const [groups, setGroups] = React.useState(
+            [{name: 'Family',
+              index: 0,
+              groupMembers: members},
+             {name: 'TO',
+              index: 1,
+              groupMembers: [members[2], members[3], members[4], members[5]]},
+            {name: 'Team 42',
+              index: 2,
+              groupMembers: [members[0], members[1]]}
+            ]);
+
+
+    /* END OF MOCK DATA ----------------------*/
 
     // openPayments indicates whether or not to open the payments dialog popup
    
@@ -55,27 +93,7 @@ export function Overview (props) {
 		setopenPayments(false)
 	};
 
-   
-    // list of current members of the systems, here we should get the data from the server later
-    
-    const members = [{name: "Alice"}, {name: "Bob"}, {name: "James"}, {name: "Maria"}, {name: "Thomas"},
-                     {name: "Jennifer"}]
-
-    // groups as a state variable for the list, will later be fetched from server
-    // TODO: figure out how to represent expenses and who owes whom
-    const [groups, setGroups] = React.useState(
-            [{name: 'Family',
-              index: 0,
-              groupMembers: members},
-             {name: 'TO',
-              index: 1,
-              groupMembers: [members[2], members[3], members[4], members[5]]},
-            {name: 'Team 42',
-              index: 2,
-              groupMembers: [members[0], members[1]]}
-            ]);
-
-	/*
+   	/*
      index of the current group
     */
     const [selectedIndex, setSelectedIndex] = React.useState(0); 
@@ -86,16 +104,46 @@ export function Overview (props) {
        setSelectedIndex(index);
     };
 
+    /* the following are all functions and variables needed
+     * for the menu button to decide between bills or
+     * balances overview in the right grid
+     *
+     */
+
+    const [anchorE1, setAnchorE1] = React.useState(null);
+    // indicates whether the overview shows the balances (true) or the bills
+    const [balancesOrBills, setBalancesOrBills] = React.useState(true);
+    
+    // Handles whenever one wants to switch between balances or bills
+    const handleMenuClick = event => {
+        setAnchorE1(event.currentTarget);
+    }
+    
+    // functions to switch between balances or bills
+    const switchToBills = () => {
+        setBalancesOrBills(false);
+        setAnchorE1(null);
+    }
+
+    const switchToBalances = () => {
+        setBalancesOrBills(true);
+        setAnchorE1(null);
+    }
+    const closeMenu = () => {
+       setAnchorE1(null);
+    } 
     // the styles for the components    
 	const classes = useStyles();
 
 	return (
 			<div>
-				<CustomHeader />
+                <CustomHeader />
                 <Container maxWidth="lg">
-                    <div className={classes.gridcontainer}>
+                    <Card className={classes.gridcontainer}>
                     <Grid container spacing = {2}>
-                    {/*left Grid that shows the grouplist*/}
+                    
+                    
+                     {/*left Grid that shows the grouplist*/}
                        <Grid item xs={4}>
                             <Paper className={classes.paperGroupList}>
                                 <h3>Your groups</h3>
@@ -110,10 +158,17 @@ export function Overview (props) {
                             </ListItem>
                             </Paper>
                         </Grid>
+                        
+                        
                         {/* right Grid that shows the overview and diagram */}
+                        
+                               
                         <Grid item xs={8}>
                             <Paper className={classes.paperGroupOverview}>
-                                <h3>{groups[selectedIndex].name} - Overview</h3>
+                                <p><strong>{groups[selectedIndex].name}</strong> - 
+                                    <em> {groupMembersString(groups[selectedIndex])} </em>
+                                </p>
+                               
                                 <ExpenseDiagram
                                     group={groups[selectedIndex]}
                                 />
@@ -128,8 +183,8 @@ export function Overview (props) {
                             </Paper>
                         </Grid>
                     </Grid>                
-			    	</div>
-                </Container>            
+			    	</Card>
+                </Container>
     		</div>
 		);
 

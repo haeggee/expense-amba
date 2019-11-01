@@ -1,5 +1,4 @@
 import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
-import {ThemeProvider} from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import SvgIcon from "@material-ui/core/SvgIcon/SvgIcon";
@@ -72,7 +71,6 @@ export function CustomHeader(props) {
     let [loggedIn, setLoggedIn] = useState(flag)
 
     return(
-        <ThemeProvider theme={theme}>
             <AppBar position={'static'} flexGrow={1}>
                 <Toolbar>
                     <SvgIcon>
@@ -90,7 +88,6 @@ export function CustomHeader(props) {
                     <CustomButton> {buttonText} </CustomButton>
                 </Toolbar>
             </AppBar>
-        </ThemeProvider>
 
     )
 }
@@ -131,11 +128,9 @@ export function CustomButton(props) {
 
     return(
         
-		<ThemeProvider theme={theme} >
 			<Button {...props} variant={"contained"} color={"primary"} className={className} onClick={clickHandler} style={{textTransform: 'none'}}>
 				{props.children}
 			</Button>
-		</ThemeProvider>
         
     )
 }

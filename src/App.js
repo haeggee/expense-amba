@@ -5,12 +5,15 @@ import { Route, Switch, BrowserRouter } from 'react-router-dom';
 import Home from './Home';
 import Overview from './Overview';
 import Accountsview from './AccountsView'
+import theme from "./GUI/Theme";
+import {ThemeProvider} from "@material-ui/core/styles"
 
 
 class App extends React.Component {
 	render() {
 		return (	
-		    <div>
+		   <ThemeProvider theme={theme}>
+           <div>
 			<BrowserRouter>
 			<Switch> 
 			  <Route exact path='/' component={Home}/>
@@ -19,7 +22,8 @@ class App extends React.Component {
 			</Switch>
 			</BrowserRouter>
 		    </div>
-		  );
+		  </ThemeProvider>
+          );
 	}
 }
 

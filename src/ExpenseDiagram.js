@@ -6,12 +6,7 @@ export function ExpenseDiagram(props) {
     return (
         <div>
         {/* print list of group members*/}
-            <p>{(() => { let text = group.groupMembers[0].name;
-                        for (let i = 1; i < group.groupMembers.length; i++) {
-                               text += ", " + group.groupMembers[i].name;
-                        }
-                        return text;})()}        
-           </p>
+            <p></p>
         </div>)
 
 }

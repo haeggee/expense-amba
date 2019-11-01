@@ -9,8 +9,6 @@ import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
-import theme from "./Theme";
-import {ThemeProvider} from "@material-ui/core/styles"
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Card from '@material-ui/core/Card';
@@ -172,7 +170,6 @@ export default function PaymentDialog(props) {
     return (
 	<div>
 		<Dialog maxWidth="md" fullWidth={true} open={open} onClose={closeHandler} TransitionComponent={Transition}>
-			<ThemeProvider theme={theme}>
 				<AppBar className={classes.appBar}>
 				
 					<Toolbar>
@@ -180,7 +177,7 @@ export default function PaymentDialog(props) {
 							<CloseIcon />
 						</IconButton>
 						<Typography variant="h6" className={classes.title}>
-							Add a payment for: {group.name}
+							Add a payment for: <em>{group.name}</em>
 						</Typography>
 						<Button color="inherit" onClick={closeHandler}>
 							Cancel
@@ -194,7 +191,6 @@ export default function PaymentDialog(props) {
 						
 				</AppBar>
 				
-			</ThemeProvider>
 			
 			<PayBill value={tabIndex} index={0}/>
 			<PayPerson value={tabIndex} index={1}/>
