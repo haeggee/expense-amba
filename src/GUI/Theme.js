@@ -3,11 +3,11 @@ import AppBar from "@material-ui/core/AppBar/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import SvgIcon from "@material-ui/core/SvgIcon/SvgIcon";
 import LogoComponent from "./LogoComponent";
-import React, {useState} from "react"
+import React, { useState } from "react"
 import Button from "@material-ui/core/Button";
-import {Typography} from "@material-ui/core";
+import { Typography } from "@material-ui/core";
 import Box from "@material-ui/core/Box";
-import {Link} from "react-router-dom"
+import { Link } from "react-router-dom"
 
 /*
     This is defines major colors/fonts we are using in this project.
@@ -41,7 +41,7 @@ const theme = createMuiTheme({
         ].join(','),
     },
     mixins: {
-        toolbar:{
+        toolbar: {
             minHeight: 40
         }
     }
@@ -70,24 +70,24 @@ export function CustomHeader(props) {
 
     let [loggedIn, setLoggedIn] = useState(flag)
 
-    return(
-            <AppBar position={'static'} flexGrow={1}>
-                <Toolbar>
-                    <SvgIcon>
-                        {LogoComponent()}
-                    </SvgIcon>
-                    <Box fontFamily={'mistral'} fontSize={'h4.fontSize'} marginLeft={'10px'} flexGrow={1}>
-                        AM.BA
+    return (
+        <AppBar position={'static'} flexGrow={1}>
+            <Toolbar>
+                <SvgIcon>
+                    {LogoComponent()}
+                </SvgIcon>
+                <Box fontFamily={'mistral'} fontSize={'h4.fontSize'} marginLeft={'10px'} flexGrow={1}>
+                    AM.BA
                     </Box>
-                    <Link to={loggedIn?'/overview':'/'} style={{position: 'absolute'}}>
-                        <Box
-                             width={120}
-                             height={40}
-                        />
-                    </Link>
-                    <CustomButton> {buttonText} </CustomButton>
-                </Toolbar>
-            </AppBar>
+                <Link to={loggedIn ? '/overview' : '/'} style={{ position: 'absolute' }}>
+                    <Box
+                        width={120}
+                        height={40}
+                    />
+                </Link>
+                <CustomButton> {buttonText} </CustomButton>
+            </Toolbar>
+        </AppBar>
 
     )
 }
@@ -123,15 +123,15 @@ To do so do <CustomButton className={the-class-name}>
 Click handlers can also be assigned via setting clickHandler={}
  */
 export function CustomButton(props) {
-	const className = props.className
-	const clickHandler = props.clickHandler
+    const className = props.className
+    const clickHandler = props.clickHandler
 
-    return(
-        
-			<Button {...props} variant={"contained"} color={"primary"} className={className} onClick={clickHandler} style={{textTransform: 'none'}}>
-				{props.children}
-			</Button>
-        
+    return (
+
+        <Button {...props} variant={"contained"} color={"primary"} className={className} onClick={clickHandler} style={{ textTransform: 'none' }}>
+            {props.children}
+        </Button>
+
     )
 }
 

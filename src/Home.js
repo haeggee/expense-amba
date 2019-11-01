@@ -1,13 +1,13 @@
-import React, {useState, useEffect} from 'react'
+import React, { useState, useEffect } from 'react'
 import './App.css'
 import HomeWhiteMat from "./GUI/HomeWhiteMat"
 import LogoComponent from "./GUI/LogoComponent"
 import HomeDisplayText from "./GUI/HomeDisplayText"
-import theme, {CustomHeader, CustomButton} from "./GUI/Theme"
+import theme, { CustomHeader, CustomButton } from "./GUI/Theme"
 import Grid from "@material-ui/core/Grid"
-import {CardContent, CardHeader, Fade, Grow, Paper, Slide, Typography} from "@material-ui/core"
+import { CardContent, CardHeader, Fade, Grow, Paper, Slide, Typography } from "@material-ui/core"
 import makeStyles from "@material-ui/core/styles/makeStyles"
-import {ThemeProvider} from "@material-ui/core/styles";
+import { ThemeProvider } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card"
 
 const useStyle = makeStyles(theme => ({
@@ -45,12 +45,12 @@ function Home() {
     return (
         <ThemeProvider theme={theme}>
             <header>
-                <CustomHeader loggedIn={false}/>
+                <CustomHeader loggedIn={false} />
             </header>
             <div className={classes.homePic}>
 
-                <img width={'100%'} alt={"Home illustration"} src={require("./GUI/imgs/home-illustration.jpg")}/>
-                <HomeWhiteMat/>
+                <img width={'100%'} alt={"Home illustration"} src={require("./GUI/imgs/home-illustration.jpg")} />
+                <HomeWhiteMat />
                 <div className={classes.logo}>
                     <Slide direction={"right"} mountOnEnter in={true} timeout={700}>
                         {LogoComponent()}
@@ -96,13 +96,13 @@ function Home() {
 
 function GridContainer(props) {
     const classes = useStyle(theme)
-    return(
+    return (
         <Grid container
-              alignContent={"flex-start"}
-              direction={'row'}
-              justify={"center"}
-              spacing={10}
-              className={classes.container}>
+            alignContent={"flex-start"}
+            direction={'row'}
+            justify={"center"}
+            spacing={10}
+            className={classes.container}>
             {props.children}
         </Grid>
     )
@@ -110,21 +110,21 @@ function GridContainer(props) {
 
 function GrowGrid(props) {
     const classes = useStyle(theme)
-    const {displayOffset, timeout} = props
+    const { displayOffset, timeout } = props
 
     const [show, setShow] = useState(false)
 
-    useEffect(()=>{
+    useEffect(() => {
         window.addEventListener('scroll', event => {
             const y = window.pageYOffset
             const vh = window.innerHeight / 100
-            if (y >= displayOffset * vh){
+            if (y >= displayOffset * vh) {
                 setShow(true)
             }
         })
     })
 
-    return(
+    return (
         <Grow in={show} className={classes.grow} timeout={timeout}>
             <Grid item>
                 {props.children}
@@ -135,9 +135,9 @@ function GrowGrid(props) {
 
 function StyledCard(props) {
     const classes = useStyle(theme)
-    return(
+    return (
         <ThemeProvider theme={theme}>
-            <Card  className={classes.card}>
+            <Card className={classes.card}>
                 <CardContent>
                     {props.children}
                 </CardContent>

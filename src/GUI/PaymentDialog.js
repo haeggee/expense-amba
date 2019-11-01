@@ -15,7 +15,7 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import TextField from '@material-ui/core/TextField';
-import {CustomButton, CustomHeader} from "./Theme";
+import { CustomButton, CustomHeader } from "./Theme";
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 
@@ -39,7 +39,7 @@ const useStyles = makeStyles(theme => ({
 		marginLeft: 40,
 		marginRight: 40,
 	},
-	
+
 }));
 
 
@@ -47,7 +47,7 @@ const useStyles = makeStyles(theme => ({
 Animation for opening dialog.
 */
 const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
+	return <Slide direction="up" ref={ref} {...props} />;
 });
 
 /*
@@ -83,24 +83,24 @@ Tab for paying person. Has Autocomplete features to select people.
 function PayPerson(props) {
 	const index = props.index
 	const v = props.value
-	
+
 	// When user selects person from the menu, display it on the text input.
-    const [name, setName] = React.useState('');
+	const [name, setName] = React.useState('');
 	//open and close menu
-    const [open, setOpen] = React.useState(false);
+	const [open, setOpen] = React.useState(false);
 
-    const handleChange = event => {
-        setName(event.target.value);
-    };
+	const handleChange = event => {
+		setName(event.target.value);
+	};
 
-    const handleClose = () => {
+	const handleClose = () => {
 		setOpen(false);
-    };
+	};
 
-    const handleOpen = () => {
+	const handleOpen = () => {
 		setOpen(true);
-    };
-	
+	};
+
 	return (
 		<Card className={useStyles().card} role="tabpanel" raised="true" hidden={v !== index}>
 			<CardContent>
@@ -109,7 +109,7 @@ function PayPerson(props) {
 			</CardContent>
 			<CardContent>
 				<h4>Payment to</h4>
-				
+
 				<form autoComplete="off">
 
 					<FormControl fullWidth>
@@ -121,9 +121,9 @@ function PayPerson(props) {
 							value={name}
 							onChange={handleChange}
 							inputProps={{
-							name: 'name',
-							id: 'demo-controlled-open-select',
-						}}>
+								name: 'name',
+								id: 'demo-controlled-open-select',
+							}}>
 							<MenuItem value=""><em>None</em></MenuItem>
 							<MenuItem value={1}>Joe</MenuItem>
 							<MenuItem value={2}>Bob</MenuItem>
@@ -131,7 +131,7 @@ function PayPerson(props) {
 						</Select>
 					</FormControl>
 				</form>
-				
+
 			</CardContent>
 			<CardContent>
 				<h4>Memo</h4>
@@ -152,11 +152,11 @@ function a11yProps(index) {
 
 export default function PaymentDialog(props) {
 	const classes = useStyles();
-	
+
 	const open = props.open
 	// Handler to notify when it is time to close the dialog.
 	const closeHandler = props.closeHandler
-	
+
 	// which tab we are on
 	const [tabIndex, setTabIndex] = React.useState(0);
 
@@ -164,14 +164,14 @@ export default function PaymentDialog(props) {
 	const handleChange = (event, newTabIndex) => {
 		setTabIndex(newTabIndex);
 	};
-    // what group we are looking at
-    const group = props.group;
+	// what group we are looking at
+	const group = props.group;
 
-    return (
-	<div>
-		<Dialog maxWidth="md" fullWidth={true} open={open} onClose={closeHandler} TransitionComponent={Transition}>
+	return (
+		<div>
+			<Dialog maxWidth="md" fullWidth={true} open={open} onClose={closeHandler} TransitionComponent={Transition}>
 				<AppBar className={classes.appBar}>
-				
+
 					<Toolbar>
 						<IconButton edge="start" color="inherit" onClick={closeHandler} aria-label="close">
 							<CloseIcon />
@@ -183,19 +183,19 @@ export default function PaymentDialog(props) {
 							Cancel
 						</Button>
 					</Toolbar>
-					
+
 					<Tabs centered value={tabIndex} onChange={handleChange} >
-						<Tab label="Bill payment" {...a11yProps(0)}/>
-						<Tab label="Payment to" {...a11yProps(1)}/>
+						<Tab label="Bill payment" {...a11yProps(0)} />
+						<Tab label="Payment to" {...a11yProps(1)} />
 					</Tabs>
-						
+
 				</AppBar>
-				
-			
-			<PayBill value={tabIndex} index={0}/>
-			<PayPerson value={tabIndex} index={1}/>
-			
-		</Dialog>
-	</div>
-    );
+
+
+				<PayBill value={tabIndex} index={0} />
+				<PayPerson value={tabIndex} index={1} />
+
+			</Dialog>
+		</div>
+	);
 }
