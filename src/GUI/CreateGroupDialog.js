@@ -25,6 +25,7 @@ import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import { InputAdornment } from '@material-ui/core';
 import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
+import Group from '../Group'
 
 /*
 Some styles for this part only
@@ -45,17 +46,31 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-/*
-Animation for opening dialog.
-*/
+/**
+ * Animation for opening dialog.
+ */
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
 });
 
+/**
+ * Creates a unique group id. NOTE: THIS IS JUST A PLACEHOLDER METHOD. WILL NOT WORK WITH DB DUE TO SYNCHRONIZATION ISSUES.
+ * @param {groups} All the groups currently in the system.
+ */
+const createUniqueId = function(groups) {
+  // basically assign the largest groupID + 1
+  let groupID = 0;
+  for (let i = 0; i < groups.length; i ++) {
+    if (groups[i].groupID <= groupID) {
+      groupID = groups[i].groupID + 1;
+    }
+  }
+  return groupID;
+}
 
-/*
-Contents for this dialog.
-*/
+/**
+ * Contents for this dialog.
+ */
 function DialogContents(props) {
 	const index = props.index;
 	const users = props.users;
@@ -64,26 +79,38 @@ function DialogContents(props) {
   // the current user that is logged in
   const currentUser = props.currentUser;
 
+  const groupCreatedListener = props.groupCreatedListener;
+
+  const closeHandler = props.closeHandler;
+
+  /**
+   * Creates a new group with the info the user entered.
+   */
+  const createGroup = function() {
+    let groupID = createUniqueId(members);
+    // create group with bills array initially empty.
+    const group = new Group(groupID, name, members, []);
+    groupCreatedListener(group);
+    closeHandler();
+  }
+
+  // list of users in the group
+  const [members, setMembers] = React.useState([]);
 	// When user selects person from the menu, display it on the text input.
 	const [name, setName] = React.useState([]);
-	//open and close menu
-	const [open, setOpen] = React.useState(false);
 	// amount input
 	const [amount, setAmount] = React.useState(null);
   
+  const handleNameChange = event => {
+    setName(event.target.value);
+  }
+
 	const handleAmountChange = event => {
 		setAmount(event.target.value);
 	}
-	const handleNameChange = event => {
-		setName(event.target.value);
-	};
 
-	const handleClose = () => {
-		setOpen(false);
-	};
-
-	const handleOpen = () => {
-		setOpen(true);
+	const handleMembersChange = event => {
+		setMembers(event.target.value);
 	};
 
   const ITEM_HEIGHT = 48;
@@ -102,7 +129,7 @@ function DialogContents(props) {
 		
       <CardContent>
         <h4>Group Name</h4>
-        <TextField fullWidth variant="outlined" placeholder="Name" />
+        <TextField fullWidth variant="outlined" placeholder="Name" onChange={handleNameChange} />
 			</CardContent>
 			<CardContent>
 				<h4>Users in this group with you</h4>
@@ -111,8 +138,8 @@ function DialogContents(props) {
             <InputLabel htmlFor="select-multiple-chip">Click to add users</InputLabel>
             <Select
               multiple
-              value={name}
-              onChange={handleNameChange}
+              value={members}
+              onChange={handleMembersChange}
               input={<Input id="select-multiple-chip" />}
               renderValue={selected => (
                 <div className={classes.chips}>
@@ -132,7 +159,7 @@ function DialogContents(props) {
 				</form>
 			</CardContent>
 			<CardContent>
-				<CustomButton >Accept</CustomButton>
+				<CustomButton clickHandler={createGroup}>Accept</CustomButton>
 			</CardContent>
 		</Card>
 	)
@@ -145,6 +172,9 @@ export default function CreateGroupDialog(props) {
 	const open = props.open;
 	// Handler to notify when it is time to close the dialog.
 	const closeHandler = props.closeHandler;
+
+  // handler that should get notified when we create a group
+  const groupCreatedListener = props.groupCreatedListener;
 
   // the current user that is logged in
   const user = props.currentUser;
@@ -166,7 +196,7 @@ export default function CreateGroupDialog(props) {
 					</Toolbar>
 				</AppBar>
 
-				<DialogContents users={users} currentUser={user} />
+				<DialogContents users={users} currentUser={user} groupCreatedListener={groupCreatedListener} closeHandler={closeHandler} />
 
 			</Dialog>
 		</div>

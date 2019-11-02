@@ -51,15 +51,15 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-/*  Returns a string of all the members of a group.
-    @param {group} the group object
-    @param {currentUser} The user that is using this app that is a part of this group
-    We assume a group has at least one member.
+/**  
+ * Returns a string of all the members of a group.
+ * @param {group} the group object
+ * @param {currentUser} The user that is using this app that is a part of this group. We assume a group has at least one member.
 */
 const groupMembersString = function (group, currentUser) {
   let text = "You"
   
-  for (let i = 1; i < group.groupMembers.length; i++) {
+  for (let i = 0; i < group.groupMembers.length; i++) {
     // all usernames are unique, so we can use them to compare users
     if (currentUser.username != group.groupMembers[i].username) {
       // only add to string if this is not the current user
@@ -117,7 +117,7 @@ export function Overview(props) {
       [new Bill(0, "Uber", 20.0, new Date('2019-10-01'), members[0], members),
       new Bill(1, "Dinner", 35.0, new Date('2019-10-12'), members[1], [members[0], members[1], members[2]]),
       new Bill(2, "Movie tickets", 15.0, new Date('2019-10-25'), members[4], [members[4], members[0], members[5]])]
-  const groups = [new Group(0, "Family", members, billsGroup1), new Group(1, "TO", [members[0], members[2], members[3], members[4], members[5]]), new Group(2, "Team 42", [members[0], members[1]])]
+  let groups = [new Group(0, "Family", members, billsGroup1), new Group(1, "TO", [members[0], members[2], members[3], members[4], members[5]]), new Group(2, "Team 42", [members[0], members[1]])]
 
   // Let this be the current user.
   const user = members[0]
@@ -159,6 +159,15 @@ export function Overview(props) {
     setOpenGroup(false)
   };
 
+  // function that should be notified when user creates a new group in the create group dialog
+  function onGroupCreated(group) {
+    groups.push(group);
+    setGroups(groups);
+    setSelectedIndex(groups.length - 1);
+  }
+
+  const [currentGroups, setGroups] = React.useState(groups);
+
   /*
   index of the current group
   */
@@ -166,7 +175,7 @@ export function Overview(props) {
 
   /* Handles whenever another group is clicked */
 
-  const handeListItemClick = (event, index) => {
+  const handleListItemClick = (event, index) => {
     setSelectedIndex(index);
   };
 
@@ -196,9 +205,9 @@ export function Overview(props) {
                   </Typography>
                 </AppBar>
                 <GroupList
-                  groups={groups}
+                  groups={currentGroups}
                   groupID={selectedIndex}
-                  handeListItemClick={handeListItemClick}
+                  handleListItemClick={handleListItemClick}
                 />
                 <Divider />
                 <ListItem className={classes.addButton}>
@@ -212,48 +221,49 @@ export function Overview(props) {
             <Grid item xs={8}>
               <Paper className={classes.paperGroupOverview}>
                 <AppBar className={classes.AppBar}>
-                    <Typography variant="h6" className={classes.title}>
-                        <strong>{groups[selectedIndex].name}</strong>
-                    </Typography>
-                    <Typography variant="subtitle1" className={classes.subtitle}>
-                        <em>Members:</em> {groupMembersString(groups[selectedIndex], user)}
-                    </Typography>
+                  <Typography variant="h6" className={classes.title}>
+                    <strong>{currentGroups[selectedIndex].name}</strong>
+                  </Typography>
+                  <Typography variant="subtitle1" className={classes.subtitle}>
+                    <em>Members:</em> {groupMembersString(currentGroups[selectedIndex], user)}
+                  </Typography>
                 </AppBar>
 
                 <Box display="flex" flexDirection="row-reverse">
-                    <Tabs value={tabIndex} onChange={handleTabChange}>
-                        <Tab label="Balances" {...a11yProps(0)} />
-                        <Tab label="Bills" {...a11yProps(1)} />
-                    </Tabs>
+                  <Tabs value={tabIndex} onChange={handleTabChange}>
+                    <Tab label="Balances" {...a11yProps(0)} />
+                    <Tab label="Bills" {...a11yProps(1)} />
+                  </Tabs>
                 </Box>
 
                 <Balances
-                    group={groups[selectedIndex]}
-                    value={tabIndex}
-                    index={0}
+                  group={currentGroups[selectedIndex]}
+                  value={tabIndex}
+                  index={0}
                 />
 
                 <BillList
-                    group={groups[selectedIndex]}
-                    value={tabIndex}
-                    index={1}
+                  group={currentGroups[selectedIndex]}
+                  value={tabIndex}
+                  index={1}
                 />
 
                 <Container className={classes.addButton}>
-                    <CustomButton clickHandler={openPaymentsDialog}>Add another payment</CustomButton>
+                  <CustomButton clickHandler={openPaymentsDialog}>Add another payment</CustomButton>
                 </Container>
 
                 {/* Pass in handler that closes Dialog when the Dialog requests it. */}
                 <PaymentDialog
                   open={openPayments}
                   closeHandler={closePaymentsDialog}
-                  group={groups[selectedIndex]}
+                  group={currentGroups[selectedIndex]}
                   currentUser={user} />
                 <CreateGroupDialog
                   open={openGroup}
                   closeHandler={closeGroupDialog}
                   users={members}
                   currentUser={user}
+                  groupCreatedListener={onGroupCreated}
                 />
               </Paper>
             </Grid>
