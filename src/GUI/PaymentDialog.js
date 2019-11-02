@@ -22,6 +22,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
+import { InputAdornment } from '@material-ui/core';
+import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
+import DateFnsUtils from '@date-io/date-fns'
 import {CustomHeader} from "./Header"
 
 
@@ -57,20 +60,54 @@ Tab for paying bills.
 function PayBill(props) {
 	const index = props.index
 	const currentIndex = props.currentIndex
+	const classes = useStyles()
+
+	const [billValues, setBillValues] = React.useState({
+		title: '',
+		amount: '',
+	})
+
+	const handleBillChange = prop => event => {
+		setBillValues({ ...setBillValues, [prop]: event.target.value });
+	}
+	const [selectedDate, setSelectedDate] = React.useState(new Date())
+
+	const handleDateChange = date => {
+		setSelectedDate(date);
+	}
+
 	return (
-		<Card className={useStyles().card} role="tabpanel" hidden={currentIndex !== index}>
+		<Card className={classes.card} role="tabpanel" hidden={currentIndex !== index}>
+			<CardContent>
+				<h4>Title</h4>
+				<TextField fullWidth variant="outlined"
+					value={billValues.title} onChange={handleBillChange('title')} />
+			</CardContent>
 			<CardContent>
 				<h4>Payment Amount</h4>
-				<TextField fullWidth variant="outlined" />
+				<TextField fullWidth variant="outlined"
+					type='number' value={billValues.amount} onChange={handleBillChange('amount')}
+					InputProps={{
+						startAdornment: <InputAdornment position="start">CAD$</InputAdornment>,
+					}} />
 			</CardContent>
 			<CardContent>
 				<h4>Date</h4>
-				<TextField fullWidth variant="outlined" />
+				<MuiPickersUtilsProvider utils={DateFnsUtils}>
+					<KeyboardDatePicker
+						disableToolbar
+						inputVariant="outlined"
+						fullWidth
+						variant="inline"
+						format="MM//dd/yyyy"
+						margin="normal"
+						value={selectedDate}
+						onChange={handleDateChange}
+						maxDate={new Date()}
+					/>
+				</MuiPickersUtilsProvider>
 			</CardContent>
-			<CardContent>
-				<h4>Memo</h4>
-				<TextField fullWidth variant="outlined" />
-			</CardContent>
+
 			<CardContent>
 				<CustomButton >Accept</CustomButton>
 			</CardContent>
@@ -85,13 +122,42 @@ function PayPerson(props) {
 	const index = props.index
 	const currentIndex = props.currentIndex
 	const groupMembers = props.groupMembers
+	const classes = useStyles()
+
+  // the current user that is logged in
+  const user = props.currentUser;
 
 	// When user selects person from the menu, display it on the text input.
 	const [name, setName] = React.useState('');
 	//open and close menu
 	const [open, setOpen] = React.useState(false);
+	// amount input
+	const [amount, setAmount] = React.useState(null);
 
-	const handleChange = event => {
+	// state of label of name input
+	const inputLabel = React.useRef(null);
+	const [labelWidth, setLabelWidth] = React.useState(0);
+	React.useEffect(() => {
+    if (inputLabel.current.offsetWidth > 0) {
+		  setLabelWidth(inputLabel.current.offsetWidth);
+    }
+    // temporary fix for when first time label pops up, width is set to 0
+    else {
+       setLabelWidth(42);
+    }
+	}, []);
+
+	// date for payment
+
+	const [selectedDate, setSelectedDate] = React.useState(new Date())
+
+	const handleDateChange = date => {
+		setSelectedDate(date);
+	}
+	const handleAmountChange = event => {
+		setAmount(event.target.value);
+	}
+	const handleNameChange = event => {
 		setName(event.target.value);
 	};
 
@@ -104,40 +170,65 @@ function PayPerson(props) {
 	};
 
 	return (
-		<Card className={useStyles().card} role="tabpanel"  hidden={currentIndex !== index}>
+		<Card className={classes.card} role="tabpanel" hidden={currentIndex !== index}>
 			<CardContent>
 				<h4>Payment Amount</h4>
-				<TextField fullWidth variant="outlined" />
+				<TextField fullWidth variant="outlined"
+					type='number' value={amount} onChange={handleAmountChange}
+					InputProps={{
+						startAdornment: <InputAdornment position="start">CAD$</InputAdornment>,
+					}} />
 			</CardContent>
 			<CardContent>
 				<h4>Payment to</h4>
 
 				<form autoComplete="off">
 
-					<FormControl fullWidth>
-						<InputLabel htmlFor="demo-controlled-open-select">Name</InputLabel>
+					<FormControl
+						variant="outlined" fullWidth>
+
+
+						<InputLabel ref={inputLabel}
+							htmlFor="select-outlined">Name</InputLabel>
 						<Select
 							open={open}
 							onClose={handleClose}
 							onOpen={handleOpen}
 							value={name}
-							onChange={handleChange}
-							>
-							
-							<MenuItem value=""><em>None</em></MenuItem>
-						
-							{groupMembers.map(member => (
-							<MenuItem value={member.name}>{member.name}</MenuItem>
-							))}
-							
+							onChange={handleNameChange}
+							id="select-outlined"
+							labelWidth={labelWidth}
+						>
+
+							{groupMembers.map(function(member) {
+                if (user.username != member.username) {
+                  return (<MenuItem value={member.name}>{member.name}</MenuItem>)
+                }
+              })}
+
 						</Select>
 					</FormControl>
 				</form>
-
 			</CardContent>
 			<CardContent>
 				<h4>Memo</h4>
 				<TextField fullWidth variant="outlined" />
+			</CardContent>
+			<CardContent>
+				<h4>Date</h4>
+				<MuiPickersUtilsProvider utils={DateFnsUtils}>
+					<KeyboardDatePicker
+						disableToolbar
+						inputVariant="outlined"
+						fullWidth
+						variant="inline"
+						format="MM//dd/yyyy"
+						margin="normal"
+						value={selectedDate}
+						onChange={handleDateChange}
+						maxDate={new Date()}
+					/>
+				</MuiPickersUtilsProvider>
 			</CardContent>
 			<CardContent>
 				<CustomButton >Accept</CustomButton>
@@ -155,9 +246,9 @@ function a11yProps(index) {
 export default function PaymentDialog(props) {
 	const classes = useStyles();
 
-	const open = props.open
+	const open = props.open;
 	// Handler to notify when it is time to close the dialog.
-	const closeHandler = props.closeHandler
+	const closeHandler = props.closeHandler;
 
 	// which tab we are on
 	const [tabIndex, setTabIndex] = React.useState(0);
@@ -169,9 +260,13 @@ export default function PaymentDialog(props) {
 	// what group we are looking at
 	const group = props.group;
 
+  // the current user that is logged in
+  const user = props.currentUser;
+
 	return (
 		<div>
-			<Dialog maxWidth="md" fullWidth={true} open={open} onClose={closeHandler} TransitionComponent={Transition}>
+			<Dialog maxWidth="md" fullWidth={true} open={open} onClose={closeHandler}
+			TransitionComponent={Transition} scroll='body'>
 				<AppBar className={classes.appBar}>
 
 					<Toolbar>
@@ -193,9 +288,8 @@ export default function PaymentDialog(props) {
 
 				</AppBar>
 
-
 				<PayBill currentIndex={tabIndex} index={0} />
-				<PayPerson currentIndex={tabIndex} index={1} groupMembers={group.groupMembers}/>
+				<PayPerson currentIndex={tabIndex} index={1} groupMembers={group.groupMembers} currentUser={user} />
 
 			</Dialog>
 		</div>

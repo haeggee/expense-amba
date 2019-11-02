@@ -11,7 +11,7 @@ import { uid } from 'react-uid';
 import {CustomHeader} from "./GUI/Header"
 
 export function GroupList(props) {
-  const { groups, groupID, handeListItemClick } = props;
+  const { groups, groupID, handleListItemClick } = props;
 
   return (
     <div className='GroupList'>
@@ -22,7 +22,7 @@ export function GroupList(props) {
             <ListItem key={uid(group)}
               button
               selected={group.groupID == groupID} /* highlights selected group*/
-              onClick={event => handeListItemClick(event, group.groupID)}
+              onClick={event => handleListItemClick(event, group.groupID)}
             >
               <ListItemIcon>
                 {/* use first two letters as short avatar left of name*/}

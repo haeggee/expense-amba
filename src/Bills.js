@@ -3,7 +3,7 @@
 Class that represents a specific Bill. Has information such as who it is for, who is paying, the date, the amount, etc.
 */
 export default class Bill {
-	
+
 	/**
 	 * Creates a new Bill.
 	 * @param {billID} The id. Should be unique.
@@ -21,5 +21,12 @@ export default class Bill {
 		this.payer = payer
 		this.payees = payees
 	}
-	
+
+	toPayeesString() {
+		let text = this.payees[0].name + ": CAD$" + (this.amount / this.payees.length).toFixed(2);
+		for (let i = 1; i < this.payees.length; i++) {
+			text += "\n" + this.payees[i].name + ": CAD$" + (this.amount / this.payees.length).toFixed(2);
+		}
+		return text;
+	}
 }
