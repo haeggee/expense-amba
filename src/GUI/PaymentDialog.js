@@ -132,10 +132,16 @@ function PayPerson(props) {
 	const [amount, setAmount] = React.useState(null);
 
 	// state of label of name input
-	const inputLabel = React.useRef("");
+	const inputLabel = React.useRef(null);
 	const [labelWidth, setLabelWidth] = React.useState(0);
 	React.useEffect(() => {
-		setLabelWidth(inputLabel.current.offsetWidth);
+    if (inputLabel.current.offsetWidth > 0) {
+		  setLabelWidth(inputLabel.current.offsetWidth);
+    }
+    // temporary fix for when first time label pops up, width is set to 0
+    else {
+       setLabelWidth(42);
+    }
 	}, []);
 	
 	// date for payment
@@ -177,6 +183,8 @@ function PayPerson(props) {
 
 					<FormControl
 						variant="outlined" fullWidth>
+
+
 						<InputLabel ref={inputLabel} 
 							htmlFor="select-outlined">Name</InputLabel>
 						<Select
