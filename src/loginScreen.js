@@ -5,7 +5,7 @@ import Header from "./GUI/HeaderComponent";
 import Button from "@material-ui/core/Button";
 import LogoComponent from "./GUI/LogoComponent";
 import InputComponent from "./GUI/InputComponent";
-import { CustomButton, CustomHeader, EmptyHeader } from "./GUI/Theme";
+import { CustomButton, CustomHeader, EmptyHeader } from "./GUI/Header";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 

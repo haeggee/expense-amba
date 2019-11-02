@@ -15,7 +15,7 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import TextField from '@material-ui/core/TextField';
-import { CustomButton, CustomHeader } from "./Theme";
+import { CustomButton} from "./Theme";
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 
@@ -25,6 +25,9 @@ import InputLabel from '@material-ui/core/InputLabel';
 import { InputAdornment } from '@material-ui/core';
 import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
 import DateFnsUtils from '@date-io/date-fns'
+import {CustomHeader} from "./Header"
+
+
 /*
 Some styles for this part only
 */
@@ -143,7 +146,7 @@ function PayPerson(props) {
        setLabelWidth(42);
     }
 	}, []);
-	
+
 	// date for payment
 
 	const [selectedDate, setSelectedDate] = React.useState(new Date())
@@ -185,7 +188,7 @@ function PayPerson(props) {
 						variant="outlined" fullWidth>
 
 
-						<InputLabel ref={inputLabel} 
+						<InputLabel ref={inputLabel}
 							htmlFor="select-outlined">Name</InputLabel>
 						<Select
 							open={open}

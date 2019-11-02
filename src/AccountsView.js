@@ -5,10 +5,11 @@ import Header from './GUI/HeaderComponent';
 import Button from "@material-ui/core/Button";
 import LogoComponent from "./GUI/LogoComponent";
 import InputComponent from "./GUI/InputComponent";
-import { CustomButton, CustomHeader, EmptyHeader } from "./GUI/Theme"
+import { CustomButton} from "./GUI/Theme"
 import AccountsCard from "./GUI/AccountsCard"
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid"
+import {CustomHeader, EmptyHeader} from "./GUI/Header"
 
 // themes and styles class
 const themes = makeStyles({
@@ -64,7 +65,7 @@ export function Accountsview(props) {
 				<AccountsCard title="Password" value="password" type="password" editable={values.editable} />
 
 				<Box flexDirection="row">
-					<CustomButton className={className.editbutton} clickHandler={handleEditClick}>{values.editButtonText}</CustomButton>
+					<CustomButton className={className.editbutton} onClick={handleEditClick}>{values.editButtonText}</CustomButton>
 					<CustomButton className={className.donebutton} >Done</CustomButton>
 				</Box>
 				

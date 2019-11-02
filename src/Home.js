@@ -3,12 +3,13 @@ import './App.css'
 import HomeWhiteMat from "./GUI/HomeWhiteMat"
 import LogoComponent from "./GUI/LogoComponent"
 import HomeDisplayText from "./GUI/HomeDisplayText"
-import theme, { CustomHeader, CustomButton } from "./GUI/Theme"
+import theme, { CustomButton } from "./GUI/Theme"
 import Grid from "@material-ui/core/Grid"
 import { CardContent, CardHeader, Fade, Grow, Paper, Slide, Typography } from "@material-ui/core"
 import makeStyles from "@material-ui/core/styles/makeStyles"
 import { ThemeProvider } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card"
+import {CustomHeader} from "./GUI/Header"
 
 const useStyle = makeStyles(theme => ({
     homePic: {
@@ -37,7 +38,7 @@ const useStyle = makeStyles(theme => ({
 }))
 
 
-function Home() {
+function Home(props) {
     const classes = useStyle(theme)
     const firstRowOffset = 20
     const secondRowOffset = 60
@@ -45,7 +46,7 @@ function Home() {
     return (
         <ThemeProvider theme={theme}>
             <header>
-                <CustomHeader loggedIn={false} />
+                <CustomHeader/>
             </header>
             <div className={classes.homePic}>
 
@@ -67,7 +68,7 @@ function Home() {
                         <Typography variant={"h5"}>
                             Never forget a bill
                         </Typography>
-                        <Typography variant={"p"}>
+                        <Typography variant={"body1"}>
                             AMBA helps you to keep track of everything with everybody.
                         </Typography>
                     </StyledCard>

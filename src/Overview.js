@@ -1,10 +1,11 @@
 import React from "react";
 import "./App.css";
-import { CustomButton, CustomHeader } from "./GUI/Theme";
+import { CustomButton } from "./GUI/Theme";
 import PaymentDialog from "./GUI/PaymentDialog";
 import CreateGroupDialog from "./GUI/CreateGroupDialog";
 import GroupList from "./GroupList";
 import {
+  Fab,
   Box,
   Typography,
   AppBar,
@@ -26,6 +27,8 @@ import BillList from "./BillList";
 import Bill from "./Bills";
 import User from "./User";
 import Group from "./Group";
+import { CustomHeader } from "./GUI/Header";
+import AddIcon from "@material-ui/icons/Add";
 
 const useStyles = makeStyles(theme => ({
   gridcontainer: {
@@ -55,7 +58,7 @@ const useStyles = makeStyles(theme => ({
     flex: 1
   },
   subtitle: {
-    marginBottom: theme.spacing(1),
+    marginBottom: theme.spacing(2),
     marginLeft: theme.spacing(3),
     flex: 1
   },
@@ -270,10 +273,29 @@ export function Overview(props) {
                   <Typography variant="h6" className={classes.title}>
                     <strong>{currentGroups[selectedIndex].name}</strong>
                   </Typography>
+
+                  {/* 
+                  <div> */}
                   <Typography variant="subtitle1" className={classes.subtitle}>
                     <em>Members:</em>{" "}
                     {groupMembersString(currentGroups[selectedIndex], user)}
+                    <Box
+                      // display="flex" fxDirection="row-reverse"
+                      component="span"
+                      m={1}
+                    >
+                      <Fab
+                        display="flex"
+                        flexDirection="row-reverse"
+                        size="small"
+                        color="third"
+                        aria-label="add"
+                      >
+                        <AddIcon />
+                      </Fab>
+                    </Box>
                   </Typography>
+                  {/* </div> */}
                 </AppBar>
 
                 <Box display="flex" flexDirection="row-reverse">
