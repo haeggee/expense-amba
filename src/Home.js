@@ -68,7 +68,7 @@ function Home(props) {
                         <Typography variant={"h5"}>
                             Never forget a bill
                         </Typography>
-                        <Typography variant={"p"}>
+                        <Typography variant={"body1"}>
                             AMBA helps you to keep track of everything with everybody.
                         </Typography>
                     </StyledCard>

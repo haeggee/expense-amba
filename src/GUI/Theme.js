@@ -52,11 +52,10 @@ Click handlers can also be assigned via setting clickHandler={}
  */
 export function CustomButton(props) {
     const className = props.className
-    const clickHandler = props.clickHandler
 
     return (
 
-        <Button {...props} variant={"contained"} color={"primary"} className={className} onClick={clickHandler} style={{ textTransform: 'none' }}>
+        <Button {...props} variant={"contained"} color={"primary"} className={className} style={{ textTransform: 'none' }}>
             {props.children}
         </Button>
 

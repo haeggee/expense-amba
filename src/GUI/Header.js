@@ -15,6 +15,7 @@ import {UserContext} from "../UserContext"
 import makeStyles from "@material-ui/core/styles/makeStyles"
 import {CustomButton} from "./Theme"
 import {useHistory} from "react-router-dom"
+import User from "../User"
 
 const useStyle = makeStyles(()=>({
     absolute: {
@@ -27,7 +28,7 @@ export function CustomHeader(props) {
     let history = useHistory()
 
     return (
-        <AppBar position={'static'} flexGrow={1}>
+        <AppBar position={'static'}>
             <Toolbar>
                 <SvgIcon>
                     {LogoComponent()}
@@ -37,7 +38,7 @@ export function CustomHeader(props) {
                 </Box>
                 <UserContext.Consumer>
                     {value => {
-                        const link = (
+                        return(
                             <Link to={value.userName ? '/overview' : '/'} className={classes.absolute}>
                                 <Box
                                     width={120}
@@ -45,17 +46,42 @@ export function CustomHeader(props) {
                                 />
                             </Link>
                         )
-                        let buttons = (
-                            <CustomButton onClick={()=>{history.push('/overview')}}>
-                                Register/Login
-                            </CustomButton>
+                    }}
+                </UserContext.Consumer>
+                <UserContext.Consumer>
+                    {value => {
+                        if (value.userName) {
+                            return (
+                                <div>
+                                    <CustomButton onClick={()=>{history.push('/accountsview')}}>
+                                        Account
+                                    </CustomButton>
+                                    <CustomButton onClick={()=>{
+                                        value.userLogin(undefined)
+                                        history.push('/')
+                                    }}>
+                                        Logout
+                                    </CustomButton>
+                                </div>
                             )
+                        }
+                        else {
+                            return (
+                                <CustomButton onClick={() => {
+                                    history.push('/login')
+                                }}>
+                                    Register/Login
+                                </CustomButton>
+                            )
+                        }
                     }}
                 </UserContext.Consumer>
             </Toolbar>
         </AppBar>
     )
+
 }
+
 
 
 

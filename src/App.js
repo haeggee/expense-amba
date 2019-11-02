@@ -8,6 +8,7 @@ import Accountsview from './AccountsView'
 import theme from "./GUI/Theme";
 import { ThemeProvider } from "@material-ui/core/styles"
 import {UserContext} from "./UserContext"
+import LoginPage from "./LoginPage"
 
 
 
@@ -18,8 +19,10 @@ class App extends React.Component {
 	constructor(props){
 		super(props)
 		this.state = {
-			userName: undefined, //undefined for no user login
-			userLogin: (userName) => {this.setState(userName)}
+			userName: 'xuewenjie', //undefined for no user login
+			userLogin: (username) => {this.setState({userName: username})},
+			logUserName: ()=>{
+                console.log(this.state.userName)}
 		}
 	}
 
@@ -35,6 +38,7 @@ class App extends React.Component {
 							<Route exact path='/' component={Home}/>
 							<Route exact path='/overview' component={Overview}/>
 							<Route exact path='/accountsview' component={Accountsview}/>
+							<Route exact path='/login' component={LoginPage}/>
 						</Switch>
 					</BrowserRouter>
 				</div>

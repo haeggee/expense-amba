@@ -65,7 +65,7 @@ export function Accountsview(props) {
 				<AccountsCard title="Password" value="password" type="password" editable={values.editable} />
 
 				<Box flexDirection="row">
-					<CustomButton className={className.editbutton} clickHandler={handleEditClick}>{values.editButtonText}</CustomButton>
+					<CustomButton className={className.editbutton} onClick={handleEditClick}>{values.editButtonText}</CustomButton>
 					<CustomButton className={className.donebutton} >Done</CustomButton>
 				</Box>
 				
