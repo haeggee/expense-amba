@@ -191,9 +191,7 @@ export function Overview(props) {
               </Paper>
             </Grid>
 
-
             {/* right Grid that shows the overview and diagram */}
-
 
             <Grid item xs={8}>
               <Paper className={classes.paperGroupOverview}>

@@ -121,6 +121,9 @@ function PayPerson(props) {
 	const groupMembers = props.groupMembers
 	const classes = useStyles()
 
+  // the current user that is logged in
+  const user = props.currentUser;
+
 	// When user selects person from the menu, display it on the text input.
 	const [name, setName] = React.useState('');
 	//open and close menu
@@ -129,7 +132,7 @@ function PayPerson(props) {
 	const [amount, setAmount] = React.useState(null);
 
 	// state of label of name input
-	const inputLabel = React.useRef(null);
+	const inputLabel = React.useRef("");
 	const [labelWidth, setLabelWidth] = React.useState(0);
 	React.useEffect(() => {
 		setLabelWidth(inputLabel.current.offsetWidth);
@@ -174,22 +177,23 @@ function PayPerson(props) {
 
 					<FormControl
 						variant="outlined" fullWidth>
-						<InputLabel ref={inputLabel}
-							id="demo-simple-select-outlined-label">Name</InputLabel>
+						<InputLabel ref={inputLabel} 
+							htmlFor="select-outlined">Name</InputLabel>
 						<Select
 							open={open}
 							onClose={handleClose}
 							onOpen={handleOpen}
 							value={name}
 							onChange={handleNameChange}
-							labelId="demo-simple-select-outlined-label"
-							id="demo-simple-select-outlined"
+							id="select-outlined"
 							labelWidth={labelWidth}
 						>
 
-							{groupMembers.map(member => (
-								<MenuItem value={member.name}>{member.name}</MenuItem>
-							))}
+							{groupMembers.map(function(member) {
+                if (user.username != member.username) {
+                  return (<MenuItem value={member.name}>{member.name}</MenuItem>)
+                }
+              })}
 
 						</Select>
 					</FormControl>
@@ -231,9 +235,9 @@ function a11yProps(index) {
 export default function PaymentDialog(props) {
 	const classes = useStyles();
 
-	const open = props.open
+	const open = props.open;
 	// Handler to notify when it is time to close the dialog.
-	const closeHandler = props.closeHandler
+	const closeHandler = props.closeHandler;
 
 	// which tab we are on
 	const [tabIndex, setTabIndex] = React.useState(0);
@@ -244,6 +248,9 @@ export default function PaymentDialog(props) {
 	};
 	// what group we are looking at
 	const group = props.group;
+
+  // the current user that is logged in
+  const user = props.currentUser;
 
 	return (
 		<div>
@@ -270,9 +277,8 @@ export default function PaymentDialog(props) {
 
 				</AppBar>
 
-
 				<PayBill currentIndex={tabIndex} index={0} />
-				<PayPerson currentIndex={tabIndex} index={1} groupMembers={group.groupMembers} />
+				<PayPerson currentIndex={tabIndex} index={1} groupMembers={group.groupMembers} currentUser={user} />
 
 			</Dialog>
 		</div>
