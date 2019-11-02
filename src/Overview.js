@@ -213,7 +213,7 @@ export function Overview(props) {
                 />
                 <Divider />
                 <ListItem className={classes.addButton}>
-                  <CustomButton clickHandler={openGroupDialog}>Create new group</CustomButton>
+                  <CustomButton onClick={openGroupDialog}>Create new group</CustomButton>
                 </ListItem>
               </Paper>
             </Grid>
@@ -263,7 +263,7 @@ export function Overview(props) {
                 />
 
                 <Container className={classes.addButton}>
-                  <CustomButton clickHandler={openPaymentsDialog}>Add another payment</CustomButton>
+                  <CustomButton onClick={openPaymentsDialog}>Add another payment</CustomButton>
                 </Container>
 
                 {/* Pass in handler that closes Dialog when the Dialog requests it. */}
