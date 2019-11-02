@@ -1,44 +1,58 @@
-import React from 'react';
-import './App.css';
+import React from "react";
+import "./App.css";
 import { CustomButton, CustomHeader } from "./GUI/Theme";
 import PaymentDialog from "./GUI/PaymentDialog";
-import CreateGroupDialog from "./GUI/CreateGroupDialog"
-import GroupList from './GroupList';
-import { Box, Typography, AppBar, Tabs, Tab, Paper, Grid, Divider, ListItem, Container, Card, Button, Menu, MenuItem, makeStyles }
-    from '@material-ui/core';
-import Balances from './Balances';
-import BillList from './BillList';
-import Bill from './Bills';
-import User from './User';
-import Group from './Group';
-
+import CreateGroupDialog from "./GUI/CreateGroupDialog";
+import GroupList from "./GroupList";
+import {
+  Box,
+  Typography,
+  AppBar,
+  Tabs,
+  Tab,
+  Paper,
+  Grid,
+  Divider,
+  ListItem,
+  Container,
+  Card,
+  Button,
+  Menu,
+  MenuItem,
+  makeStyles
+} from "@material-ui/core";
+import Balances from "./Balances";
+import BillList from "./BillList";
+import Bill from "./Bills";
+import User from "./User";
+import Group from "./Group";
 
 const useStyles = makeStyles(theme => ({
   gridcontainer: {
     flexGrow: 1,
     padding: theme.spacing(2),
     minHeight: 750,
-    background: '#FFFFFF'
+    background: "#FFFFFF"
   },
 
   // the style for the left grouplist paper
   paperGroupList: {
     color: theme.palette.text.secondary,
-    background: '#FFFFFF'
+    background: "#FFFFFF"
   },
   // the style for the expense diagram paper
   paperGroupOverview: {
     // color: theme.palette.text.secondary,
-    background: '#FFFFFF'
+    background: "#FFFFFF"
   },
   AppBar: {
-    position: 'relative'
+    position: "relative"
   },
   title: {
     marginLeft: theme.spacing(3),
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
-    flex: 1,
+    flex: 1
   },
   subtitle: {
     marginBottom: theme.spacing(1),
@@ -51,14 +65,14 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-/**  
+/**
  * Returns a string of all the members of a group.
  * @param {group} the group object
  * @param {currentUser} The user that is using this app that is a part of this group. We assume a group has at least one member.
-*/
-const groupMembersString = function (group, currentUser) {
-  let text = "You"
-  
+ */
+const groupMembersString = function(group, currentUser) {
+  let text = "You";
+
   for (let i = 0; i < group.groupMembers.length; i++) {
     // all usernames are unique, so we can use them to compare users
     if (currentUser.username != group.groupMembers[i].username) {
@@ -67,19 +81,19 @@ const groupMembersString = function (group, currentUser) {
     }
   }
   return text;
-}
+};
 
 function a11yProps(index) {
   return {
-    id: `scrollable-auto-tab-${index}`, 'aria-controls': `scrollable-auto-tabpanel-${index}`,
+    id: `scrollable-auto-tab-${index}`,
+    "aria-controls": `scrollable-auto-tabpanel-${index}`
   };
 }
 
-
 export function Overview(props) {
-    /* MOCK DATA ----------------------------*/
+  /* MOCK DATA ----------------------------*/
 
-	/*
+  /*
     // list of current members of the systems, here we should get the data from the server later
 
     const members = [{ name: "Alice" }, { name: "Bob" }, { name: "James" }, { name: "Maria" }, { name: "Thomas" },
@@ -111,16 +125,46 @@ export function Overview(props) {
 	*/
 
   // A possible way of implementing it?
-  const members = [new User("Alice`s username", "password", "Alice", "Alice.gmail.com"), new User("Bob`s username", "password", "Bob", "Bob.gmail.com"), new User("Jame`s username", "password", "James", "James.gmail.com"),
-  new User("Maria`s username", "password", "Maria", "Maria.gmail.com"), new User("Thoma`s username", "password", "Thomas", "Thomas.gmail.com"), new User("Jennifer`s username", "password", "Jennifer", "Jennifer.gmail.com")]
-  const billsGroup1 =
-      [new Bill(0, "Uber", 20.0, new Date('2019-10-01'), members[0], members),
-      new Bill(1, "Dinner", 35.0, new Date('2019-10-12'), members[1], [members[0], members[1], members[2]]),
-      new Bill(2, "Movie tickets", 15.0, new Date('2019-10-25'), members[4], [members[4], members[0], members[5]])]
-  let groups = [new Group(0, "Family", members, billsGroup1), new Group(1, "TO", [members[0], members[2], members[3], members[4], members[5]]), new Group(2, "Team 42", [members[0], members[1]])]
+  const members = [
+    new User("Alice`s username", "password", "Alice", "Alice.gmail.com"),
+    new User("Bob`s username", "password", "Bob", "Bob.gmail.com"),
+    new User("Jame`s username", "password", "James", "James.gmail.com"),
+    new User("Maria`s username", "password", "Maria", "Maria.gmail.com"),
+    new User("Thoma`s username", "password", "Thomas", "Thomas.gmail.com"),
+    new User(
+      "Jennifer`s username",
+      "password",
+      "Jennifer",
+      "Jennifer.gmail.com"
+    )
+  ];
+  const billsGroup1 = [
+    new Bill(0, "Uber", 20.0, new Date("2019-10-01"), members[0], members),
+    new Bill(1, "Dinner", 35.0, new Date("2019-10-12"), members[1], [
+      members[0],
+      members[1],
+      members[2]
+    ]),
+    new Bill(2, "Movie tickets", 15.0, new Date("2019-10-25"), members[4], [
+      members[4],
+      members[0],
+      members[5]
+    ])
+  ];
+  let groups = [
+    new Group(0, "Family", members, billsGroup1),
+    new Group(1, "TO", [
+      members[0],
+      members[2],
+      members[3],
+      members[4],
+      members[5]
+    ]),
+    new Group(2, "Team 42", [members[0], members[1]])
+  ];
 
   // Let this be the current user.
-  const user = members[0]
+  const user = members[0];
 
   /* END OF MOCK DATA ----------------------*/
 
@@ -132,14 +176,14 @@ export function Overview(props) {
 	Handles whenever payment button is clicked to open dialog to make payment.
 	*/
   const openPaymentsDialog = () => {
-    setopenPayments(true)
+    setopenPayments(true);
   };
 
-	/* 
+  /* 
 	Handles closing dialog when Dialog requests it.
 	*/
   const closePaymentsDialog = () => {
-    setopenPayments(false)
+    setopenPayments(false);
   };
 
   // indicates whether or not to open the create group dialog popup
@@ -149,14 +193,14 @@ export function Overview(props) {
 	Handles whenever create group button is clicked to open dialog to make payment.
 	*/
   const openGroupDialog = () => {
-    setOpenGroup(true)
+    setOpenGroup(true);
   };
 
-	/* 
+  /* 
 	Handles closing dialog when Dialog requests it.
 	*/
   const closeGroupDialog = () => {
-    setOpenGroup(false)
+    setOpenGroup(false);
   };
 
   // function that should be notified when user creates a new group in the create group dialog
@@ -187,7 +231,7 @@ export function Overview(props) {
     setTabIndex(newTabIndex);
   };
 
-  // the styles for the components    
+  // the styles for the components
   const classes = useStyles();
 
   return (
@@ -211,7 +255,9 @@ export function Overview(props) {
                 />
                 <Divider />
                 <ListItem className={classes.addButton}>
-                  <CustomButton clickHandler={openGroupDialog}>Create new group</CustomButton>
+                  <CustomButton clickHandler={openGroupDialog}>
+                    Create new group
+                  </CustomButton>
                 </ListItem>
               </Paper>
             </Grid>
@@ -225,7 +271,8 @@ export function Overview(props) {
                     <strong>{currentGroups[selectedIndex].name}</strong>
                   </Typography>
                   <Typography variant="subtitle1" className={classes.subtitle}>
-                    <em>Members:</em> {groupMembersString(currentGroups[selectedIndex], user)}
+                    <em>Members:</em>{" "}
+                    {groupMembersString(currentGroups[selectedIndex], user)}
                   </Typography>
                 </AppBar>
 
@@ -249,7 +296,9 @@ export function Overview(props) {
                 />
 
                 <Container className={classes.addButton}>
-                  <CustomButton clickHandler={openPaymentsDialog}>Add another payment</CustomButton>
+                  <CustomButton clickHandler={openPaymentsDialog}>
+                    Add another payment
+                  </CustomButton>
                 </Container>
 
                 {/* Pass in handler that closes Dialog when the Dialog requests it. */}
@@ -257,7 +306,8 @@ export function Overview(props) {
                   open={openPayments}
                   closeHandler={closePaymentsDialog}
                   group={currentGroups[selectedIndex]}
-                  currentUser={user} />
+                  currentUser={user}
+                />
                 <CreateGroupDialog
                   open={openGroup}
                   closeHandler={closeGroupDialog}
