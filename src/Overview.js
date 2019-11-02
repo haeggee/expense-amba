@@ -51,12 +51,18 @@ const useStyles = makeStyles(theme => ({
 }));
 /*  Returns a string of all the members of a group.
     @param {group} the group object
+    @param {currentUser} The user that is using this app that is a part of this group
     We assume a group has at least one member.
 */
-const groupMembersString = function (group) {
-    let text = group.groupMembers[0].name;
+const groupMembersString = function (group, currentUser) {
+    let text = "You"
+    
     for (let i = 1; i < group.groupMembers.length; i++) {
-        text += ", " + group.groupMembers[i].name;
+        // all usernames are unique, so we can use them to compare users
+        if (currentUser.username != group.groupMembers[i].username) {
+            // only add to string if this is not the current user
+            text += ", " + group.groupMembers[i].name;
+        }
     }
     return text;
 }
@@ -108,8 +114,11 @@ export function Overview(props) {
     const billsGroup1 =
         [new Bill(0, "Uber", 20.0, new Date('2019-10-01'), members[0], members),
         new Bill(1, "Dinner", 35.0, new Date('2019-10-12'), members[1], [members[0], members[1], members[2]]),
-        new Bill(2, "Movie tickets", 15.0, new Date('2019-10-25'), members[4], [members[4], members[5]])]
+        new Bill(2, "Movie tickets", 15.0, new Date('2019-10-25'), members[4], [members[4], members[0], members[5]])]
     const groups = [new Group(0, "Family", members, billsGroup1), new Group(1, "TO", [members[0], members[2], members[3], members[4], members[5]]), new Group(2, "Team 42", [members[0], members[1]])]
+
+    // Let this be the current user.
+    const user = members[0]
 
     /* END OF MOCK DATA ----------------------*/
 
@@ -194,7 +203,7 @@ export function Overview(props) {
                                         <strong>{groups[selectedIndex].name}</strong>
                                     </Typography>
                                     <Typography variant="subtitle1" className={classes.subtitle}>
-                                        <em>Members:</em> {groupMembersString(groups[selectedIndex])}
+                                        <em>Members:</em> {groupMembersString(groups[selectedIndex], user)}
                                     </Typography>
 
                                 </AppBar>
