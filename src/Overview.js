@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import { CustomButton, CustomHeader } from "./GUI/Theme";
+import { CustomButton} from "./GUI/Theme";
 import PaymentDialog from "./GUI/PaymentDialog";
 import GroupList from './GroupList';
 import { Box, Typography, AppBar, Tabs, Tab, Paper, Grid, Divider, ListItem, Container, Card, Button, Menu, MenuItem, makeStyles }
@@ -10,6 +10,7 @@ import BillList from './BillList';
 import Bill from './Bills';
 import User from './User';
 import Group from './Group';
+import {CustomHeader} from "./GUI/Header"
 
 
 const useStyles = makeStyles(theme => ({

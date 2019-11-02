@@ -1,13 +1,6 @@
-import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
-import AppBar from "@material-ui/core/AppBar/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import SvgIcon from "@material-ui/core/SvgIcon/SvgIcon";
-import LogoComponent from "./LogoComponent";
-import React, { useState } from "react"
-import Button from "@material-ui/core/Button";
-import { Typography } from "@material-ui/core";
-import Box from "@material-ui/core/Box";
-import { Link } from "react-router-dom"
+import createMuiTheme from "@material-ui/core/styles/createMuiTheme"
+import React from "react"
+import Button from "@material-ui/core/Button"
 
 /*
     This is defines major colors/fonts we are using in this project.
@@ -48,70 +41,6 @@ const theme = createMuiTheme({
 
 });
 
-
-/*
-    This is the header element that will appear in all web pages.
-    Sample usage: <CustomHeader loggedIn={false} /> when user haven't logged in.
-                    loggedIn is default to be true.
-
- */
-export function CustomHeader(props) {
-    let buttonText;
-    let flag;
-
-    if (props.loggedIn === false) {
-        buttonText = 'Register/Login';
-        flag = false
-    }
-    else {
-        buttonText = 'My Account';
-        flag = true
-    }
-
-    let [loggedIn, setLoggedIn] = useState(flag)
-
-    return (
-        <AppBar position={'static'} flexGrow={1}>
-            <Toolbar>
-                <SvgIcon>
-                    {LogoComponent()}
-                </SvgIcon>
-                <Box fontFamily={'mistral'} fontSize={'h4.fontSize'} marginLeft={'10px'} flexGrow={1}>
-                    AM.BA
-                    </Box>
-                <Link to={loggedIn ? '/overview' : '/'} style={{ position: 'absolute' }}>
-                    <Box
-                        width={120}
-                        height={40}
-                    />
-                </Link>
-                <CustomButton> {buttonText} </CustomButton>
-            </Toolbar>
-        </AppBar>
-
-    )
-}
-
-/*
-Same as above but without any buttons.
-*/
-export function EmptyHeader() {
-
-    return(
-        <AppBar position={'static'} flexGrow={1}>
-            <Toolbar>
-                <SvgIcon>
-                    {LogoComponent()}
-                </SvgIcon>
-                <Box fontFamily={'mistral'} fontSize={'h4.fontSize'} marginLeft={'10px'} flexGrow={1}>
-                    AM.BA
-                </Box>
-                
-                
-            </Toolbar>
-        </AppBar>
-    )
-}
 
 /*
 This is the default button to use for the project.

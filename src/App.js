@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {createContext} from 'react'
 import logo from './logo.svg';
 import './App.css';
 import { Route, Switch, BrowserRouter } from 'react-router-dom';
@@ -7,22 +7,39 @@ import Overview from './Overview';
 import Accountsview from './AccountsView'
 import theme from "./GUI/Theme";
 import { ThemeProvider } from "@material-ui/core/styles"
+import {UserContext} from "./UserContext"
+
 
 
 class App extends React.Component {
+
+
+
+	constructor(props){
+		super(props)
+		this.state = {
+			userName: undefined, //undefined for no user login
+			userLogin: (userName) => {this.setState(userName)}
+		}
+	}
+
+
+
 	render() {
 		return (
+			<UserContext.Provider value={this.state}>
 			<ThemeProvider theme={theme}>
 				<div>
 					<BrowserRouter>
 						<Switch>
-							<Route exact path='/' component={Home} />
-							<Route exact path='/overview' component={Overview} />
-							<Route exact path='/accountsview' component={Accountsview} />
+							<Route exact path='/' component={Home}/>
+							<Route exact path='/overview' component={Overview}/>
+							<Route exact path='/accountsview' component={Accountsview}/>
 						</Switch>
 					</BrowserRouter>
 				</div>
 			</ThemeProvider>
+			</UserContext.Provider>
 		);
 	}
 }
