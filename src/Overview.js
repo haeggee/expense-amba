@@ -2,6 +2,7 @@ import React from 'react';
 import './App.css';
 import { CustomButton, CustomHeader } from "./GUI/Theme";
 import PaymentDialog from "./GUI/PaymentDialog";
+import CreateGroupDialog from "./GUI/CreateGroupDialog"
 import GroupList from './GroupList';
 import { Box, Typography, AppBar, Tabs, Tab, Paper, Grid, Divider, ListItem, Container, Card, Button, Menu, MenuItem, makeStyles }
     from '@material-ui/core';
@@ -110,8 +111,8 @@ export function Overview(props) {
 	*/
 
   // A possible way of implementing it?
-  const members = [new User("Alice", "password", "Alice", "Alice.gmail.com"), new User("Bob", "password", "Bob", "Bob.gmail.com"), new User("James", "password", "James", "James.gmail.com"),
-  new User("Maria", "password", "Maria", "Maria.gmail.com"), new User("Thomas", "password", "Thomas", "Thomas.gmail.com"), new User("Jennifer", "password", "Jennifer", "Jennifer.gmail.com")]
+  const members = [new User("Alice`s username", "password", "Alice", "Alice.gmail.com"), new User("Bob`s username", "password", "Bob", "Bob.gmail.com"), new User("Jame`s username", "password", "James", "James.gmail.com"),
+  new User("Maria`s username", "password", "Maria", "Maria.gmail.com"), new User("Thoma`s username", "password", "Thomas", "Thomas.gmail.com"), new User("Jennifer`s username", "password", "Jennifer", "Jennifer.gmail.com")]
   const billsGroup1 =
       [new Bill(0, "Uber", 20.0, new Date('2019-10-01'), members[0], members),
       new Bill(1, "Dinner", 35.0, new Date('2019-10-12'), members[1], [members[0], members[1], members[2]]),
@@ -141,6 +142,23 @@ export function Overview(props) {
     setopenPayments(false)
   };
 
+  // indicates whether or not to open the create group dialog popup
+  const [openGroup, setOpenGroup] = React.useState(false);
+
+  /* 
+	Handles whenever create group button is clicked to open dialog to make payment.
+	*/
+  const openGroupDialog = () => {
+    setOpenGroup(true)
+  };
+
+	/* 
+	Handles closing dialog when Dialog requests it.
+	*/
+  const closeGroupDialog = () => {
+    setOpenGroup(false)
+  };
+
   /*
   index of the current group
   */
@@ -151,8 +169,6 @@ export function Overview(props) {
   const handeListItemClick = (event, index) => {
     setSelectedIndex(index);
   };
-
-
 
   // which tab we are on
   const [tabIndex, setTabIndex] = React.useState(0);
@@ -186,7 +202,7 @@ export function Overview(props) {
                 />
                 <Divider />
                 <ListItem className={classes.addButton}>
-                  <CustomButton>Create new group</CustomButton>
+                  <CustomButton clickHandler={openGroupDialog}>Create new group</CustomButton>
                 </ListItem>
               </Paper>
             </Grid>
@@ -226,12 +242,19 @@ export function Overview(props) {
                 <Container className={classes.addButton}>
                     <CustomButton clickHandler={openPaymentsDialog}>Add another payment</CustomButton>
                 </Container>
+
                 {/* Pass in handler that closes Dialog when the Dialog requests it. */}
                 <PaymentDialog
-                    open={openPayments}
-                    closeHandler={closePaymentsDialog}
-                    group={groups[selectedIndex]}
-                    currentUser={user} />
+                  open={openPayments}
+                  closeHandler={closePaymentsDialog}
+                  group={groups[selectedIndex]}
+                  currentUser={user} />
+                <CreateGroupDialog
+                  open={openGroup}
+                  closeHandler={closeGroupDialog}
+                  users={members}
+                  currentUser={user}
+                />
               </Paper>
             </Grid>
           </Grid>
