@@ -100,6 +100,7 @@ function PayBill(props) {
 						margin="normal"
 						value={selectedDate}
 						onChange={handleDateChange}
+						maxDate={new Date()}
 					/>
 				</MuiPickersUtilsProvider>
 			</CardContent>
@@ -124,8 +125,27 @@ function PayPerson(props) {
 	const [name, setName] = React.useState('');
 	//open and close menu
 	const [open, setOpen] = React.useState(false);
+	// amount input
+	const [amount, setAmount] = React.useState(null);
 
-	const handleChange = event => {
+	// state of label of name input
+	const inputLabel = React.useRef(null);
+	const [labelWidth, setLabelWidth] = React.useState(0);
+	React.useEffect(() => {
+		setLabelWidth(inputLabel.current.offsetWidth);
+	}, []);
+	
+	// date for payment
+
+	const [selectedDate, setSelectedDate] = React.useState(new Date())
+
+	const handleDateChange = date => {
+		setSelectedDate(date);
+	}
+	const handleAmountChange = event => {
+		setAmount(event.target.value);
+	}
+	const handleNameChange = event => {
 		setName(event.target.value);
 	};
 
@@ -141,21 +161,30 @@ function PayPerson(props) {
 		<Card className={classes.card} role="tabpanel" hidden={currentIndex !== index}>
 			<CardContent>
 				<h4>Payment Amount</h4>
-				<TextField fullWidth variant="outlined" />
+				<TextField fullWidth variant="outlined"
+					type='number' value={amount} onChange={handleAmountChange}
+					InputProps={{
+						startAdornment: <InputAdornment position="start">CAD$</InputAdornment>,
+					}} />
 			</CardContent>
 			<CardContent>
 				<h4>Payment to</h4>
 
 				<form autoComplete="off">
 
-					<FormControl fullWidth>
-						<InputLabel htmlFor="demo-controlled-open-select">Name</InputLabel>
+					<FormControl
+						variant="outlined" fullWidth>
+						<InputLabel ref={inputLabel}
+							id="demo-simple-select-outlined-label">Name</InputLabel>
 						<Select
 							open={open}
 							onClose={handleClose}
 							onOpen={handleOpen}
 							value={name}
-							onChange={handleChange}
+							onChange={handleNameChange}
+							labelId="demo-simple-select-outlined-label"
+							id="demo-simple-select-outlined"
+							labelWidth={labelWidth}
 						>
 
 							{groupMembers.map(member => (
@@ -165,11 +194,26 @@ function PayPerson(props) {
 						</Select>
 					</FormControl>
 				</form>
-
 			</CardContent>
 			<CardContent>
 				<h4>Memo</h4>
 				<TextField fullWidth variant="outlined" />
+			</CardContent>
+			<CardContent>
+				<h4>Date</h4>
+				<MuiPickersUtilsProvider utils={DateFnsUtils}>
+					<KeyboardDatePicker
+						disableToolbar
+						inputVariant="outlined"
+						fullWidth
+						variant="inline"
+						format="MM//dd/yyyy"
+						margin="normal"
+						value={selectedDate}
+						onChange={handleDateChange}
+						maxDate={new Date()}
+					/>
+				</MuiPickersUtilsProvider>
 			</CardContent>
 			<CardContent>
 				<CustomButton >Accept</CustomButton>
@@ -203,7 +247,8 @@ export default function PaymentDialog(props) {
 
 	return (
 		<div>
-			<Dialog maxWidth="md" fullWidth={true} open={open} onClose={closeHandler} TransitionComponent={Transition}>
+			<Dialog maxWidth="md" fullWidth={true} open={open} onClose={closeHandler}
+			TransitionComponent={Transition} scroll='body'>
 				<AppBar className={classes.appBar}>
 
 					<Toolbar>
