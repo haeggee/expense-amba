@@ -25,7 +25,12 @@ const useStyles = makeStyles(theme => ({
         marginLeft: 40,
         marginRight: 40,
     },
-
+    box: {
+        margin: theme.spacing(4),
+        alignItems: 'center',
+        justifyContent: 'center',
+        display: 'flex'
+    }
 }));
 
 
@@ -59,14 +64,14 @@ export default function DeleteGroupDialog(props) {
                             <CloseIcon />
                         </IconButton>
                         <Typography variant="h6" className={classes.title}>Are you sure you want to delete the group <em>{group.name}</em>?</Typography>
-                        <Button color="inherit" onClick={closeHandler}>
-                            Cancel
-						</Button>
                     </Toolbar>
                 </AppBar>
-                <Box align="center"> 
+                <div className={classes.box}>   
                     <Button onClick={deleteGroup}>Confirm</Button>
-                </Box>
+            
+                    <Button onClick={closeHandler}>Cancel</Button>
+                </div>
+
             </Dialog>
         </div>
     );
