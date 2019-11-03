@@ -222,6 +222,9 @@ function PayPerson(props) {
 	const currentIndex = props.currentIndex
 	const groupMembers = props.groupMembers
 	const classes = useStyles()
+	const closeHandler = props.closeHandler
+	const payPersonHandler = props.payPersonHandler
+	const group = props.group
 
 	// the current user that is logged in
 	const user = props.currentUser;
@@ -259,13 +262,30 @@ function PayPerson(props) {
 	const handleNameChange = event => {
 		setName(event.target.value);
 	};
-
 	const handleClose = () => {
 		setOpen(false);
 	};
 
 	const handleOpen = () => {
 		setOpen(true);
+	};
+	
+	// Create the new bill with given info
+	function acceptButtonPressed() {
+		payPersonHandler(group, "Reimbursement from " + user.name + " to " + name.name, amount, [name], selectedDate);
+		closeHandler();
+		console.log(name)
+	}
+	
+	const ITEM_HEIGHT = 48;
+	const ITEM_PADDING_TOP = 8;
+	const MenuProps = {
+	PaperProps: {
+	  style: {
+		maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+		width: 250,
+	  },
+	},
 	};
 
 	return (
@@ -307,11 +327,17 @@ function PayPerson(props) {
 							onChange={handleNameChange}
 							id="select-outlined"
 							labelWidth={labelWidth}
+							renderValue={
+								function(selected) {
+									return (<Chip key={selected.username} label={selected.name} className={classes.chip} />)
+								}
+							}
+							MenuProps={MenuProps}
 						>
 
 							{groupMembers.map(function (member) {
 								if (user.username != member.username) {
-									return (<MenuItem value={member.name}>{member.name}</MenuItem>)
+									return (<MenuItem value={member}>{member.username}</MenuItem>)
 								}
 							})}
 
@@ -325,7 +351,7 @@ function PayPerson(props) {
 				<TextField fullWidth variant="outlined" />
 			</CardContent>
 			<CardContent>
-				<CustomButton >Accept</CustomButton>
+				<CustomButton onClick={acceptButtonPressed}>Accept</CustomButton>
 			</CardContent>
 		</Card>
 	)
@@ -359,6 +385,8 @@ export default function PaymentDialog(props) {
 
 	// the current user that is logged in
 	const user = props.currentUser;
+	
+	const payPersonHandler = props.payPersonHandler
 
 	return (
 		<div>
@@ -386,7 +414,7 @@ export default function PaymentDialog(props) {
 				</AppBar>
 
 				<PayBill currentIndex={tabIndex} index={0} createBillHandler={createBillHandler} group={group} groupMembers={group.groupMembers} currentUser={user} closeHandler={closeHandler} />
-				<PayPerson currentIndex={tabIndex} index={1} groupMembers={group.groupMembers} currentUser={user} closeHandler={closeHandler} />
+				<PayPerson currentIndex={tabIndex} index={1} groupMembers={group.groupMembers} group={group} currentUser={user} payPersonHandler={payPersonHandler} closeHandler={closeHandler} />
 
 			</Dialog>
 		</div>
