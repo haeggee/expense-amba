@@ -88,7 +88,7 @@ export function Balances(props) {
 		plotOptions: {
 		  bar: {
 			horizontal: true,
-			barHeight: '100%',
+			barHeight: '80%',
 		  },
 		},
 		dataLabels: {
@@ -131,7 +131,7 @@ export function Balances(props) {
 		  },
 		  labels: {
 			formatter: function (val) {
-			  return "$" + val
+			  return "$" + Math.round(val * 100) / 100
 			}
 		  }
 		}
