@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import "./App.css";
 import { Box, makeStyles, Divider, Container } from "@material-ui/core";
 import { CustomHeader } from "./GUI/Header";
@@ -6,6 +6,7 @@ import { CustomButton } from "./GUI/Theme";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import { useHistory } from "react-router-dom";
+import { UserContext } from "./UserContext";
 
 // Style sheet
 const useStyles = makeStyles(theme => ({
@@ -31,10 +32,12 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export function LoginScreen(props) {
+
+  //Data for page and user context
   const classes = useStyles();
   let history = useHistory();
 
-  const [values, setValues] = React.useState({
+  const [params, setParams] = React.useState({
     loginUsername: "",
     loginPassword: "",
     signUpUsername: "",
@@ -42,14 +45,16 @@ export function LoginScreen(props) {
     signUpPassword: ""
   });
 
+  const contextValue = useContext(UserContext)
+
   //Relevant functions for the page
   const _onLoginUsernameClick = e => {
-    let a = values.loginUsername;
-    let b = values.loginPassword;
-    let c = values.signUpUsername;
-    let d = values.signUpEmail;
-    let f = values.signUpPassword;
-    setValues({
+    let a = params.loginUsername;
+    let b = params.loginPassword;
+    let c = params.signUpUsername;
+    let d = params.signUpEmail;
+    let f = params.signUpPassword;
+    setParams({
       loginUsername: e.target.value,
       loginPassword: b,
       signUpUsername: c,
@@ -59,12 +64,12 @@ export function LoginScreen(props) {
   };
 
   const _onLoginPasswordClick = e => {
-    let a = values.loginUsername;
-    let b = values.loginPassword;
-    let c = values.signUpUsername;
-    let d = values.signUpEmail;
-    let f = values.signUpPassword;
-    setValues({
+    let a = params.loginUsername;
+    let b = params.loginPassword;
+    let c = params.signUpUsername;
+    let d = params.signUpEmail;
+    let f = params.signUpPassword;
+    setParams({
       loginUsername: a,
       loginPassword: e.target.value,
       signUpUsername: c,
@@ -74,12 +79,12 @@ export function LoginScreen(props) {
   };
 
   const _onSignUpUsernameClick = e => {
-    let a = values.loginUsername;
-    let b = values.loginPassword;
-    let c = values.signUpUsername;
-    let d = values.signUpEmail;
-    let f = values.signUpPassword;
-    setValues({
+    let a = params.loginUsername;
+    let b = params.loginPassword;
+    let c = params.signUpUsername;
+    let d = params.signUpEmail;
+    let f = params.signUpPassword;
+    setParams({
       loginUsername: a,
       loginPassword: b,
       signUpUsername: e.target.value,
@@ -89,12 +94,12 @@ export function LoginScreen(props) {
   };
 
   const _onSignUpPasswordClick = e => {
-    let a = values.loginUsername;
-    let b = values.loginPassword;
-    let c = values.signUpUsername;
-    let d = values.signUpEmail;
-    let f = values.signUpPassword;
-    setValues({
+    let a = params.loginUsername;
+    let b = params.loginPassword;
+    let c = params.signUpUsername;
+    let d = params.signUpEmail;
+    let f = params.signUpPassword;
+    setParams({
       loginUsername: a,
       loginPassword: b,
       signUpUsername: c,
@@ -104,12 +109,12 @@ export function LoginScreen(props) {
   };
 
   const _onSignUpEmailClick = e => {
-    let a = values.loginUsername;
-    let b = values.loginPassword;
-    let c = values.signUpUsername;
-    let d = values.signUpEmail;
-    let f = values.signUpPassword;
-    setValues({
+    let a = params.loginUsername;
+    let b = params.loginPassword;
+    let c = params.signUpUsername;
+    let d = params.signUpEmail;
+    let f = params.signUpPassword;
+    setParams({
       loginUsername: a,
       loginPassword: b,
       signUpUsername: c,
@@ -122,12 +127,14 @@ export function LoginScreen(props) {
     // Get the listof usernames/admins and passwords from server to check
     // Requires server call
 
-    if (values.loginUsername === "user" && values.loginPassword === "user") {
+    if (params.loginUsername === "user" && params.loginPassword === "user") {
+      contextValue.userLogin(params.loginUsername)
       history.push("/overview");
     } else if (
-      values.loginUsername === "admin" &&
-      values.loginPassword === "admin"
+      params.loginUsername === "admin" &&
+      params.loginPassword === "admin"
     ) {
+      contextValue.userLogin(params.loginUsername)
       history.push("/admin");
     }
 
