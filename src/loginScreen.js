@@ -1,7 +1,7 @@
 import React from "react";
 import "./App.css";
 import { Box, makeStyles, Divider, Container } from "@material-ui/core";
-import { EmptyHeader } from "./GUI/Header";
+import { CustomHeader } from "./GUI/Header";
 import { CustomButton } from "./GUI/Theme";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
@@ -144,7 +144,7 @@ export function LoginScreen(props) {
   //returned DOM
   return (
     <div>
-      <EmptyHeader />
+      <CustomHeader />
       <Grid
         container
         spacing={5}

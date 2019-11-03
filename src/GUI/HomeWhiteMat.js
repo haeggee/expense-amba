@@ -6,10 +6,23 @@
  **/
 
 import React from "react"
+import {makeStyles} from "@material-ui/core"
 
-const HomeWhiteMat = () => (
+const useStyle = makeStyles(()=>({
+    mat: {
+        position: 'absolute',
+        top: '0px',
+        left: '0px'
+    }
+}))
+
+const HomeWhiteMat = () => {
+
+    const classes = useStyle()
+
+    return (
     <div>
-        <svg width={'100%'} height={'100%'} style={{position: 'absolute', top: '0px', left: '0px'}}>
+        <svg width={'100%'} height={'100%'} className={classes.mat}>
             <defs>
                 <style>{".whiteMat{fill:url(#whiteMat);}"}</style>
                 <linearGradient
@@ -27,6 +40,6 @@ const HomeWhiteMat = () => (
             <rect className="whiteMat" width={'100%'} height={'100%'}/>
         </svg>
     </div>
-)
+)}
 
 export default HomeWhiteMat

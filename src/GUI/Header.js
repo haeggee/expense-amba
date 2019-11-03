@@ -20,6 +20,9 @@ WebFont.load({
 const useStyle = makeStyles(() => ({
   absolute: {
     position: "absolute"
+  },
+  headerLogo: {
+    marginBottom: '5px'
   }
 }));
 
@@ -35,7 +38,7 @@ export function CustomHeader(props) {
   return (
     <AppBar position={"static"}>
       <Toolbar>
-        <SvgIcon>{LogoComponent()}</SvgIcon>
+        <img className={classes.headerLogo} height={30} alt={'logo'} src={require('./imgs/logo.svg')}/>
         <Box
           fontFamily={"mistral"}
           fontSize={"h4.fontSize"}
@@ -59,59 +62,59 @@ export function CustomHeader(props) {
         <UserContext.Consumer>
           {value => {
             if (value.userName) {
-              return (
-                <div>
+              const buttonAccount = (
                   <CustomButton
-                    onClick={() => {
-                      history.push("/accountsview");
-                    }}
+                      onClick={() => {
+                        history.push("/accountsview");
+                      }}
                   >
                     Account
                   </CustomButton>
+              )
+              const buttonLogout = (
                   <CustomButton
-                    onClick={() => {
-                      value.userLogin(undefined);
-                      history.push("/");
-                    }}
+                      onClick={() => {
+                        value.userLogin(undefined);
+                        history.push("/");
+                      }}
                   >
                     Logout
                   </CustomButton>
-                </div>
-              );
+              )
+              if (history.location.pathname === '/accountsview'){
+                return (
+                    <div>
+                      {buttonLogout}
+                    </div>
+                )
+              }
+              else {
+                return (
+                    <div>
+                      {buttonAccount}
+                      {buttonLogout}
+                    </div>
+                )
+              }
             } else {
-              return (
-                <CustomButton
-                  onClick={() => {
-                    history.push("/login");
-                  }}
-                >
-                  Register/Login
-                </CustomButton>
-              );
+              if (history.location.pathname === '/login')
+              {
+                return <div/>
+              }
+              else {
+                return (
+                    <CustomButton
+                        onClick={() => {
+                          history.push("/login");
+                        }}
+                    >
+                      Register/Login
+                    </CustomButton>
+                );
+              }
             }
           }}
         </UserContext.Consumer>
-      </Toolbar>
-    </AppBar>
-  );
-}
-
-/*
-Same as above but without any buttons.
-*/
-export function EmptyHeader() {
-  return (
-    <AppBar position={"static"} flexGrow={1}>
-      <Toolbar>
-        <SvgIcon>{LogoComponent()}</SvgIcon>
-        <Box
-          fontFamily={"mistral"}
-          fontSize={"h4.fontSize"}
-          marginLeft={"10px"}
-          flexGrow={1}
-        >
-          AM.BA
-        </Box>
       </Toolbar>
     </AppBar>
   );

@@ -14,7 +14,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      userName: undefined, //undefined for no user login
+      userName: 'something', //undefined for no user login
       userLogin: username => {
         this.setState({ userName: username });
       },

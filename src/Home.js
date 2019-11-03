@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import './App.css'
 import HomeWhiteMat from "./GUI/HomeWhiteMat"
-import LogoComponent from "./GUI/LogoComponent"
-import HomeDisplayText from "./GUI/HomeDisplayText"
 import theme, { CustomButton } from "./GUI/Theme"
 import Grid from "@material-ui/core/Grid"
-import { CardContent, CardHeader, Fade, Grow, Paper, Slide, Typography } from "@material-ui/core"
+import {Box, CardContent, CardHeader, Fade, Grow, Paper, Slide, Typography} from "@material-ui/core"
 import makeStyles from "@material-ui/core/styles/makeStyles"
 import { ThemeProvider } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card"
@@ -35,7 +33,10 @@ const useStyle = makeStyles(theme => ({
     },
     grow: {
         transformOrigin: '0 0 0'
-    }
+    },
+    displayText: {position: 'absolute',
+        right: '13%',
+        top:'25%'}
 }))
 
 
@@ -55,11 +56,17 @@ function Home(props) {
                 <HomeWhiteMat />
                 <div className={classes.logo}>
                     <Slide direction={"right"} mountOnEnter in={true} timeout={700}>
-                        {LogoComponent()}
+                        <img src={require("./GUI/imgs/logo.svg")} alt={"Logo Image"}/>
                     </Slide>
                 </div>
                 <Fade in={true} timeout={2000}>
-                    {HomeDisplayText()}
+                    <Box fontFamily={'Verdana'}
+                         fontSize={"h2.fontSize"}
+                         color={theme.palette.common.white}
+                         className={classes.displayText}>
+                        The breeze <br/>
+                        of your social life.
+                    </Box>
                 </Fade>
             </div>
 
