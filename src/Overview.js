@@ -111,7 +111,8 @@ export function Overview(props) {
     [new Bill(0, "Uber", 20.0, new Date('2019-10-01'), members[0], members),
     new Bill(1, "Dinner", 35.0, new Date('2019-10-12'), members[1], [members[0], members[1], members[2]]),
     new Bill(2, "Movie tickets", 15.0, new Date('2019-10-25'), members[4], [members[4], members[0], members[5]])]
-  let groups = [new Group(0, "Family", members, billsGroup1, []), new Group(1, "TO", [members[0], members[2], members[3], members[4], members[5]], [], []), new Group(2, "Team 42", [members[0], members[1]], [], [])]
+  const debtsGroup1 = [new Debtor(members[0], 0), new Debtor(members[1], -20), new Debtor(members[2], 15), new Debtor(members[3], 3.33), new Debtor(members[4], -6.67), new Debtor(members[5], 8.33)]
+  let groups = [new Group(0, "Family", members, billsGroup1, debtsGroup1), new Group(1, "TO", [members[0], members[2], members[3], members[4], members[5]], [], []), new Group(2, "Team 42", [members[0], members[1]], [], [])]
 
   // Let this be the current user.
   const user = members[0];
@@ -233,17 +234,30 @@ export function Overview(props) {
       // special case for current user: he is owed money 
       if (group.debtors[i].username == user.username) {
         // subtract owed because he doesnt have to owe money to himself
-        group.debtors[i].amount -= (+amount - owed);
-        continue;
+        //group.debtors[i].amount -= (+amount - owed);
+        //continue;
       }
       let participant = false
       // determine if this debtor took part in the bill
       for (let j = 0; j < members.length; j++) {
         if (members[j].username == group.debtors[i].username) { participant = true; }
       }
-      if (participant) {
-        group.debtors[i].amount += owed;
-      }
+	  
+	  // this debtor is the user
+	  if (group.debtors[i].username == user.username) {
+		// user participated
+		if (participant) {
+			// subtract owed because he doesnt have to owe money to himself
+			group.debtors[i].amount -= (+amount - owed);
+		} else {
+			// user is not paying for himself
+			group.debtors[i].amount -= (+amount);
+		}
+	  } else {
+		if (participant) {
+		  group.debtors[i].amount += owed;
+		}
+	  }
     }
 
     // now create the bill
@@ -260,19 +274,6 @@ export function Overview(props) {
    */
   function payPersonHandler(group, title, amount, members, date) {
 	createBillHandler(group, title, amount, members, date);
-
-	for (let i = 0; i < group.debtors.length; i ++) {
-	  // current user paid, so debt reduced
-      if (group.debtors[i].username == user.username) {
-		group.debtors[i].amount -= (+amount);  
-		continue;
-	  }
-      // determine if this is the right debtor
-      for (let j = 0; j < members.length; j ++) {
-		// pay debtor, so he is owed less money
-        if (members[j].username == group.debtors[i].username) {group.debtors[i].amount += +amount;}
-      }
-    }
   }
 
   const [currentGroups, setGroups] = React.useState(groups);

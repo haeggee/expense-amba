@@ -16,7 +16,9 @@
     "react-select": "^3.0.8",
     "react-uid": "^2.2.0",
     "reactide-config": "^1.0.2",
-    "webfontloader": "^1.6.28"
+    "webfontloader": "^1.6.28",
+    "react-apexcharts": "^1.3.3",
+    "apexcharts": "^3.6.6"
   },
   "scripts": {
     "start": "react-scripts start",
