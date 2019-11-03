@@ -12,3 +12,5 @@ But for now I am just going to generate a unique id by going through all the gro
 Also need to do this: for the group, bill, and payment dialogs (or anything else requiring input from user) make sure that the input is valid before accepting.
 
 Also note that as of right now, GroupList component works by treating the groupID of a group to compare to selectedIndex. This may not work when the groupIDs are not continuous, like {1, 3, 6, 7, 2}.
+
+Need to figure out how to indicate in each bill who pays how much. Because as of right now, each payee owes the same amount in a bill.
