@@ -26,6 +26,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import { InputAdornment } from '@material-ui/core';
 import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
 import Group from '../Group'
+import ServerInterface from "../ServerInterface"
 
 /*
 Some styles for this part only
@@ -55,20 +56,6 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
 });
 
-/**
- * Creates a unique group id. NOTE: THIS IS JUST A PLACEHOLDER METHOD. WILL NOT WORK WITH DB DUE TO SYNCHRONIZATION ISSUES.
- * @param {groups} All the groups currently in the system.
- */
-const createUniqueId = function(groups) {
-  // basically assign the largest groupID + 1
-  let groupID = 0;
-  for (let i = 0; i < groups.length; i ++) {
-    if (groups[i].groupID <= groupID) {
-      groupID = groups[i].groupID + 1;
-    }
-  }
-  return groupID;
-}
 
 /**
  * Contents for this dialog.
@@ -92,9 +79,10 @@ function DialogContents(props) {
    * Creates a new group with the info the user entered.
    */
   const createGroup = function() {
-    let groupID = createUniqueId(groups);
+    let groupID = ServerInterface.getNextGroupID();
     // create group with bills array initially empty.
     const group = new Group(groupID, name, members, []);
+
     groupCreatedListener(group);
     closeHandler();
   }
@@ -139,7 +127,7 @@ function DialogContents(props) {
 			<CardContent>
 				<h4>Users in this group with you</h4>
 				<form autoComplete="off">
-					<FormControl className={classes.formControl}style={{width:"100%"}}>
+					<FormControl className={classes.formControl} style={{width:"100%"}}>
             <InputLabel htmlFor="select-multiple-chip">Click to add users</InputLabel>
             <Select
               multiple

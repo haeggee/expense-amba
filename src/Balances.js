@@ -1,7 +1,5 @@
-import React from 'react';
-import ExpenseDiagram from './ExpenseDiagram';
-import { Container, Typography } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles'
+import React from 'react'
+import {makeStyles} from '@material-ui/core/styles'
 import Chart from 'react-apexcharts'
 
 const useStyles = makeStyles(theme => ({
@@ -25,19 +23,14 @@ function getMembersNames(group) {
 function getMoneyOwedBy(group) {
 	let money = [];
 	for (let i = 0; i < group.groupMembers.length; i ++) {
-		const groupMember = group.groupMembers[i];
-		// find the debtors entry
-		for (let j = 0; j < group.debtors.length; j ++) {
-			const debtor = group.debtors[j];
-			if (groupMember.username == debtor.username) {
-				// if debtor actually does not owe any money, record 0
-				if (debtor.amount < 0) {
-					money.push(0);
-				} else {
-					money.push(-debtor.amount);
-				}
-			}
+		const debt = group.groupMembers[i].debt
+		if (debt < 0){
+			money.push(0)
 		}
+		else {
+			money.push(-debt)
+		}
+
 	}
 	return money;
 }
@@ -46,18 +39,12 @@ function getMoneyOwedBy(group) {
 function getMoneyOwedTo(group) {
 	let money = [];
 	for (let i = 0; i < group.groupMembers.length; i ++) {
-		const groupMember = group.groupMembers[i];
-		// find the debtors entry
-		for (let j = 0; j < group.debtors.length; j ++) {
-			const debtor = group.debtors[j];
-			if (groupMember.username == debtor.username) {
-				// if debtor actually actually owes money, record 0
-				if (debtor.amount > 0) {
-					money.push(0);
-				} else {
-					money.push(-debtor.amount);
-				}
-			}
+		const debt = group.groupMembers[i].debt
+		if (debt > 0){
+			money.push(0)
+		}
+		else {
+			money.push(-debt)
 		}
 	}
 	return money;
@@ -65,14 +52,10 @@ function getMoneyOwedTo(group) {
 
 // returns the absolute of the maximum amount owed to or owed by anyone in the group. If nothing is owed, return 5
 function getMaxAmountOwed(group) {
-	let max = 5;
-	for (let j = 0; j < group.debtors.length; j ++) {
-		const debtor = group.debtors[j];
-		if (Math.abs(debtor.amount) > max) {
-			max = Math.abs(debtor.amount);
-		}
-	}
-	return max;
+	return group.groupMembers.reduce((max, member) => {
+		const amount = Math.abs(member.debt)
+		return max > amount ? max : amount
+	}, 5);
 }
 
 export function Balances(props) {

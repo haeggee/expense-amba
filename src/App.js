@@ -1,5 +1,4 @@
 import React, { createContext } from "react";
-import logo from "./logo.svg";
 import "./App.css";
 import { Route, Switch, BrowserRouter } from "react-router-dom";
 import Home from "./Home";
@@ -9,17 +8,17 @@ import theme from "./GUI/Theme";
 import { ThemeProvider } from "@material-ui/core/styles";
 import { UserContext } from "./UserContext";
 import LoginScreen from "./loginScreen";
+import ServerInterface from "./ServerInterface"
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      userName: undefined, //undefined for no user login
+      userName: "Alice`s username", //undefined for no user login
+      user: ServerInterface.userList[0], //User object
       userLogin: username => {
-        this.setState({ userName: username });
-      },
-      logUserName: () => {
-        console.log(this.state.userName);
+        const user = ServerInterface.getUserByUsername(username)
+        this.setState({ userName: username , user: user});
       }
     };
   }
