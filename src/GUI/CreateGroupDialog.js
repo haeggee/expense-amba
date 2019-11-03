@@ -22,6 +22,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Chip from '@material-ui/core/Chip';
 import Input from '@material-ui/core/Input';
 import FormControl from '@material-ui/core/FormControl';
+import FormHelperText from '@material-ui/core/FormHelperText'
 import InputLabel from '@material-ui/core/InputLabel';
 import { InputAdornment } from '@material-ui/core';
 import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
@@ -105,21 +106,27 @@ function DialogContents(props) {
    * Creates a new group with the info the user entered.
    */
   const createGroup = function () {
-    if (name.length !== 0) {
+    if (name.length !== 0 && members.length !== 0) {
 
       let groupID = createUniqueId(groups);
       // create group with bills array initially empty.
       const group = new Group(groupID, name, members, [], []);
       groupCreatedListener(group);
       closeHandler();
-    } else {
-      setNameError(true)
-      setNameErrorText("Name must be at least 1 Character")
     }
-    // if(members.length === 0) {
-    //   membersError = true;
-    //   member
-    // }
+
+    setNameError(true)
+    setNameErrorText("Name must be at least 1 Character")
+    setNoMembersError(true);
+    setNoMembersText("Enter at least 1 member");
+    if (members.length !== 0) {
+      setNoMembersError(false);
+      setNoMembersText("");
+    }
+    if (name.length !== 0) {
+      setNameError(false)
+      setNameErrorText("")
+    }
   }
 
   // list of users in the group
@@ -129,6 +136,10 @@ function DialogContents(props) {
   // boolean to set if error message for name
   const [nameError, setNameError] = React.useState(false)
   const [nameErrorText, setNameErrorText] = React.useState("")
+
+  // boolean to set if error message for empty group
+  const [noMembersError, setNoMembersError] = React.useState(false)
+  const [noMembersText, setNoMembersText] = React.useState("")
 
   const handleNameChange = event => {
     setName(event.target.value);
@@ -161,7 +172,7 @@ function DialogContents(props) {
       <CardContent>
         <h4>Users in this group with you</h4>
         <form autoComplete="off">
-          <FormControl className={classes.formControl} style={{ width: "100%" }}>
+          <FormControl error={noMembersError} className={classes.formControl} fullWidth>
             <InputLabel htmlFor="select-multiple-chip">Click to add users</InputLabel>
             <Select
               multiple
@@ -182,7 +193,11 @@ function DialogContents(props) {
                 }
               })}
             </Select>
+
+            <FormHelperText id="my-helper-text">{noMembersText}</FormHelperText>
           </FormControl>
+          {/* Somehow autocomplete feature shows list behind the dialog. commented out
+          
           <Autocomplete
             multiple
             options={filteredUsers}
@@ -202,8 +217,7 @@ function DialogContents(props) {
                 fullWidth
               />
             )}
-          />
-
+          /> */}
         </form>
       </CardContent>
       <CardContent>
