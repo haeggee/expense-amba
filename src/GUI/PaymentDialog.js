@@ -347,10 +347,6 @@ function PayPerson(props) {
 			</CardContent>
 
 			<CardContent>
-				<h4>Memo</h4>
-				<TextField fullWidth variant="outlined" />
-			</CardContent>
-			<CardContent>
 				<CustomButton onClick={acceptButtonPressed}>Accept</CustomButton>
 			</CardContent>
 		</Card>
