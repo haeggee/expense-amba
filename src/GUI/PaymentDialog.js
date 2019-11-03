@@ -132,7 +132,7 @@ function PayPerson(props) {
 	//open and close menu
 	const [open, setOpen] = React.useState(false);
 	// amount input
-	const [amount, setAmount] = React.useState(null);
+	const [amount, setAmount] = React.useState(undefined);
 
 	// state of label of name input
 	const inputLabel = React.useRef(null);
