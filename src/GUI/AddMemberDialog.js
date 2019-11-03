@@ -23,7 +23,8 @@ import Chip from '@material-ui/core/Chip';
 import Input from '@material-ui/core/Input';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
-
+import Debtor from '../Debtor';
+import FormHelperText from '@material-ui/core/FormHelperText';
 
 /*
 Some styles for this part only
@@ -73,15 +74,33 @@ function DialogContents(props) {
         return true;
     })
     /**
-     * Creates a new group with the info the user entered.
+     * Adds Members to group
      */
     const addMembers = function () {
-        group.groupMembers = group.groupMembers.concat(members);
-        closeHandler();
+        if (members.length !== 0) {
+            const startIndex = group.groupMembers.length;
+            console.log(group.groupMembers, group.debtors)
+            group.groupMembers = group.groupMembers.concat(members);
+            if (group.debtors.length !== 0) {
+                for (let i = startIndex; i < group.groupMembers.length; i++) {
+                    group.debtors.push(new Debtor(group.groupMembers[i], 0))
+                }
+            }
+            console.log(group.groupMembers, group.debtors)
+            closeHandler();
+        } else {
+            setError(true);
+            setErrorMessage("Pick at least 1 member to add")
+        }
     }
 
     // list of users in the group
     const [members, setMembers] = React.useState([]);
+
+
+    // check for invalid input
+    const [error, setError] = React.useState(false);
+    const [errorMessage, setErrorMessage] = React.useState("")
 
     const handleMembersChange = event => {
         setMembers(event.target.value);
@@ -105,7 +124,7 @@ function DialogContents(props) {
                 <CardContent>
                     <h4>Members</h4>
                     <form autoComplete="off">
-                        <FormControl className={classes.formControl} style={{ width: "100%" }}>
+                        <FormControl error={error} className={classes.formControl} style={{ width: "100%" }}>
                             <InputLabel htmlFor="select-multiple-chip">Click to add users</InputLabel>
                             <Select
                                 multiple
@@ -124,7 +143,10 @@ function DialogContents(props) {
                                     return (<MenuItem key={user.username} value={user}>{user.username}</MenuItem>)
                                 })}
                             </Select>
+
+                            <FormHelperText id="my-helper-text">{errorMessage}</FormHelperText>
                         </FormControl>
+
                     </form>
                 </CardContent>
                 <CardContent>
@@ -135,9 +157,9 @@ function DialogContents(props) {
     } else {
         return (
             <Card className={classes.card}>
-                 <CardContent>
-                     <Typography align="center">All users in the system are in your group already.</Typography>
-                </CardContent>     
+                <CardContent>
+                    <Typography align="center">All users in the system are in your group already.</Typography>
+                </CardContent>
             </Card>
         )
     }
