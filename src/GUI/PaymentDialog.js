@@ -119,7 +119,6 @@ function PayBill(props) {
 	// Create the new bill with given info
 	function acceptButtonPressed() {
 		const billMembers = members;
-		billMembers.push(currentUser);
 		// console.log(group)
 		createBillHandler(group, title, amount, billMembers, selectedDate);
 		closeHandler();
