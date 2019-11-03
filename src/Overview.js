@@ -242,22 +242,22 @@ export function Overview(props) {
       for (let j = 0; j < members.length; j++) {
         if (members[j].username == group.debtors[i].username) { participant = true; }
       }
-	  
-	  // this debtor is the user
-	  if (group.debtors[i].username == user.username) {
-		// user participated
-		if (participant) {
-			// subtract owed because he doesnt have to owe money to himself
-			group.debtors[i].amount -= (+amount - owed);
-		} else {
-			// user is not paying for himself
-			group.debtors[i].amount -= (+amount);
-		}
-	  } else {
-		if (participant) {
-		  group.debtors[i].amount += owed;
-		}
-	  }
+
+      // this debtor is the user
+      if (group.debtors[i].username == user.username) {
+        // user participated
+        if (participant) {
+          // subtract owed because he doesnt have to owe money to himself
+          group.debtors[i].amount -= (+amount - owed);
+        } else {
+          // user is not paying for himself
+          group.debtors[i].amount -= (+amount);
+        }
+      } else {
+        if (participant) {
+          group.debtors[i].amount += owed;
+        }
+      }
     }
 
     // now create the bill
@@ -265,15 +265,15 @@ export function Overview(props) {
 
     // add bill to group
     group.bills.push(bill);
-    console.log(currentGroups)
+    // console.log(currentGroups)
   }
-  
+
   /**
    * Handler that pays people.
    * Creates Bill doing so.
    */
   function payPersonHandler(group, title, amount, members, date) {
-	createBillHandler(group, title, amount, members, date);
+    createBillHandler(group, title, amount, members, date);
   }
 
   const [currentGroups, setGroups] = React.useState(groups);
@@ -386,8 +386,8 @@ export function Overview(props) {
                   group={currentGroups[selectedIndex]}
                   currentUser={user}
                   createBillHandler={createBillHandler}
-				  payPersonHandler={payPersonHandler}
-				/>
+                  payPersonHandler={payPersonHandler}
+                />
                 <CreateGroupDialog
                   open={openGroup}
                   closeHandler={closeGroupDialog}

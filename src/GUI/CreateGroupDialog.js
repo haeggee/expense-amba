@@ -105,26 +105,33 @@ function DialogContents(props) {
    * Creates a new group with the info the user entered.
    */
   const createGroup = function () {
-    let groupID = createUniqueId(groups);
-    // create group with bills array initially empty.
-    const group = new Group(groupID, name, members, []);
-    groupCreatedListener(group);
-    closeHandler();
+    if (name.length !== 0) {
+
+      let groupID = createUniqueId(groups);
+      // create group with bills array initially empty.
+      const group = new Group(groupID, name, members, [], []);
+      groupCreatedListener(group);
+      closeHandler();
+    } else {
+      setNameError(true)
+      setNameErrorText("Name must be at least 1 Character")
+    }
+    // if(members.length === 0) {
+    //   membersError = true;
+    //   member
+    // }
   }
 
   // list of users in the group
   const [members, setMembers] = React.useState([]);
   // When user selects person from the menu, display it on the text input.
   const [name, setName] = React.useState([]);
-  // amount input
-  const [amount, setAmount] = React.useState(null);
+  // boolean to set if error message for name
+  const [nameError, setNameError] = React.useState(false)
+  const [nameErrorText, setNameErrorText] = React.useState("")
 
   const handleNameChange = event => {
     setName(event.target.value);
-  }
-
-  const handleAmountChange = event => {
-    setAmount(event.target.value);
   }
 
   const handleMembersChange = event => {
@@ -147,7 +154,9 @@ function DialogContents(props) {
 
       <CardContent>
         <h4>Group Name</h4>
-        <TextField fullWidth variant="outlined" placeholder="Name" onChange={handleNameChange} />
+        <TextField fullWidth variant="outlined"
+          placeholder="Name" onChange={handleNameChange}
+          error={nameError} helperText={nameErrorText} />
       </CardContent>
       <CardContent>
         <h4>Users in this group with you</h4>
