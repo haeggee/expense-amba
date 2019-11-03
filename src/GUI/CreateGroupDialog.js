@@ -22,29 +22,34 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Chip from '@material-ui/core/Chip';
 import Input from '@material-ui/core/Input';
 import FormControl from '@material-ui/core/FormControl';
+import FormHelperText from '@material-ui/core/FormHelperText'
 import InputLabel from '@material-ui/core/InputLabel';
 import { InputAdornment } from '@material-ui/core';
 import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
 import Group from '../Group'
 import ServerInterface from "../ServerInterface"
 
+import Autocomplete from '@material-ui/lab/Autocomplete'
 /*
 Some styles for this part only
 */
 const useStyles = makeStyles(theme => ({
-	appBar: {
-		position: 'relative',
-	},
-	title: {
-		marginLeft: theme.spacing(2),
-		flex: 1,
-	},
-	card: {
-		marginLeft: 40,
-		marginRight: 40,
-	},
+  appBar: {
+    position: 'relative',
+  },
+  title: {
+    marginLeft: theme.spacing(2),
+    flex: 1,
+  },
+  card: {
+    marginLeft: 40,
+    marginRight: 40,
+  },
   formControl: {
     color: theme.palette.text.primary
+  },
+  dialogPaper: {
+    animated: 'false'
   }
 }));
 
@@ -53,7 +58,7 @@ const useStyles = makeStyles(theme => ({
  * Animation for opening dialog.
  */
 const Transition = React.forwardRef(function Transition(props, ref) {
-	return <Slide direction="up" ref={ref} {...props} />;
+  return <Slide direction="up" ref={ref} {...props} />;
 });
 
 
@@ -61,12 +66,22 @@ const Transition = React.forwardRef(function Transition(props, ref) {
  * Contents for this dialog.
  */
 function DialogContents(props) {
-	const index = props.index;
-	const users = props.users;
-	const classes = useStyles();
+  const index = props.index;
+  const users = props.users;
+  const classes = useStyles();
 
   // the current user that is logged in
   const currentUser = props.currentUser;
+
+  // all users besides current
+  const filteredUsers = users.filter(user => {
+    for (let i = 0; i < users.length; i++) {
+      if (user.username === currentUser.username) {
+        return false;
+      }
+    }
+    return true;
+  });
 
   const groupCreatedListener = props.groupCreatedListener;
 
@@ -79,32 +94,49 @@ function DialogContents(props) {
    * Creates a new group with the info the user entered.
    */
   const createGroup = function() {
-    let groupID = ServerInterface.getNextGroupID();
-    // create group with bills array initially empty.
-    const group = new Group(groupID, name, members, []);
+      if (name.length !== 0 && members.length !== 0) {
+          let groupID = ServerInterface.getNextGroupID();
+          // create group with bills array initially empty.
+          const group = new Group(groupID, name, members, []);
 
-    groupCreatedListener(group);
-    closeHandler();
+          groupCreatedListener(group);
+          closeHandler();
+      }
+  }
+
+    setNameError(true)
+    setNameErrorText("Name must be at least 1 Character")
+    setNoMembersError(true);
+    setNoMembersText("Enter at least 1 member");
+    if (members.length !== 0) {
+      setNoMembersError(false);
+      setNoMembersText("");
+    }
+    if (name.length !== 0) {
+      setNameError(false)
+      setNameErrorText("")
+    }
   }
 
   // list of users in the group
   const [members, setMembers] = React.useState([]);
-	// When user selects person from the menu, display it on the text input.
-	const [name, setName] = React.useState([]);
-	// amount input
-	const [amount, setAmount] = React.useState(null);
-  
+  // When user selects person from the menu, display it on the text input.
+  const [name, setName] = React.useState([]);
+  // boolean to set if error message for name
+  const [nameError, setNameError] = React.useState(false)
+  const [nameErrorText, setNameErrorText] = React.useState("")
+
+  // boolean to set if error message for empty group
+  const [noMembersError, setNoMembersError] = React.useState(false)
+  const [noMembersText, setNoMembersText] = React.useState("")
+
   const handleNameChange = event => {
     setName(event.target.value);
   }
 
-	const handleAmountChange = event => {
-		setAmount(event.target.value);
-	}
-
-	const handleMembersChange = event => {
-		setMembers(event.target.value);
-	};
+  const handleMembersChange = event => {
+    setMembers(event.target.value);
+  };
 
   const ITEM_HEIGHT = 48;
   const ITEM_PADDING_TOP = 8;
@@ -117,17 +149,19 @@ function DialogContents(props) {
     },
   };
 
-	return (
-		<Card className={classes.card}>
-		
+  return (
+    <Card className={classes.card}>
+
       <CardContent>
         <h4>Group Name</h4>
-        <TextField fullWidth variant="outlined" placeholder="Name" onChange={handleNameChange} />
-			</CardContent>
-			<CardContent>
-				<h4>Users in this group with you</h4>
-				<form autoComplete="off">
-					<FormControl className={classes.formControl} style={{width:"100%"}}>
+        <TextField fullWidth variant="outlined"
+          placeholder="Name" onChange={handleNameChange}
+          error={nameError} helperText={nameErrorText} />
+      </CardContent>
+      <CardContent>
+        <h4>Users in this group with you</h4>
+        <form autoComplete="off">
+          <FormControl error={noMembersError} className={classes.formControl} fullWidth>
             <InputLabel htmlFor="select-multiple-chip">Click to add users</InputLabel>
             <Select
               multiple
@@ -142,29 +176,53 @@ function DialogContents(props) {
                 </div>
               )}
               MenuProps={MenuProps}>
-              {users.map(function(user) {
+              {users.map(function (user) {
                 if (user.username != currentUser.username) {
                   return (<MenuItem key={user.username} value={user}>{user.username}</MenuItem>)
                 }
               })}
             </Select>
+
+            <FormHelperText id="my-helper-text">{noMembersText}</FormHelperText>
           </FormControl>
-				</form>
-			</CardContent>
-			<CardContent>
-				<CustomButton onClick={createGroup}>Accept</CustomButton>
-			</CardContent>
-		</Card>
-	)
+          {/* Somehow autocomplete feature shows list behind the dialog. commented out
+
+          <Autocomplete
+            multiple
+            options={filteredUsers}
+            getOptionLabel={user => user.username}
+            defaultValue={[]}
+            input={<Input id="select-multiple-chip" />}
+            value={members}
+            onChange={handleMembersChange}
+            filterSelectedOptions
+            renderInput={params => (
+              <TextField
+                {...params}
+                variant="outlined"
+                label="Select Users"
+                placeholder="Username"
+                margin="normal"
+                fullWidth
+              />
+            )}
+          /> */}
+        </form>
+      </CardContent>
+      <CardContent>
+        <CustomButton onClick={createGroup}>Accept</CustomButton>
+      </CardContent>
+    </Card>
+  )
 }
 
 export default function CreateGroupDialog(props) {
-	const classes = useStyles();
+  const classes = useStyles();
 
   const users = props.users;
-	const open = props.open;
-	// Handler to notify when it is time to close the dialog.
-	const closeHandler = props.closeHandler;
+  const open = props.open;
+  // Handler to notify when it is time to close the dialog.
+  const closeHandler = props.closeHandler;
 
   // handler that should get notified when we create a group
   const groupCreatedListener = props.groupCreatedListener;
@@ -175,26 +233,26 @@ export default function CreateGroupDialog(props) {
   // all the groups currently in the system
   const groups = props.groups;
 
-	return (
-		<div>
-			<Dialog maxWidth="md" fullWidth={true} open={open} onClose={closeHandler}
-			TransitionComponent={Transition} scroll='body'>
-				<AppBar className={classes.appBar}>
+  return (
+    <div>
+      <Dialog className={classes.dialogPaper} maxWidth="md" fullWidth={true} open={open} onClose={closeHandler}
+        TransitionComponent={Transition} scroll='body'>
+        <AppBar className={classes.appBar}>
 
-					<Toolbar>
-						<IconButton edge="start" color="inherit" onClick={closeHandler} aria-label="close">
-							<CloseIcon />
-						</IconButton>
-						<Typography variant="h6" className={classes.title}>Create a new group</Typography>
-						<Button color="inherit" onClick={closeHandler}>
-							Cancel
+          <Toolbar>
+            <IconButton edge="start" color="inherit" onClick={closeHandler} aria-label="close">
+              <CloseIcon />
+            </IconButton>
+            <Typography variant="h6" className={classes.title}>Create a new group</Typography>
+            <Button color="inherit" onClick={closeHandler}>
+              Cancel
 						</Button>
-					</Toolbar>
-				</AppBar>
+          </Toolbar>
+        </AppBar>
 
-				<DialogContents users={users} currentUser={user} groupCreatedListener={groupCreatedListener} groups={groups} closeHandler={closeHandler} />
+        <DialogContents className={classes.dialogPaper} users={users} currentUser={user} groupCreatedListener={groupCreatedListener} groups={groups} closeHandler={closeHandler} />
 
-			</Dialog>
-		</div>
-	);
+      </Dialog>
+    </div>
+  );
 }

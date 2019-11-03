@@ -31,6 +31,10 @@ const useStyles = makeStyles(theme => ({
 export function BillList(props) {
     const classes = useStyles();
     const { group, value, index } = props;
+
+    const deleteBill = bill => {
+        
+    }
     return (
         <div className={classes.container} hidden={index !== value}>
             {group.bills.length !== 0 ? group.bills.map((bill) => {
@@ -52,16 +56,14 @@ export function BillList(props) {
                         <ExpansionPanelDetails>
                             <Divider />
                             <Typography className={classes.description}> Paid for: {/*bill.toPayeesString()*/} </Typography>
-                            <List>{bill.payees.map((payee) => {
+                            <ul>{bill.payees.map((payee) => {
                                 return (
-                                    <ListItem>
-                                        <ListItemText>
-                                            {payee.name}: CAD${(bill.amount / bill.payees.length).toFixed(2)}
-                                        </ListItemText>
-                                    </ListItem>
+                                    <li>
+                                        {payee.name}: CAD${(bill.amount / bill.payees.length).toFixed(2)}
+                                    </li>
                                 )
                             })}
-                            </List>
+                            </ul>
                         </ExpansionPanelDetails>
                         <ExpansionPanelActions>
                             <Button> Edit </Button>
@@ -75,7 +77,7 @@ export function BillList(props) {
                 </Typography>
                 </Container>
             }
-        </div>)
+        </div >)
 
 }
 

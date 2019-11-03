@@ -215,7 +215,7 @@ export function Overview(props) {
     const owed = +(amount / (members.length)).toFixed(2)
 
     for (let i = 0; i < group.groupMembers.length; i++) {
-	  
+
 	  // this debtor is the user
 	  if (group.groupMembers[i].username === user.username) {
 		// user participated
@@ -238,14 +238,15 @@ export function Overview(props) {
 
     // add bill to group
     group.bills.push(bill);
+    // console.log(currentGroups)
   }
-  
+
   /**
    * Handler that pays people.
    * Creates Bill doing so.
    */
   function payPersonHandler(group, title, amount, members, date) {
-	createBillHandler(group, title, amount, members, date);
+    createBillHandler(group, title, amount, members, date);
   }
 
   const [currentGroups, setGroups] = React.useState(user.groups);
@@ -358,8 +359,8 @@ export function Overview(props) {
                   group={currentGroups[selectedIndex]}
                   currentUser={user}
                   createBillHandler={createBillHandler}
-				  payPersonHandler={payPersonHandler}
-				/>
+                  payPersonHandler={payPersonHandler}
+                />
                 <CreateGroupDialog
                   open={openGroup}
                   closeHandler={closeGroupDialog}
