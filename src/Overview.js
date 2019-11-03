@@ -249,17 +249,22 @@ export function Overview(props) {
     console.log(currentGroups)
   }
   
+  /**
+   * Handler that pays people.
+   * Creates Bill doing so.
+   */
   function payPersonHandler(group, title, amount, members, date) {
 	createBillHandler(group, title, amount, members, date);
 
 	for (let i = 0; i < group.debtors.length; i ++) {
-	  // current user paid
+	  // current user paid, so debt reduced
       if (group.debtors[i].username == user.username) {
 		group.debtors[i].amount -= (+amount);  
 		continue;
 	  }
       // determine if this is the right debtor
       for (let j = 0; j < members.length; j ++) {
+		// pay debtor, so he is owed less money
         if (members[j].username == group.debtors[i].username) {group.debtors[i].amount += +amount;}
       }
     }
