@@ -9,6 +9,7 @@ import theme from "./GUI/Theme";
 import { ThemeProvider } from "@material-ui/core/styles";
 import { UserContext } from "./UserContext";
 import LoginScreen from "./loginScreen";
+import AdminPage from "./adminPage"
 
 class App extends React.Component {
   constructor(props) {
@@ -35,6 +36,7 @@ class App extends React.Component {
                 <Route exact path="/overview" component={Overview} />
                 <Route exact path="/accountsview" component={Accountsview} />
                 <Route exact path="/login" component={LoginScreen} />
+                <Route exact path="/admin" component={AdminPage} />
               </Switch>
             </BrowserRouter>
           </div>

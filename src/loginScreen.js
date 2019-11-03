@@ -281,10 +281,10 @@ export function LoginScreen(props) {
           <h2>Already have an account?</h2>
           <Divider />
           <br />
-          <h4> Username/Email </h4>
+          <h4> Username </h4>
           <TextField
             id="outlined-helperText"
-            label="User Name/Email"
+            label="User Name"
             className={classes.textField}
             onChange={_onLoginUsernameClick}
             helperText=""
