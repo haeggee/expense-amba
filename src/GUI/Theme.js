@@ -2,7 +2,6 @@ import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
 import AppBar from "@material-ui/core/AppBar/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import SvgIcon from "@material-ui/core/SvgIcon/SvgIcon";
-import LogoComponent from "./LogoComponent";
 import React, { useState } from "react";
 import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
