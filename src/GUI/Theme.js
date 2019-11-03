@@ -8,29 +8,38 @@ import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
 import { Link } from "react-router-dom";
 
+
 /*
     This is defines major colors/fonts we are using in this project.
  */
 const theme = createMuiTheme({
   palette: {
     primary: {
-      main: "#344B72",
-      light: "#E7EEF7",
-      contrastText: "#FFFFFF"
+      main: '#344B72',
+      light: '#E7EEF7',
+      contrastText: '#FFFFFF'
     },
     common: {
-      red: "#FF7C9B",
-      grey: "#B5B5B5",
-      white: "#FFFFFF",
-      blue: "#156EC0"
+      red: '#FF7C9B',
+      grey: '#B5B5B5',
+      white: '#FFFFFF',
+      blue: '#156EC0'
     },
     background: {
-      paper: "#FFFFFF"
+      paper: '#FFFFFF'
     },
     text: {
-      primary: "#000000",
-      third: "#5d87cf"
+      primary: '#000000',
+      footer: '#FFFFFF',
+      third: '#5d87cf'
     }
+  },
+  background: {
+    paper: "#FFFFFF"
+  },
+  text: {
+    primary: "#000000",
+    third: "#5d87cf"
   },
   typography: {
     fontFamily: ["Open Sans", "Arial", "Mistral", "Verdana"].join(",")

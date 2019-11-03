@@ -17,7 +17,7 @@ export function Balances(props) {
     const classes = useStyles();
     return (
         <div className={classes.container} role="tabpanel" hidden={index !== value}>
-            {group.bills !== undefined ? 'TODO'
+            {group.bills.length !== 0 ? 'TODO'
                 : <Container>
                     <Typography variant="body1">
                         No bills yet. Be the first to add one!

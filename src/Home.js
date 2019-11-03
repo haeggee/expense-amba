@@ -10,6 +10,7 @@ import makeStyles from "@material-ui/core/styles/makeStyles"
 import { ThemeProvider } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card"
 import {CustomHeader} from "./GUI/Header"
+import Footer from "./GUI/Footer"
 
 const useStyle = makeStyles(theme => ({
     homePic: {
@@ -91,6 +92,7 @@ function Home(props) {
                     </StyledCard>
                 </GrowGrid>
             </GridContainer>
+            <Footer/>
         </ThemeProvider>
     )
 }

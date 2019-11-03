@@ -1,9 +1,3 @@
-/*
-    This is the header element that will appear in all web pages.
-    Sample usage: <CustomHeader loggedIn={false} /> when user haven't logged in.
-                    loggedIn is default to be true.
-
- */
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import SvgIcon from "@material-ui/core/SvgIcon";
@@ -15,7 +9,13 @@ import { UserContext } from "../UserContext";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { CustomButton } from "./Theme";
 import { useHistory } from "react-router-dom";
-import User from "../User";
+import WebFont from "webfontloader";
+
+WebFont.load({
+  google: {
+    families: ["Sedgwick Ave"]
+  }
+});
 
 const useStyle = makeStyles(() => ({
   absolute: {
@@ -23,6 +23,11 @@ const useStyle = makeStyles(() => ({
   }
 }));
 
+/**
+ * This is the Header component that relies on global state
+ *
+ * @change now no attribute is needed. just do <CustomHeader/>
+ */
 export function CustomHeader(props) {
   const classes = useStyle();
   let history = useHistory();
