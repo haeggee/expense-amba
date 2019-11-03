@@ -248,6 +248,22 @@ export function Overview(props) {
     group.bills.push(bill);
     console.log(currentGroups)
   }
+  
+  function payPersonHandler(group, title, amount, members, date) {
+	createBillHandler(group, title, amount, members, date);
+
+	for (let i = 0; i < group.debtors.length; i ++) {
+	  // current user paid
+      if (group.debtors[i].username == user.username) {
+		group.debtors[i].amount -= (+amount);  
+		continue;
+	  }
+      // determine if this is the right debtor
+      for (let j = 0; j < members.length; j ++) {
+        if (members[j].username == group.debtors[i].username) {group.debtors[i].amount += +amount;}
+      }
+    }
+  }
 
   const [currentGroups, setGroups] = React.useState(groups);
 
@@ -350,7 +366,9 @@ export function Overview(props) {
                   closeHandler={closePaymentsDialog}
                   group={currentGroups[selectedIndex]}
                   currentUser={user}
-                  createBillHandler={createBillHandler} />
+                  createBillHandler={createBillHandler}
+				  payPersonHandler={payPersonHandler}
+				/>
                 <CreateGroupDialog
                   open={openGroup}
                   closeHandler={closeGroupDialog}
