@@ -15,7 +15,8 @@ import Group from './Group';
 import { CustomHeader } from "./GUI/Header"
 import AddIcon from '@material-ui/icons/Add'
 import CreateAddMemberDialog from './GUI/AddMemberDialog';
-
+import DeleteIcon from '@material-ui/icons/Delete'
+import DeleteGroupDialog from './GUI/DeleteGroupDialog'
 
 const useStyles = makeStyles(theme => ({
   gridcontainer: {
@@ -52,6 +53,10 @@ const useStyles = makeStyles(theme => ({
   addButton: {
     marginBottom: theme.spacing(2),
     padding: theme.spacing(2)
+  },
+  deleteButton: {
+    margin: theme.spacing(1),
+    color: theme.palette.secondary.main
   }
 }));
 
@@ -77,12 +82,12 @@ const groupMembersString = function (group, currentUser) {
  * Generates a unique id for a bill.
  * @param {group} The group that the current user is in.
  */
-const generateBillID = function(group) {
+const generateBillID = function (group) {
   let id = 0;
-  for (let i = 0; i < group.bills.length; i ++) {
-	if (group.bills[i].billID <= id) {
-	  id = group.bills[i].billID + 1;
-	}
+  for (let i = 0; i < group.bills.length; i++) {
+    if (group.bills[i].billID <= id) {
+      id = group.bills[i].billID + 1;
+    }
   }
   return id;
 }
@@ -97,38 +102,6 @@ function a11yProps(index) {
 
 export function Overview(props) {
   /* MOCK DATA ----------------------------*/
-
-	/*
-    // list of current members of the systems, here we should get the data from the server later
-
-    const members = [{ name: "Alice" }, { name: "Bob" }, { name: "James" }, { name: "Maria" }, { name: "Thomas" },
-    { name: "Jennifer" }]
-
-    const billsGroup1 = [{ title: 'Uber', amount: 15, date: new Date('2019-10-01'), from: members[0], to: members }]
-
-
-    // groups as a state variable for the list, will later be fetched from server
-    // TODO: figure out how to represent expenses and who owes whom
-    const [groups, setGroups] = React.useState(
-        [{
-            name: 'Family',
-            index: 0,
-            groupMembers: members
-        },
-        {
-            name: 'TO',
-            index: 1,
-            groupMembers: [members[2], members[3], members[4], members[5]]
-        },
-        {
-            name: 'Team 42',
-            index: 2,
-            groupMembers: [members[0], members[1]]
-        }
-        ]);
-
-	*/
-
   // A possible way of implementing it?
   const members = [new User("Alice`s username", "password", "Alice", "Alice.gmail.com"), new User("Bob`s username", "password", "Bob", "Bob.gmail.com"), new User("Jame`s username", "password", "James", "James.gmail.com"),
   new User("Maria`s username", "password", "Maria", "Maria.gmail.com"), new User("Thoma`s username", "password", "Thomas", "Thomas.gmail.com"), new User("Jennifer`s username", "password", "Jennifer", "Jennifer.gmail.com")]
@@ -143,6 +116,36 @@ export function Overview(props) {
 
   /* END OF MOCK DATA ----------------------*/
 
+
+  // openDeleteGroup indicates whether or not to open the delete group dialog
+
+  const [openDeleteGroup, setOpenDeleteGroup] = React.useState(false);
+
+  /* 
+	Handles whenever delete group button is clicked to open dialog
+	*/
+  const openDeleteGroupDialog = () => {
+    setOpenDeleteGroup(true)
+  };
+
+	/* 
+	Handles closing dialog when Dialog requests it.
+	*/
+  const closeDeleteGroupDialog = () => {
+    setOpenDeleteGroup(false)
+  };
+
+  const deleteCurrentGroup = () => {
+    // console.log(groups)
+    currentGroups.splice(selectedIndex, 1);
+    // since the groupid identifies the highlight in in the list, update ids
+    for (let i = 0; i < currentGroups.length; i++) {
+      currentGroups[i].groupID = i;
+    }
+    setSelectedIndex(0);
+    console.log(currentGroups)
+    closeDeleteGroupDialog();
+  }
   // openPayments indicates whether or not to open the payments dialog popup
 
   const [openPayments, setopenPayments] = React.useState(false);
@@ -217,36 +220,36 @@ export function Overview(props) {
 
     // create array of debtors if it does not already exist
     if (group.debtors.length == 0) {
-      for (let i = 0; i < group.groupMembers.length; i ++) {
+      for (let i = 0; i < group.groupMembers.length; i++) {
         group.debtors.push(new Debtor(group.groupMembers[i], 0));
       }
     }
     // amount each member has to pay to current user (the + converts this to a integer)
     const owed = +(amount / (members.length)).toFixed(2)
 
-    for (let i = 0; i < group.debtors.length; i ++) {
-	  // special case for current user: he is owed money 
+    for (let i = 0; i < group.debtors.length; i++) {
+      // special case for current user: he is owed money 
       if (group.debtors[i].username == user.username) {
-		// subtract owed because he doesnt have to owe money to himself
-		group.debtors[i].amount -= (+amount - owed);  
-		continue;
-	  }
+        // subtract owed because he doesnt have to owe money to himself
+        group.debtors[i].amount -= (+amount - owed);
+        continue;
+      }
       let participant = false
       // determine if this debtor took part in the bill
-      for (let j = 0; j < members.length; j ++) {
-        if (members[j].username == group.debtors[i].username) {participant = true;}
+      for (let j = 0; j < members.length; j++) {
+        if (members[j].username == group.debtors[i].username) { participant = true; }
       }
       if (participant) {
         group.debtors[i].amount += owed;
       }
     }
-	
-	// now create the bill
-	const bill = new Bill(generateBillID(group), title, amount, date, user, members);
-	
-	// add bill to group
-	group.bills.push(bill);
-	console.log(currentGroups)
+
+    // now create the bill
+    const bill = new Bill(generateBillID(group), title, amount, date, user, members);
+
+    // add bill to group
+    group.bills.push(bill);
+    console.log(currentGroups)
   }
 
   const [currentGroups, setGroups] = React.useState(groups);
@@ -303,18 +306,26 @@ export function Overview(props) {
             <Grid item xs={8}>
               <Paper className={classes.paperGroupOverview}>
                 <AppBar className={classes.AppBar}>
-                  <Typography variant="h6" className={classes.title}>
-                    <strong>{currentGroups[selectedIndex].name}</strong>
-                  </Typography>
-                  <Typography variant="subtitle1" className={classes.subtitle}>
-                    <em>Members:</em> {groupMembersString(currentGroups[selectedIndex], user)}
-                    <Box component="span" m={1}>
-                      <Fab display="flex" flexDirection="row-reverse" size="small" color="third"
-                        aria-label="add" onClick={openAddMembersDialog}>
-                        <AddIcon />
-                      </Fab>
-                    </Box>
-                  </Typography>
+                  <Grid container>
+                    <Grid item xs={10}
+                    ><Typography variant="h6" className={classes.title}>
+                        <strong>{currentGroups[selectedIndex].name}</strong>
+                      </Typography>
+                      <Typography variant="subtitle1" className={classes.subtitle}>
+                        <em>Members:</em> {groupMembersString(currentGroups[selectedIndex], user)}
+                        <Box component="span" m={1}>
+                          <Fab display="flex" flexDirection="row-reverse" size="small" color="third"
+                            aria-label="add" onClick={openAddMembersDialog}>
+                            <AddIcon />
+                          </Fab>
+                        </Box>
+                      </Typography>
+                    </Grid>
+
+                    <Grid item xs={2}>
+                      <Button className={classes.deleteButton} startIcon={<DeleteIcon />} onClick={openDeleteGroupDialog}> Delete </Button>
+                    </Grid>
+                  </Grid>
                 </AppBar>
 
                 <Box display="flex" flexDirection="row-reverse">
@@ -360,7 +371,12 @@ export function Overview(props) {
                   closeHandler={closeAddMembersDialog}
                   users={members}
                   group={currentGroups[selectedIndex]}
-                  /> 
+                />
+                <DeleteGroupDialog
+                  open={openDeleteGroup}
+                  closeHandler={closeDeleteGroupDialog}
+                  deleteGroup={deleteCurrentGroup}
+                  group={currentGroups[selectedIndex]} />
               </Paper>
             </Grid>
           </Grid>
