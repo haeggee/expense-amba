@@ -24,7 +24,7 @@ const theme = createMuiTheme({
         },
         text: {
             primary: '#000000',
-            secondary: '#FFFFFF',
+            footer: '#FFFFFF',
             third: '#5d87cf'
         }
     },

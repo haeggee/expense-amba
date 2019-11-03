@@ -42,7 +42,9 @@ const useStyles = makeStyles(theme => ({
 		marginLeft: 40,
 		marginRight: 40,
 	},
-
+  formControl: {
+    color: theme.palette.text.primary
+  }
 }));
 
 

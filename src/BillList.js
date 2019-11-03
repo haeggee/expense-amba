@@ -33,7 +33,7 @@ export function BillList(props) {
     const { group, value, index } = props;
     return (
         <div className={classes.container} hidden={index !== value}>
-            {group.bills !== undefined ? group.bills.map((bill) => {
+            {group.bills.length !== 0 ? group.bills.map((bill) => {
                 return (
                     <ExpansionPanel>
                         <ExpansionPanelSummary
