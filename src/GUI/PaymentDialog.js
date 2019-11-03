@@ -45,6 +45,13 @@ const useStyles = makeStyles(theme => ({
 		marginLeft: 40,
 		marginRight: 40,
 	},
+	leftComponent: {
+		width: "40%",
+		marginRight: 20,
+	},
+	rightComponent: {
+		width: "40%"
+	},
 	field: {
 		width: '90%',
 		marginTop: theme.spacing(0)
@@ -136,7 +143,7 @@ function PayBill(props) {
 					<Grid item xs={6}>
 						<h4>Title</h4>
 						<TextField className={classes.field} variant="outlined"
-							onChange={handleTitleChange} />
+							onChange={handleTitleChange} placeholder="Enter title for the bill" />
 					</Grid>
 					<Grid item xs={6} >
 						<h4>Date</h4>
@@ -156,9 +163,8 @@ function PayBill(props) {
 					</Grid>
 				</Grid>
 			</CardContent>
-
 			<CardContent>
-				<Grid container>
+			<Grid container>
 					<Grid item xs={6}>
 						<h4>Payment Amount</h4>
 
@@ -199,7 +205,7 @@ function PayBill(props) {
 					</Grid>
 				</Grid>
 			</CardContent>
-			<br/>
+			<br />
 
 			<CardContent>
 				<CustomButton onClick={acceptButtonPressed}>Accept</CustomButton>
@@ -265,22 +271,32 @@ function PayPerson(props) {
 	return (
 		<Card className={classes.card} role="tabpanel" hidden={currentIndex !== index}>
 			<CardContent>
-				<h4>Payment Amount</h4>
-				<TextField fullWidth variant="outlined"
-					type='number' value={amount} onChange={handleAmountChange}
-					InputProps={{
-						startAdornment: <InputAdornment position="start">CAD$</InputAdornment>,
-					}} />
+				<h4>Date</h4>
+				<MuiPickersUtilsProvider utils={DateFnsUtils}>
+					<KeyboardDatePicker
+						disableToolbar
+						inputVariant="outlined"
+						fullWidth
+						variant="inline"
+						format="MM//dd/yyyy"
+						margin="normal"
+						value={selectedDate}
+						onChange={handleDateChange}
+						maxDate={new Date()}
+					/>
+				</MuiPickersUtilsProvider>
 			</CardContent>
 			<CardContent>
-				<h4>Payment to</h4>
+				<Box flexDirection="row">
 
-				<form autoComplete="off">
+					<h4>Payment amount</h4>
+					<TextField variant="outlined" className={classes.leftComponent}
+						type='number' value={amount} onChange={handleAmountChange}
+						InputProps={{
+							startAdornment: <InputAdornment position="start">CAD$</InputAdornment>,
+						}} />
 
-					<FormControl
-						variant="outlined" fullWidth>
-
-
+					<FormControl className={classes.rightComponent} variant="outlined">
 						<InputLabel ref={inputLabel}
 							htmlFor="select-outlined">Name</InputLabel>
 						<Select
@@ -301,27 +317,12 @@ function PayPerson(props) {
 
 						</Select>
 					</FormControl>
-				</form>
+				</Box>
 			</CardContent>
+
 			<CardContent>
 				<h4>Memo</h4>
 				<TextField fullWidth variant="outlined" />
-			</CardContent>
-			<CardContent>
-				<h4>Date</h4>
-				<MuiPickersUtilsProvider utils={DateFnsUtils}>
-					<KeyboardDatePicker
-						disableToolbar
-						inputVariant="outlined"
-						fullWidth
-						variant="inline"
-						format="MM//dd/yyyy"
-						margin="normal"
-						value={selectedDate}
-						onChange={handleDateChange}
-						maxDate={new Date()}
-					/>
-				</MuiPickersUtilsProvider>
 			</CardContent>
 			<CardContent>
 				<CustomButton >Accept</CustomButton>
