@@ -159,7 +159,7 @@ function DialogContents(props) {
 				</form>
 			</CardContent>
 			<CardContent>
-				<CustomButton clickHandler={createGroup}>Accept</CustomButton>
+				<CustomButton onClick={createGroup}>Accept</CustomButton>
 			</CardContent>
 		</Card>
 	)

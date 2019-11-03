@@ -1,81 +1,245 @@
 import React from "react";
 import "./App.css";
-import { makeStyles } from "@material-ui/core/styles";
-import Header from "./GUI/HeaderComponent";
-import Button from "@material-ui/core/Button";
-import LogoComponent from "./GUI/LogoComponent";
-import InputComponent from "./GUI/InputComponent";
-import { CustomButton, CustomHeader, EmptyHeader } from "./GUI/Header";
-import Box from "@material-ui/core/Box";
+import { Box, makeStyles, Divider, Container } from "@material-ui/core";
+import { EmptyHeader } from "./GUI/Header";
+import { CustomButton } from "./GUI/Theme";
 import Grid from "@material-ui/core/Grid";
+import TextField from "@material-ui/core/TextField";
+import { useHistory } from "react-router-dom";
 
-// Themes and styles - Need to implement
+// Style sheet
+const useStyles = makeStyles(theme => ({
+  textField: {
+    margin: 0,
+    marginBottom: 5,
+    padding: 0,
+    width: 500
+  },
+  buttonLogin: {
+    width: 150,
+    marginTop: 50,
+    marginBottom: 100
+  },
 
-/*
-View that shows account info for the user.
-*/
-export function loginScreen(props) {
-  // const className = themes()
+  gridClassLeft: {
+    textAlign: "center",
+    borderRight: 1
+  },
+  gridClass: {
+    textAlign: "center"
+  }
+}));
 
-  // const [values, setValues] = React.useState({
-  // 	editable: false,
-  // 	editButtonText: "Edit"
-  // });
+export function LoginScreen(props) {
+  const classes = useStyles();
+  let history = useHistory();
 
-  // const handleEditClick = () => {
-  // 	if (values.editable === false) {
-  // 		setValues({ editable: true, editButtonText: "Save" })
-  // 	} else {
-  // 		setValues({ editable: false, editButtonText: "Edit" })
-  // 	}
-  // };
+  const [values, setValues] = React.useState({
+    loginUsername: "",
+    loginPassword: "",
+    signUpUsername: "",
+    signUpEmail: "",
+    signUpPassword: ""
+  });
 
+  //Relevant functions for the page
+  const _onLoginUsernameClick = e => {
+    let a = values.loginUsername;
+    let b = values.loginPassword;
+    let c = values.signUpUsername;
+    let d = values.signUpEmail;
+    let f = values.signUpPassword;
+    setValues({
+      loginUsername: e.target.value,
+      loginPassword: b,
+      signUpUsername: c,
+      signUpEmail: d,
+      signUpPassword: f
+    });
+  };
+
+  const _onLoginPasswordClick = e => {
+    let a = values.loginUsername;
+    let b = values.loginPassword;
+    let c = values.signUpUsername;
+    let d = values.signUpEmail;
+    let f = values.signUpPassword;
+    setValues({
+      loginUsername: a,
+      loginPassword: e.target.value,
+      signUpUsername: c,
+      signUpEmail: d,
+      signUpPassword: f
+    });
+  };
+
+  const _onSignUpUsernameClick = e => {
+    let a = values.loginUsername;
+    let b = values.loginPassword;
+    let c = values.signUpUsername;
+    let d = values.signUpEmail;
+    let f = values.signUpPassword;
+    setValues({
+      loginUsername: a,
+      loginPassword: b,
+      signUpUsername: e.target.value,
+      signUpEmail: d,
+      signUpPassword: f
+    });
+  };
+
+  const _onSignUpPasswordClick = e => {
+    let a = values.loginUsername;
+    let b = values.loginPassword;
+    let c = values.signUpUsername;
+    let d = values.signUpEmail;
+    let f = values.signUpPassword;
+    setValues({
+      loginUsername: a,
+      loginPassword: b,
+      signUpUsername: c,
+      signUpEmail: d,
+      signUpPassword: e.target.value
+    });
+  };
+
+  const _onSignUpEmailClick = e => {
+    let a = values.loginUsername;
+    let b = values.loginPassword;
+    let c = values.signUpUsername;
+    let d = values.signUpEmail;
+    let f = values.signUpPassword;
+    setValues({
+      loginUsername: a,
+      loginPassword: b,
+      signUpUsername: c,
+      signUpEmail: e.target.value,
+      signUpPassword: f
+    });
+  };
+
+  const _handleSignClick = () => {
+    // Get the listof usernames/admins and passwords from server to check
+    // Requires server call
+
+    if (values.loginUsername === "user" && values.loginPassword === "user") {
+      history.push("/overview");
+    } else if (
+      values.loginUsername === "admin" &&
+      values.loginPassword === "admin"
+    ) {
+      history.push("/admin");
+    }
+
+    //else {
+    //Handle functionalities of invalid username, wrong password
+    //}
+  };
+
+  const _handleRegisterClick = () => {
+    // Functionality to be added: Once clicked, it appends info to user database from server
+    //Requires server call
+  };
+
+  //returned DOM
   return (
     <div>
-      {/* Dont use the CustomHeader because it has a button for user to go to accounts screen. This IS the accounts screen! */}
       <EmptyHeader />
+      <Grid
+        container
+        spacing={5}
+        direction="row"
+        alignItems="center"
+        justify="center"
+        style={{ minHeight: "100vh" }}
+      >
+        <Grid item xs={4} className={classes.gridClassLeft}>
+          <h2>First Time User</h2>
+          <Divider />
+          <br />
+          <h4> User Name </h4>
+          <TextField
+            id="outlined-helperText"
+            label="User Name"
+            className={classes.textField}
+            onChange={_onSignUpUsernameClick}
+            helperText=""
+            margin="normal"
+            variant="outlined"
+          />
+          <br />
+          <h4> Email </h4>
+          <TextField
+            id="outlined-helperText"
+            label="Email"
+            className={classes.textField}
+            onChange={_onSignUpEmailClick}
+            helperText=""
+            margin="normal"
+            variant="outlined"
+          />
+          <h4> Password </h4>
+          <TextField
+            id="outlined-helperText"
+            label="Password"
+            className={classes.textField}
+            onChange={_onSignUpPasswordClick}
+            helperText=""
+            margin="normal"
+            variant="outlined"
+          />
+          <Box>
+            <CustomButton
+              className={classes.buttonLogin}
+              onClick={_handleRegisterClick}
+            >
+              Register Now
+            </CustomButton>
+          </Box>
+        </Grid>
 
-      {/* <Grid
-				container
-				spacing={0}
-				direction="column"
-				alignItems="center"
-				justify="center"
-				style={{ minHeight: '100vh' }}>
-				
-				
-				<h2>Account settings</h2>
-				<AccountsCard title="Username" value="n00bm@ster69" editable={values.editable} />
-				<AccountsCard title="Name" value="Donald Trump" editable={values.editable} />
-				<AccountsCard title="Email" value="DJT@gmail.com" editable={values.editable} />
-				<AccountsCard title="Password" value="password" type="password" editable={values.editable} />
+        <Grid item xs={1}>
+          <Divider orientation="vertical" />
+        </Grid>
 
-				<Box flexDirection="row">
-					<CustomButton className={className.editbutton} clickHandler={handleEditClick}>{values.editButtonText}</CustomButton>
-					<CustomButton className={className.donebutton} >Done</CustomButton>
-				</Box>
-				
-			</Grid>  */}
+        <Grid item xs={4} className={classes.gridClass}>
+          <h2>Already have an account?</h2>
+          <Divider />
+          <br />
+          <h4> Username/Email </h4>
+          <TextField
+            id="outlined-helperText"
+            label="User Name/Email"
+            className={classes.textField}
+            onChange={_onLoginUsernameClick}
+            helperText=""
+            margin="normal"
+            variant="outlined"
+          />
+
+          <h4> Password </h4>
+          <TextField
+            id="outlined-helperText"
+            label="Password"
+            className={classes.textField}
+            onChange={_onLoginPasswordClick}
+            helperText=""
+            margin="normal"
+            variant="outlined"
+          />
+          <br />
+          <Box>
+            <CustomButton
+              className={classes.buttonLogin}
+              onClick={_handleSignClick}
+            >
+              Sign In
+            </CustomButton>
+          </Box>
+        </Grid>
+      </Grid>
     </div>
   );
 }
 
-/*
-class Accountsview extends React.Component {
-	render() {
-		const buttonstyle = cardStyle()
-		return (
-			<div>
-				<EmptyHeader />
-				<CustomCard prompt="Username" readonly={false}/>
-				<CustomCard prompt="Name" readonly={false}/>
-				<CustomCard prompt="Email" readonly={false}/>
-				<CustomCard prompt="Password" readonly={false}/>
-				<br/>
-				<CustomButton margins={40} className={buttonstyle.card}>Edit</CustomButton>
-			</div>
-		);
-	}
-}
-*/
-export default loginScreen;
+export default LoginScreen;

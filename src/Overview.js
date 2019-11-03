@@ -258,7 +258,7 @@ export function Overview(props) {
                 />
                 <Divider />
                 <ListItem className={classes.addButton}>
-                  <CustomButton clickHandler={openGroupDialog}>
+                  <CustomButton onClick={openGroupDialog}>
                     Create new group
                   </CustomButton>
                 </ListItem>
@@ -318,7 +318,7 @@ export function Overview(props) {
                 />
 
                 <Container className={classes.addButton}>
-                  <CustomButton clickHandler={openPaymentsDialog}>
+                  <CustomButton onClick={openPaymentsDialog}>
                     Add another payment
                   </CustomButton>
                 </Container>
