@@ -83,11 +83,14 @@ function DialogContents(props) {
 
   const closeHandler = props.closeHandler;
 
+  // all the groups currently in the system
+  const groups = props.groups;
+
   /**
    * Creates a new group with the info the user entered.
    */
   const createGroup = function() {
-    let groupID = createUniqueId(members);
+    let groupID = createUniqueId(groups);
     // create group with bills array initially empty.
     const group = new Group(groupID, name, members, []);
     groupCreatedListener(group);
@@ -179,6 +182,9 @@ export default function CreateGroupDialog(props) {
   // the current user that is logged in
   const user = props.currentUser;
 
+  // all the groups currently in the system
+  const groups = props.groups;
+
 	return (
 		<div>
 			<Dialog maxWidth="md" fullWidth={true} open={open} onClose={closeHandler}
@@ -196,7 +202,7 @@ export default function CreateGroupDialog(props) {
 					</Toolbar>
 				</AppBar>
 
-				<DialogContents users={users} currentUser={user} groupCreatedListener={groupCreatedListener} closeHandler={closeHandler} />
+				<DialogContents users={users} currentUser={user} groupCreatedListener={groupCreatedListener} groups={groups} closeHandler={closeHandler} />
 
 			</Dialog>
 		</div>

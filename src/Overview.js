@@ -163,9 +163,11 @@ export function Overview(props) {
 
   // function that should be notified when user creates a new group in the create group dialog
   function onGroupCreated(group) {
-    groups.push(group);
-    setGroups(groups);
-    setSelectedIndex(groups.length - 1);
+    const newGroups = currentGroups;
+    newGroups.push(group)
+    setGroups(newGroups);
+    
+    setSelectedIndex(newGroups.length - 1);
   }
 
   const [currentGroups, setGroups] = React.useState(groups);
@@ -277,6 +279,7 @@ export function Overview(props) {
                   closeHandler={closeGroupDialog}
                   users={members}
                   currentUser={user}
+                  groups={currentGroups}
                   groupCreatedListener={onGroupCreated}
                 />
               </Paper>
