@@ -10,6 +10,7 @@ import Balances from './Balances';
 import BillList from './BillList';
 import Bill from './Bills';
 import User from './User';
+import Debtor from './Debtor';
 import Group from './Group';
 import { CustomHeader } from "./GUI/Header"
 import AddIcon from '@material-ui/icons/Add'
@@ -72,6 +73,20 @@ const groupMembersString = function (group, currentUser) {
   return text;
 }
 
+/**
+ * Generates a unique id for a bill.
+ * @param {group} The group that the current user is in.
+ */
+const generateBillID = function(group) {
+  let id = 0;
+  for (let i = 0; i < group.bills.length; i ++) {
+	if (group.bills[i].billID <= id) {
+	  id = group.bills[i].billID + 1;
+	}
+  }
+  return id;
+}
+
 
 function a11yProps(index) {
   return {
@@ -121,7 +136,7 @@ export function Overview(props) {
     [new Bill(0, "Uber", 20.0, new Date('2019-10-01'), members[0], members),
     new Bill(1, "Dinner", 35.0, new Date('2019-10-12'), members[1], [members[0], members[1], members[2]]),
     new Bill(2, "Movie tickets", 15.0, new Date('2019-10-25'), members[4], [members[4], members[0], members[5]])]
-  let groups = [new Group(0, "Family", members, billsGroup1), new Group(1, "TO", [members[0], members[2], members[3], members[4], members[5]], []), new Group(2, "Team 42", [members[0], members[1]], [])]
+  let groups = [new Group(0, "Family", members, billsGroup1, []), new Group(1, "TO", [members[0], members[2], members[3], members[4], members[5]], [], []), new Group(2, "Team 42", [members[0], members[1]], [], [])]
 
   // Let this be the current user.
   const user = members[0]
@@ -188,6 +203,50 @@ export function Overview(props) {
     setGroups(newGroups);
 
     setSelectedIndex(newGroups.length - 1);
+  }
+
+  /**
+   * Function that should be notified when user wants a new bill to be created with this information.
+   * @param {group} The group this bill should be created in.
+   * @param {title} The title of the bill.
+   * @param {amount} The total amount of the bill.
+   * @param {members} The people involved in this bill. 
+   * @param {date} The date this bill is created on. 
+   */
+  function createBillHandler(group, title, amount, members, date) {
+
+    // create array of debtors if it does not already exist
+    if (group.debtors.length == 0) {
+      for (let i = 0; i < group.groupMembers.length; i ++) {
+        group.debtors.push(new Debtor(group.groupMembers[i], 0));
+      }
+    }
+    // amount each member has to pay to current user (the + converts this to a integer)
+    const owed = +(amount / (members.length)).toFixed(2)
+
+    for (let i = 0; i < group.debtors.length; i ++) {
+	  // special case for current user: he is owed money 
+      if (group.debtors[i].username == user.username) {
+		// subtract owed because he doesnt have to owe money to himself
+		group.debtors[i].amount -= (+amount - owed);  
+		continue;
+	  }
+      let participant = false
+      // determine if this debtor took part in the bill
+      for (let j = 0; j < members.length; j ++) {
+        if (members[j].username == group.debtors[i].username) {participant = true;}
+      }
+      if (participant) {
+        group.debtors[i].amount += owed;
+      }
+    }
+	
+	// now create the bill
+	const bill = new Bill(generateBillID(group), title, amount, date, user, members);
+	
+	// add bill to group
+	group.bills.push(bill);
+	console.log(currentGroups)
   }
 
   const [currentGroups, setGroups] = React.useState(groups);
@@ -286,7 +345,8 @@ export function Overview(props) {
                   open={openPayments}
                   closeHandler={closePaymentsDialog}
                   group={currentGroups[selectedIndex]}
-                  currentUser={user} />
+                  currentUser={user}
+                  createBillHandler={createBillHandler} />
                 <CreateGroupDialog
                   open={openGroup}
                   closeHandler={closeGroupDialog}

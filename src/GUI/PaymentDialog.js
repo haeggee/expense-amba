@@ -19,13 +19,15 @@ import { CustomButton} from "./Theme";
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 
-
+import Chip from '@material-ui/core/Chip';
+import Input from '@material-ui/core/Input';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import { InputAdornment } from '@material-ui/core';
 import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
 import DateFnsUtils from '@date-io/date-fns'
 import {CustomHeader} from "./Header"
+import Box from "@material-ui/core/Box";
 
 
 /*
@@ -61,6 +63,14 @@ function PayBill(props) {
 	const index = props.index
 	const currentIndex = props.currentIndex
 	const classes = useStyles()
+  const groupMembers = props.groupMembers
+  const currentUser = props.currentUser
+  const group = props.group
+
+  // handler that should be notified when user wants to pay a bill
+  const createBillHandler = props.createBillHandler
+
+  const closeHandler = props.closeHandler
 
 	const [billValues, setBillValues] = React.useState({
 		title: '',
@@ -70,26 +80,96 @@ function PayBill(props) {
 	const handleBillChange = prop => event => {
 		setBillValues({ ...setBillValues, [prop]: event.target.value });
 	}
+
+  const [title, setTitle] = React.useState("")
+
+  const handleTitleChange = event => {
+    setTitle(event.target.value)
+  }
+
+  const [amount, setAmount] = React.useState('')
+
+  const handleAmountChange = event => {
+    setAmount(event.target.value)
+  }
+
 	const [selectedDate, setSelectedDate] = React.useState(new Date())
 
-	const handleDateChange = date => {
-		setSelectedDate(date);
+	const handleDateChange = event => {
+		setSelectedDate(event.target.value);
 	}
+
+  // list of users in this bill
+  const [members, setMembers] = React.useState([]);
+
+	const handleMembersChange = event => {
+		setMembers(event.target.value);
+	};
+
+  // Create the new bill with given info
+  function acceptButtonPressed() {
+    const billMembers = members;
+    billMembers.push(currentUser);
+    console.log(group)
+    createBillHandler(group, title, amount, billMembers, selectedDate);
+    closeHandler();
+  }
+
+  const ITEM_HEIGHT = 48;
+  const ITEM_PADDING_TOP = 8;
+  const MenuProps = {
+    PaperProps: {
+      style: {
+        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+        width: 250,
+      },
+    },
+  };
 
 	return (
 		<Card className={classes.card} role="tabpanel" hidden={currentIndex !== index}>
 			<CardContent>
 				<h4>Title</h4>
 				<TextField fullWidth variant="outlined"
-					value={billValues.title} onChange={handleBillChange('title')} />
+					 onChange={handleTitleChange} />
 			</CardContent>
 			<CardContent>
 				<h4>Payment Amount</h4>
-				<TextField fullWidth variant="outlined"
-					type='number' value={billValues.amount} onChange={handleBillChange('amount')}
+
+				<TextField fullwidth variant="outlined"
+					type='number' onChange={handleAmountChange}
 					InputProps={{
 						startAdornment: <InputAdornment position="start">CAD$</InputAdornment>,
 					}} />
+
+			</CardContent>
+      <CardContent>
+				<h4>Participants</h4>
+				<form autoComplete="off">
+					<FormControl className={classes.formControl}style={{width:"100%"}}>
+            <InputLabel htmlFor="select-multiple-chip">Click to add users</InputLabel>
+            <Select
+              multiple
+              value={members}
+              onChange={handleMembersChange}
+              input={<Input id="select-multiple-chip" />}
+              renderValue={selected => (
+                <div className={classes.chips}>
+                  {selected.map(value => (
+                    <Chip key={value.username} label={value.name} className={classes.chip} />
+                  ))}
+                </div>
+              )}
+              MenuProps={MenuProps}>
+              {groupMembers.map(function(user) {
+                if (user.username != currentUser.username) {
+                  return (<MenuItem key={user.username} value={user}>{user.username}</MenuItem>)
+                }
+              })}
+            </Select>
+          </FormControl>
+				</form>
+
 			</CardContent>
 			<CardContent>
 				<h4>Date</h4>
@@ -99,7 +179,7 @@ function PayBill(props) {
 						inputVariant="outlined"
 						fullWidth
 						variant="inline"
-						format="MM//dd/yyyy"
+						format="MM/dd/yyyy"
 						margin="normal"
 						value={selectedDate}
 						onChange={handleDateChange}
@@ -109,7 +189,7 @@ function PayBill(props) {
 			</CardContent>
 
 			<CardContent>
-				<CustomButton >Accept</CustomButton>
+				<CustomButton onClick={acceptButtonPressed}>Accept</CustomButton>
 			</CardContent>
 		</Card>
 	)
@@ -250,6 +330,9 @@ export default function PaymentDialog(props) {
 	// Handler to notify when it is time to close the dialog.
 	const closeHandler = props.closeHandler;
 
+  // handler to notify when user wants to pay a bill
+  const createBillHandler = props.createBillHandler
+
 	// which tab we are on
 	const [tabIndex, setTabIndex] = React.useState(0);
 
@@ -288,8 +371,8 @@ export default function PaymentDialog(props) {
 
 				</AppBar>
 
-				<PayBill currentIndex={tabIndex} index={0} />
-				<PayPerson currentIndex={tabIndex} index={1} groupMembers={group.groupMembers} currentUser={user} />
+				<PayBill currentIndex={tabIndex} index={0} createBillHandler={createBillHandler} group={group} groupMembers={group.groupMembers} currentUser={user} closeHandler={closeHandler} />
+				<PayPerson currentIndex={tabIndex} index={1} groupMembers={group.groupMembers} currentUser={user} closeHandler={closeHandler} />
 
 			</Dialog>
 		</div>
