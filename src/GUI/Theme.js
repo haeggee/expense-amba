@@ -2,6 +2,7 @@ import createMuiTheme from "@material-ui/core/styles/createMuiTheme"
 import React from "react"
 import Button from "@material-ui/core/Button"
 
+
 /*
     This is defines major colors/fonts we are using in this project.
  */
@@ -23,6 +24,7 @@ const theme = createMuiTheme({
         },
         text: {
             primary: '#000000',
+            secondary: '#FFFFFF',
             third: '#5d87cf'
         }
     },
@@ -30,7 +32,6 @@ const theme = createMuiTheme({
         fontFamily: [
             "Open Sans",
             "Arial",
-            "Mistral",
             "Verdana"
         ].join(','),
     },
