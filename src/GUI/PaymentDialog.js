@@ -45,7 +45,13 @@ const useStyles = makeStyles(theme => ({
 		marginLeft: 40,
 		marginRight: 40,
 	},
-
+	leftComponent: {
+		width: "40%",
+		marginRight: 20,
+	},
+	rightComponent: {
+		width: "40%"
+	}
 }));
 
 
@@ -60,9 +66,9 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 Tab for paying bills.
 */
 function PayBill(props) {
-	const index = props.index
-	const currentIndex = props.currentIndex
-	const classes = useStyles()
+  const index = props.index
+  const currentIndex = props.currentIndex
+  const classes = useStyles()
   const groupMembers = props.groupMembers
   const currentUser = props.currentUser
   const group = props.group
@@ -72,14 +78,14 @@ function PayBill(props) {
 
   const closeHandler = props.closeHandler
 
-	const [billValues, setBillValues] = React.useState({
-		title: '',
-		amount: '',
-	})
+  const [billValues, setBillValues] = React.useState({
+	title: '',
+	amount: '',
+  })
 
-	const handleBillChange = prop => event => {
-		setBillValues({ ...setBillValues, [prop]: event.target.value });
-	}
+  const handleBillChange = prop => event => {
+	setBillValues({ ...setBillValues, [prop]: event.target.value });
+  }
 
   const [title, setTitle] = React.useState("")
 
@@ -129,63 +135,61 @@ function PayBill(props) {
 	return (
 		<Card className={classes.card} role="tabpanel" hidden={currentIndex !== index}>
 			<CardContent>
-				<h4>Title</h4>
-				<TextField fullWidth variant="outlined"
-					 onChange={handleTitleChange} />
-			</CardContent>
-			<CardContent>
-				<h4>Payment Amount</h4>
-
-				<TextField fullwidth variant="outlined"
-					type='number' onChange={handleAmountChange}
-					InputProps={{
-						startAdornment: <InputAdornment position="start">CAD$</InputAdornment>,
-					}} />
-
-			</CardContent>
-      <CardContent>
-				<h4>Participants</h4>
-				<form autoComplete="off">
-					<FormControl className={classes.formControl}style={{width:"100%"}}>
-            <InputLabel htmlFor="select-multiple-chip">Click to add users</InputLabel>
-            <Select
-              multiple
-              value={members}
-              onChange={handleMembersChange}
-              input={<Input id="select-multiple-chip" />}
-              renderValue={selected => (
-                <div className={classes.chips}>
-                  {selected.map(value => (
-                    <Chip key={value.username} label={value.name} className={classes.chip} />
-                  ))}
-                </div>
-              )}
-              MenuProps={MenuProps}>
-              {groupMembers.map(function(user) {
-                if (user.username != currentUser.username) {
-                  return (<MenuItem key={user.username} value={user}>{user.username}</MenuItem>)
-                }
-              })}
-            </Select>
-          </FormControl>
-				</form>
-
-			</CardContent>
-			<CardContent>
-				<h4>Date</h4>
-				<MuiPickersUtilsProvider utils={DateFnsUtils}>
+			  <Box flexDirection="row">
+				<h4>Name and Date</h4>
+				<TextField className={classes.leftComponent} variant="outlined"
+					 onChange={handleTitleChange} placeholder={"Enter title for the bill"} />
+				
+				<MuiPickersUtilsProvider  utils={DateFnsUtils}>
 					<KeyboardDatePicker
 						disableToolbar
 						inputVariant="outlined"
-						fullWidth
 						variant="inline"
 						format="MM/dd/yyyy"
-						margin="normal"
+						className={classes.rightComponent}
 						value={selectedDate}
 						onChange={handleDateChange}
 						maxDate={new Date()}
 					/>
 				</MuiPickersUtilsProvider>
+			  </Box>
+			</CardContent>
+			<CardContent>
+			  <Box flexDirection="row">
+				
+					<h4>Payment Amount</h4>
+
+					<TextField variant="outlined" className={classes.leftComponent}
+						type='number' onChange={handleAmountChange}
+						InputProps={{
+							startAdornment: <InputAdornment position="start">CAD$</InputAdornment>,
+						}} />		
+				
+				  <FormControl className={classes.rightComponent}>
+					<InputLabel htmlFor="select-multiple-chip">Click to add users</InputLabel>
+					<Select
+					  multiple
+					  variant="inline"
+					  value={members}
+					  onChange={handleMembersChange}
+					  input={<Input id="select-multiple-chip" />}
+					  renderValue={selected => (
+						<div className={classes.chips}>
+						  {selected.map(value => (
+							<Chip key={value.username} label={value.name} className={classes.chip} />
+						  ))}
+						</div>
+					  )}
+					  MenuProps={MenuProps}>
+					  {groupMembers.map(function(user) {
+						if (user.username != currentUser.username) {
+						  return (<MenuItem key={user.username} value={user}>{user.username}</MenuItem>)
+						}
+					  })}
+					</Select>
+				  </FormControl>
+				
+			  </Box>
 			</CardContent>
 
 			<CardContent>
@@ -252,49 +256,6 @@ function PayPerson(props) {
 	return (
 		<Card className={classes.card} role="tabpanel" hidden={currentIndex !== index}>
 			<CardContent>
-				<h4>Payment Amount</h4>
-				<TextField fullWidth variant="outlined"
-					type='number' value={amount} onChange={handleAmountChange}
-					InputProps={{
-						startAdornment: <InputAdornment position="start">CAD$</InputAdornment>,
-					}} />
-			</CardContent>
-			<CardContent>
-				<h4>Payment to</h4>
-
-				<form autoComplete="off">
-
-					<FormControl
-						variant="outlined" fullWidth>
-
-
-						<InputLabel ref={inputLabel}
-							htmlFor="select-outlined">Name</InputLabel>
-						<Select
-							open={open}
-							onClose={handleClose}
-							onOpen={handleOpen}
-							value={name}
-							onChange={handleNameChange}
-							id="select-outlined"
-							labelWidth={labelWidth}
-						>
-
-							{groupMembers.map(function(member) {
-                if (user.username != member.username) {
-                  return (<MenuItem value={member.name}>{member.name}</MenuItem>)
-                }
-              })}
-
-						</Select>
-					</FormControl>
-				</form>
-			</CardContent>
-			<CardContent>
-				<h4>Memo</h4>
-				<TextField fullWidth variant="outlined" />
-			</CardContent>
-			<CardContent>
 				<h4>Date</h4>
 				<MuiPickersUtilsProvider utils={DateFnsUtils}>
 					<KeyboardDatePicker
@@ -309,6 +270,44 @@ function PayPerson(props) {
 						maxDate={new Date()}
 					/>
 				</MuiPickersUtilsProvider>
+			</CardContent>
+			<CardContent>
+			  <Box flexDirection="row">
+				
+				<h4>Payment amount</h4>
+				<TextField variant="outlined" className={classes.leftComponent}
+					type='number' value={amount} onChange={handleAmountChange}
+					InputProps={{
+						startAdornment: <InputAdornment position="start">CAD$</InputAdornment>,
+					}} />
+					
+				<FormControl className={classes.rightComponent} variant="outlined">
+					<InputLabel ref={inputLabel}
+						htmlFor="select-outlined">Name</InputLabel>
+					<Select
+						open={open}
+						onClose={handleClose}
+						onOpen={handleOpen}
+						value={name}
+						onChange={handleNameChange}
+						id="select-outlined"
+						labelWidth={labelWidth}
+					>
+
+						{groupMembers.map(function(member) {
+							if (user.username != member.username) {
+							  return (<MenuItem value={member.name}>{member.name}</MenuItem>)
+							}
+						  })}
+
+					</Select>
+				</FormControl>
+			  </Box>
+			</CardContent>
+			
+			<CardContent>
+				<h4>Memo</h4>
+				<TextField fullWidth variant="outlined" />
 			</CardContent>
 			<CardContent>
 				<CustomButton >Accept</CustomButton>
