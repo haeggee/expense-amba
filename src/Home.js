@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import './App.css'
 import HomeWhiteMat from "./GUI/HomeWhiteMat"
-import theme, { CustomButton } from "./GUI/Theme"
+import theme from "./GUI/Theme"
 import Grid from "@material-ui/core/Grid"
-import {Box, CardContent, CardHeader, Fade, Grow, Paper, Slide, Typography} from "@material-ui/core"
+import {Box, CardContent, Fade, Grow, Slide, Typography} from "@material-ui/core"
 import makeStyles from "@material-ui/core/styles/makeStyles"
 import { ThemeProvider } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card"
@@ -56,7 +56,7 @@ function Home(props) {
                 <HomeWhiteMat />
                 <div className={classes.logo}>
                     <Slide direction={"right"} mountOnEnter in={true} timeout={700}>
-                        <img src={require("./GUI/imgs/logo.svg")} alt={"Logo Image"}/>
+                        <img src={require("./GUI/imgs/logo.svg")} alt={"Logo"}/>
                     </Slide>
                 </div>
                 <Fade in={true} timeout={2000}>

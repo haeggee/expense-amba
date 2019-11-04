@@ -166,7 +166,7 @@ export function LoginScreen(props) {
     // Requires server call
 
     if (params.loginUsername === "user" && params.loginPassword === "user") {
-      contextValue.userLogin(params.loginUsername)
+      contextValue.userLogin("Alice`s username")
       history.push("/overview");
     } else if (
       params.loginUsername === "admin" &&

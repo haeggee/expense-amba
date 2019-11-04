@@ -2,20 +2,16 @@ import React from 'react'
 import {makeStyles} from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
 import Dialog from '@material-ui/core/Dialog'
-import Divider from '@material-ui/core/Divider'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import IconButton from '@material-ui/core/IconButton'
 import Typography from '@material-ui/core/Typography'
 import CloseIcon from '@material-ui/icons/Close'
 import Slide from '@material-ui/core/Slide'
-import Tabs from '@material-ui/core/Tabs'
-import Tab from '@material-ui/core/Tab'
 import Card from '@material-ui/core/Card'
-import CardActions from '@material-ui/core/CardActions'
 import CardContent from '@material-ui/core/CardContent'
 import TextField from '@material-ui/core/TextField'
-import {CustomButton, CustomHeader} from "./Theme"
+import {CustomButton} from "./Theme"
 import Select from '@material-ui/core/Select'
 import MenuItem from '@material-ui/core/MenuItem'
 
@@ -24,12 +20,10 @@ import Input from '@material-ui/core/Input'
 import FormControl from '@material-ui/core/FormControl'
 import FormHelperText from '@material-ui/core/FormHelperText'
 import InputLabel from '@material-ui/core/InputLabel'
-import {InputAdornment} from '@material-ui/core'
-import {KeyboardDatePicker, MuiPickersUtilsProvider} from '@material-ui/pickers'
 import Group from '../Group'
 import ServerInterface from "../ServerInterface"
 
-import Autocomplete from '@material-ui/lab/Autocomplete'
+// import Autocomplete from '@material-ui/lab/Autocomplete'
 /*
 Some styles for this part only
 */
@@ -66,29 +60,15 @@ const Transition = React.forwardRef(function Transition(props, ref) {
  * Contents for this dialog.
  */
 function DialogContents(props) {
-    const index = props.index
     const users = props.users
     const classes = useStyles()
 
     // the current user that is logged in
     const currentUser = props.currentUser
 
-    // all users besides current
-    const filteredUsers = users.filter(user => {
-        for (let i = 0; i < users.length; i++) {
-            if (user.username === currentUser.username) {
-                return false
-            }
-        }
-        return true
-    })
-
     const groupCreatedListener = props.groupCreatedListener
 
     const closeHandler = props.closeHandler
-
-    // all the groups currently in the system
-    const groups = props.groups
 
     /**
      * Creates a new group with the info the user entered.
@@ -104,8 +84,6 @@ function DialogContents(props) {
             groupCreatedListener(group)
             closeHandler()
         }
-
-
         setNameError(true)
         setNameErrorText("Name must be at least 1 Character")
         setNoMembersError(true)
@@ -179,7 +157,7 @@ function DialogContents(props) {
                             )}
                             MenuProps={MenuProps}>
                             {users.map(function (user) {
-                                if (user.username != currentUser.username) {
+                                if (user.username !== currentUser.username) {
                                     return (<MenuItem key={user.username} value={user}>{user.username}</MenuItem>)
                                 }
                             })}

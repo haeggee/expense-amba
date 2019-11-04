@@ -5,10 +5,8 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
-import { CustomButton} from "./GUI/Theme";
 
 import { uid } from 'react-uid';
-import {CustomHeader} from "./GUI/Header"
 
 export function GroupList(props) {
   const { groups, groupID, handleListItemClick } = props;
@@ -21,7 +19,7 @@ export function GroupList(props) {
             /* every list item needs a specific key to be identifiable, therefore use react uid */
             <ListItem key={uid(group)}
               button
-              selected={group.groupID == groupID} /* highlights selected group*/
+              selected={group.groupID === groupID} /* highlights selected group*/
               onClick={event => handleListItemClick(event, group.groupID)}
             >
               <ListItemIcon>
