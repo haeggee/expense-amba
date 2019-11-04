@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from "react";
 import './App.css';
 import { makeStyles } from '@material-ui/core/styles';
 import { CustomButton} from "./GUI/Theme"
@@ -6,6 +6,7 @@ import AccountsCard from "./GUI/AccountsCard"
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid"
 import {CustomHeader} from "./GUI/Header"
+import { UserContext } from "./UserContext";
 
 // themes and styles class
 const themes = makeStyles({
@@ -25,6 +26,9 @@ View that shows account info for the user.
 */
 export function Accountsview(props) {
 	const className = themes()
+	
+	const contextValue = useContext(UserContext)
+	const user = contextValue.user
 
 	const [values, setValues] = React.useState({
 		editable: false,
@@ -39,6 +43,21 @@ export function Accountsview(props) {
 		}
 	};
 
+	function onNameChange(event) {
+		user.name = event.target.value
+	}
+	
+	function onUserNameChange(event) {
+		user.username = event.target.value
+	}
+	
+	function onPasswordChange(event) {
+		user.password = event.target.value
+	}
+	
+	function onEmailChange(event) {
+		user.email = event.target.value
+	}
 
 	return (
 		<div>
@@ -55,10 +74,10 @@ export function Accountsview(props) {
 				
 				
 				<h2>Account settings</h2>
-				<AccountsCard title="Username" value="n00bm@ster69" editable={values.editable} />
-				<AccountsCard title="Name" value="Donald Trump" editable={values.editable} />
-				<AccountsCard title="Email" value="DJT@gmail.com" editable={values.editable} />
-				<AccountsCard title="Password" value="password" type="password" editable={values.editable} />
+				<AccountsCard title="Username" value={user.username} editable={values.editable} onChange={onUserNameChange}/>
+				<AccountsCard title="Name" value={user.name} editable={values.editable} onChange={onNameChange}/>
+				<AccountsCard title="Email" value={user.email} editable={values.editable} onChange={onEmailChange}/>
+				<AccountsCard title="Password" value={user.password} type="password" editable={values.editable} onChange={onPasswordChange}/>
 
 				<Box flexDirection="row">
 					<CustomButton className={className.editbutton} onClick={handleEditClick}>{values.editButtonText}</CustomButton>
