@@ -195,10 +195,10 @@ export function Overview(props) {
   // function that should be notified when user creates a new group in the create group dialog
   function onGroupCreated(group) {
     const newGroups = currentGroups;
-    newGroups.push(group)
     setGroups(newGroups);
 
     setSelectedIndex(newGroups.length - 1);
+	console.log(group)
   }
 
   /**
