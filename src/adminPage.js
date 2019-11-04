@@ -12,6 +12,13 @@ import Footer from "./GUI/Footer";
 import { Typography } from '@material-ui/core';
 import User from './User';
 import Group from './Group';
+import Chip from '@material-ui/core/Chip';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import Input from '@material-ui/core/Input';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import { InputAdornment, Menu } from '@material-ui/core';
 
 
 const cardStyle = makeStyles({
@@ -30,6 +37,10 @@ const cardStyle = makeStyles({
     buttonStyle: {
         marginTop: 30,
         marginBottom: 10
+    },
+    field: {
+        marginTop: 0,
+        width: '100%'
     }
 });
 
@@ -58,16 +69,36 @@ export function AdminPage(props) {
     const Team42 = new Group(3, 'Team 42', [user, Bob], null, null)
     const [groupList, setGroupList] = React.useState([Family, TO, Team42])
 
+
+    //other data
+    const [UserErrorText, setUserErrorText] = React.useState({ a: "" })
+    const [UserModifyText, setUserModifyText] = React.useState({ a: "" })
+    const [GroupErrorText, setGroupErrorText] = React.useState({ a: "" })
+
+    const [setUser, setsetUser] = React.useState("")
+
     // Functions handling clicks
     const _handleUserClick = e => {
+        setUserErrorText({ a: "Deleted the User" })
+        setUserModifyText({ a: "" })
+        setGroupErrorText({ a: "" })
     }
 
     const _handleGroupClick = e => {
-
+        setGroupErrorText({ a: "Deleted the Group" })
+        setUserErrorText({ a: "" })
+        setUserModifyText({ a: "" })
     }
 
     const _handleModifyClick = e => {
+        setUserModifyText({ a: "Modified the User" })
+        setUserErrorText({ a: "" })
+        setGroupErrorText({ a: "" })
+    }
 
+    const _handleUsersChange = e => {
+        let userSelect = e.target.value;
+        setsetUser(userSelect)
     }
 
     //Returned DOM
@@ -95,7 +126,7 @@ export function AdminPage(props) {
                         <TextField fullWidth variant="outlined" />
                         <CustomButton className={styles.buttonStyle} onClick={_handleUserClick}>Delete User Account</CustomButton>
                         <Typography color='error'>
-
+                            {UserErrorText.a}
                         </Typography>
                     </CardContent>
                 </Card>
@@ -108,7 +139,7 @@ export function AdminPage(props) {
                         <TextField fullWidth variant="outlined" />
                         <CustomButton className={styles.buttonStyle} onClick={_handleGroupClick}>Delete Group Account</CustomButton>
                         <Typography color='error'>
-
+                            {GroupErrorText.a}
                         </Typography>
                     </CardContent>
                 </Card>
@@ -127,7 +158,7 @@ export function AdminPage(props) {
                         <TextField fullWidth label="Password" variant="outlined" />
                         <CustomButton className={styles.buttonStyle} onClick={_handleModifyClick}>Modify User Account</CustomButton>
                         <Typography color='error'>
-
+                            {UserModifyText.a}
                         </Typography>
                     </CardContent>
                 </Card>
