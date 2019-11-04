@@ -3,11 +3,11 @@ import './App.css'
 import HomeWhiteMat from "./GUI/HomeWhiteMat"
 import theme from "./GUI/Theme"
 import Grid from "@material-ui/core/Grid"
-import {Box, CardContent, Fade, Grow, Slide, Typography} from "@material-ui/core"
+import { Box, CardContent, Fade, Grow, Slide, Typography } from "@material-ui/core"
 import makeStyles from "@material-ui/core/styles/makeStyles"
 import { ThemeProvider } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card"
-import {CustomHeader} from "./GUI/Header"
+import { CustomHeader } from "./GUI/Header"
 import Footer from "./GUI/Footer"
 
 const useStyle = makeStyles(theme => ({
@@ -24,19 +24,25 @@ const useStyle = makeStyles(theme => ({
     },
     card: {
         width: '30vw',
-        height: '30vh'
+        height: '30vh',
+        alignContent: 'center'
     },
     container: {
         width: '100vw',
         direction: 'row',
-        marginBottom: '5vh'
+        marginBottom: '5vh',
     },
     grow: {
         transformOrigin: '0 0 0'
     },
-    displayText: {position: 'absolute',
+    displayText: {
+        position: 'absolute',
         right: '13%',
-        top:'25%'}
+        top: '25%'
+    },
+    gridclass: {
+        alignContent: 'center'
+    }
 }))
 
 
@@ -48,7 +54,7 @@ function Home(props) {
     return (
         <ThemeProvider theme={theme}>
             <header>
-                <CustomHeader/>
+                <CustomHeader />
             </header>
             <div className={classes.homePic}>
 
@@ -56,25 +62,25 @@ function Home(props) {
                 <HomeWhiteMat />
                 <div className={classes.logo}>
                     <Slide direction={"right"} mountOnEnter in={true} timeout={700}>
-                        <img src={require("./GUI/imgs/logo.svg")} alt={"Logo"}/>
+                        <img src={require("./GUI/imgs/logo.svg")} alt={"Logo"} />
                     </Slide>
                 </div>
                 <Fade in={true} timeout={2000}>
                     <Box fontFamily={'Verdana'}
-                         fontSize={"h2.fontSize"}
-                         color={theme.palette.common.white}
-                         className={classes.displayText}>
-                        The breeze <br/>
+                        fontSize={"h2.fontSize"}
+                        color={theme.palette.common.white}
+                        className={classes.displayText}>
+                        The breeze <br />
                         of your social life.
                     </Box>
                 </Fade>
             </div>
 
-            <GridContainer>
+            <GridContainer >
                 <GrowGrid item displayOffset={firstRowOffset} timeout={1000}>
                     <StyledCard className={classes.paper}>
-                        <Typography variant={"h5"}>
-                            Never forget a bill
+                        <Typography className={classes.headline} variant={"h5"}>
+                            - Never forget a bill -
                         </Typography>
                         <Typography variant={"body1"}>
                             AMBA helps you to keep track of everything with everybody.
@@ -83,23 +89,38 @@ function Home(props) {
                 </GrowGrid>
                 <GrowGrid item displayOffset={firstRowOffset} timeout={2000}>
                     <StyledCard className={classes.paper}>
-                        box 1
+                        <Typography variant={"h5"}>
+                            - Connect with your friends -
+                        </Typography>
+                        <Typography variant={"body1"}>
+                            Create a group and add the people that you share bills with.
+                        </Typography>
                     </StyledCard>
                 </GrowGrid>
             </GridContainer>
             <GridContainer>
                 <GrowGrid item displayOffset={secondRowOffset} timeout={1000}>
                     <StyledCard className={classes.paper}>
-                        box 1
+                        <Typography className={classes.headline} variant={"h5"}>
+                            - Have an overview of your expenses -
+                        </Typography>
+                        <Typography variant={"body1"}>
+                            Easily check the balance of everyone in each of your group.
+                        </Typography>
                     </StyledCard>
                 </GrowGrid>
                 <GrowGrid item displayOffset={secondRowOffset} timeout={2000}>
                     <StyledCard className={classes.paper}>
-                        box 1
+                        <Typography className={classes.headline} variant={"h5"}>
+                            - No bill is lost -
+                        </Typography>
+                        <Typography variant={"body1"}>
+                            See all bills paid by you and your friends.
+                        </Typography>
                     </StyledCard>
                 </GrowGrid>
             </GridContainer>
-            <Footer/>
+            <Footer />
         </ThemeProvider>
     )
 }
@@ -109,7 +130,8 @@ function GridContainer(props) {
     return (
         <Grid container
             alignContent={"flex-start"}
-            direction={'row'}
+            alignItems="center"
+            direction={"row"}
             justify={"center"}
             spacing={10}
             className={classes.container}>
