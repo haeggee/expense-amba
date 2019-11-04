@@ -34,6 +34,10 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+
+/**
+ * Login screen.
+ */ 
 export function LoginScreen(props) {
 
   //Data for page and user context

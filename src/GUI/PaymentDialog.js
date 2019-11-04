@@ -240,9 +240,9 @@ function PayBill(props) {
 	)
 }
 
-/*
-Tab for paying person. Has Autocomplete features to select people.
-*/
+/**
+ * Tab for paying person. Has Autocomplete features to select people.
+ */
 function PayPerson(props) {
 	const index = props.index
 	const currentIndex = props.currentIndex
@@ -407,6 +407,9 @@ function a11yProps(index) {
 	};
 }
 
+/**
+ * Dialog containing two tabs; one for paying bill, one for paying person.
+ */
 export default function PaymentDialog(props) {
 	const classes = useStyles();
 

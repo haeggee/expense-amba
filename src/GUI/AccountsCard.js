@@ -15,9 +15,8 @@ const cardStyle = makeStyles({
 });
 
 /*
-A custom card that has a text prompt/label, as well as a TextField.
-The prompt can be set via prompt="text". The TextField can be set to be editable by doing readonly={false}.
-*/
+ *A custom card that has a text prompt/title, as well as a TextField to enter in information.
+ */
 export function AccountsCard(props) {
 	const classes = cardStyle();
 	const title = props.title
