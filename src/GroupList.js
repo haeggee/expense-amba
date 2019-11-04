@@ -8,6 +8,9 @@ import Avatar from '@material-ui/core/Avatar';
 
 import { uid } from 'react-uid';
 
+/**
+ * A menu containing a list of groups. Highlights the currently selected group, and notify listener when a menu item is clicked.
+ */
 export function GroupList(props) {
   const { groups, groupID, handleListItemClick } = props;
 

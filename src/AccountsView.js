@@ -22,9 +22,9 @@ const themes = makeStyles({
 });
 
 
-/*
-View that shows account info for the user.
-*/
+/**
+ * View that shows account info for the user.
+ */
 export function Accountsview(props) {
 	const className = themes()
 	let history = useHistory();

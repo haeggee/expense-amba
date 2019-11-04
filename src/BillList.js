@@ -29,6 +29,9 @@ const useStyles = makeStyles(theme => ({
     }
 }))
 
+/**
+ * A drop down menu containing the list of Bills. User can expand this to view more info about the bill.
+ */
 export function BillList(props) {
     const classes = useStyles();
     const { group, value, index } = props;
