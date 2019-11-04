@@ -79,14 +79,7 @@ function DialogContents(props) {
     const addMembers = function () {
         if (members.length !== 0) {
             const startIndex = group.groupMembers.length;
-            console.log(group.groupMembers, group.debtors)
-            group.groupMembers = group.groupMembers.concat(members);
-            if (group.debtors.length !== 0) {
-                for (let i = startIndex; i < group.groupMembers.length; i++) {
-                    group.debtors.push(new Debtor(group.groupMembers[i], 0))
-                }
-            }
-            console.log(group.groupMembers, group.debtors)
+            group.addMembers(members)
             closeHandler();
         } else {
             setError(true);
