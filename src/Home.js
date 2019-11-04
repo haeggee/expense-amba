@@ -40,8 +40,8 @@ const useStyle = makeStyles(theme => ({
         right: '13%',
         top: '25%'
     },
-    gridclass: {
-        alignContent: 'center'
+    alignCenter: {
+        textAlign: 'center'
     }
 }))
 
@@ -79,21 +79,25 @@ function Home(props) {
             <GridContainer >
                 <GrowGrid item displayOffset={firstRowOffset} timeout={1000}>
                     <StyledCard className={classes.paper}>
-                        <Typography className={classes.headline} variant={"h5"}>
-                            - Never forget a bill -
+                        <Typography variant={"h5"} className={classes.alignCenter}>
+                            Never forget a bill
                         </Typography>
-                        <Typography variant={"body1"}>
+                        <br />
+                        <br />
+                        <Typography variant={"body1"} className={classes.alignCenter}>
                             AMBA helps you to keep track of everything with everybody.
                         </Typography>
                     </StyledCard>
                 </GrowGrid>
                 <GrowGrid item displayOffset={firstRowOffset} timeout={2000}>
                     <StyledCard className={classes.paper}>
-                        <Typography variant={"h5"}>
-                            - Connect with your friends -
+                        <Typography variant={"h5"} className={classes.alignCenter}>
+                            Payments made simple
                         </Typography>
-                        <Typography variant={"body1"}>
-                            Create a group and add the people that you share bills with.
+                        <br />
+                        <br />
+                        <Typography variant={"body1"} className={classes.alignCenter}>
+                            AMBA's graph-based approach does away with the clutter and simplifies bill payments.
                         </Typography>
                     </StyledCard>
                 </GrowGrid>
@@ -101,21 +105,25 @@ function Home(props) {
             <GridContainer>
                 <GrowGrid item displayOffset={secondRowOffset} timeout={1000}>
                     <StyledCard className={classes.paper}>
-                        <Typography className={classes.headline} variant={"h5"}>
-                            - Have an overview of your expenses -
+                        <Typography variant={"h5"} className={classes.alignCenter}>
+                            Detailed records
                         </Typography>
-                        <Typography variant={"body1"}>
-                            Easily check the balance of everyone in each of your group.
+                        <br />
+                        <br />
+                        <Typography variant={"body1"} className={classes.alignCenter}>
+                            AMBA keeps detailed records of all bills, giving you clarity on your amounts due.
                         </Typography>
                     </StyledCard>
                 </GrowGrid>
                 <GrowGrid item displayOffset={secondRowOffset} timeout={2000}>
                     <StyledCard className={classes.paper}>
-                        <Typography className={classes.headline} variant={"h5"}>
-                            - No bill is lost -
+                        <Typography variant={"h5"} className={classes.alignCenter}>
+                            Unlimited groups
                         </Typography>
-                        <Typography variant={"body1"}>
-                            See all bills paid by you and your friends.
+                        <br />
+                        <br />
+                        <Typography variant={"body1"} className={classes.alignCenter}>
+                            Freely create as many groups as you want, with as many members as you want.
                         </Typography>
                     </StyledCard>
                 </GrowGrid>
