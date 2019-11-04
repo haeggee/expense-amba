@@ -73,9 +73,9 @@ const groupMembersString = function (group, currentUser) {
 
   for (let i = 0; i < group.groupMembers.length; i++) {
     // all usernames are unique, so we can use them to compare users
-    if (currentUser.username != group.groupMembers[i].username) {
+    if (currentUser.username != group.groupMembers[i].user.username) {
       // only add to string if this is not the current user
-      text += ", " + group.groupMembers[i].name;
+      text += ", " + group.groupMembers[i].user.name;
     }
   }
   return text;
@@ -217,7 +217,7 @@ export function Overview(props) {
     for (let i = 0; i < group.groupMembers.length; i++) {
 
 	  // this debtor is the user
-	  if (group.groupMembers[i].username === user.username) {
+	  if (group.groupMembers[i].user.username === user.username) {
 		// user participated
 		if (members.includes(user)) {
 			// subtract owed because he doesnt have to owe money to himself

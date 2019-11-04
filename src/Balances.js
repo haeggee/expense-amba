@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
 function getMembersNames(group) {
 	let names = [];
 	for (let i = 0; i < group.groupMembers.length; i ++) {
-		names.push(group.groupMembers[i].name);
+		names.push(group.groupMembers[i].user.name);
 	}
 	return names;
 }

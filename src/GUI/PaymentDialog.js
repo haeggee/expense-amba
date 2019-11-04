@@ -221,9 +221,9 @@ function PayBill(props) {
 									)}
 									MenuProps={MenuProps}>
 									<MenuItem key={currentUser.username} value={currentUser}>You</MenuItem>
-									{groupMembers.map(function (user) {
-										if (user.username != currentUser.username) {
-											return (<MenuItem key={user.username} value={user}>{user.username}</MenuItem>)
+									{groupMembers.map(function (member) {
+										if (member.user.username != currentUser.username) {
+											return (<MenuItem key={member.user.username} value={member.user}>{member.user.username}</MenuItem>)
 										}
 									})}
 								</Select>
@@ -386,8 +386,8 @@ function PayPerson(props) {
 						>
 
 							{groupMembers.map(function (member) {
-								if (user.username != member.username) {
-									return (<MenuItem value={member}>{member.username}</MenuItem>)
+								if (user.username != member.user.username) {
+									return (<MenuItem value={member.user}>{member.user.username}</MenuItem>)
 								}
 							})}
 						</Select>
