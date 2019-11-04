@@ -36,7 +36,7 @@ export function CustomHeader(props) {
   return (
     <AppBar position={"static"}>
       <Toolbar>
-        <img className={classes.headerLogo} height={30} alt={'logo'} src={require('./imgs/logo.svg')}/>
+        <img className={classes.headerLogo} height={30} alt={'logo'} src={require('./imgs/logo.svg')} />
         <Box
           fontFamily={"mistral"}
           fontSize={"h4.fontSize"}
@@ -61,52 +61,51 @@ export function CustomHeader(props) {
           {value => {
             if (value.userName) {
               const buttonAccount = (
-                  <CustomButton
-                      onClick={() => {
-                        history.push("/accountsview");
-                      }}
-                  >
-                    Account
+                <CustomButton
+                  onClick={() => {
+                    history.push("/accountsview");
+                  }}
+                >
+                  Account
                   </CustomButton>
               )
               const buttonLogout = (
-                  <CustomButton
-                      onClick={() => {
-                        value.userLogin(undefined);
-                        history.push("/");
-                      }}
-                  >
-                    Logout
+                <CustomButton
+                  onClick={() => {
+                    value.userLogin(undefined);
+                    history.push("/");
+                  }}
+                >
+                  Logout
                   </CustomButton>
               )
-              if (history.location.pathname === '/accountsview'){
+              if (history.location.pathname === '/accountsview' || history.location.pathname === '/admin') {
                 return (
-                    <div>
-                      {buttonLogout}
-                    </div>
+                  <div>
+                    {buttonLogout}
+                  </div>
                 )
               }
               else {
                 return (
-                    <div>
-                      {buttonAccount}
-                      {buttonLogout}
-                    </div>
+                  <div>
+                    {buttonAccount}
+                    {buttonLogout}
+                  </div>
                 )
               }
             } else {
-              if (history.location.pathname === '/login')
-              {
-                return <div/>
+              if (history.location.pathname === '/login') {
+                return <div />
               }
               else {
                 return (
-                    <CustomButton
-                        onClick={() => {
-                          history.push("/login");
-                        }}
-                    >
-                      Register/Login
+                  <CustomButton
+                    onClick={() => {
+                      history.push("/login");
+                    }}
+                  >
+                    Register/Login
                     </CustomButton>
                 );
               }

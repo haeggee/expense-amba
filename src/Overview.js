@@ -4,14 +4,11 @@ import { CustomButton } from "./GUI/Theme";
 import PaymentDialog from "./GUI/PaymentDialog";
 import CreateGroupDialog from "./GUI/CreateGroupDialog"
 import GroupList from './GroupList';
-import { Fab, Box, Typography, AppBar, Tabs, Tab, Paper, Grid, Divider, ListItem, Container, Card, Button, Menu, MenuItem, makeStyles }
+import { Fab, Box, Typography, AppBar, Tabs, Tab, Paper, Grid, Divider, ListItem, Container, Card, Button, makeStyles }
   from '@material-ui/core';
 import Balances from './Balances';
 import BillList from './BillList';
 import Bill from './Bills';
-import User from './User';
-import Debtor from './Debtor';
-import Group from './Group';
 import { CustomHeader } from "./GUI/Header"
 import AddIcon from '@material-ui/icons/Add'
 import CreateAddMemberDialog from './GUI/AddMemberDialog';
@@ -73,7 +70,7 @@ const groupMembersString = function (group, currentUser) {
 
   for (let i = 0; i < group.groupMembers.length; i++) {
     // all usernames are unique, so we can use them to compare users
-    if (currentUser.username != group.groupMembers[i].user.username) {
+    if (currentUser.username !== group.groupMembers[i].user.username) {
       // only add to string if this is not the current user
       text += ", " + group.groupMembers[i].user.name;
     }
