@@ -17,8 +17,14 @@ export default class User {
 		this.password = password
 		this.name = name
 		this.email = email
-		
+		this.groups = []
 		// add more fields here such as account balance and which groups this user is in later
 	}
+
+	_addToGroup(group){
+		this.groups.push(group)
+	}
+
+
 	
 }

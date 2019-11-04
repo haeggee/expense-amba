@@ -29,7 +29,7 @@ export function AccountsCard(props) {
 	const type = props.type
 	
 	return (
-		<Card className={classes.card} raised="true">
+		<Card className={classes.card} raised={true}>
 			<CardContent>
 				<h4>{ title }</h4>
 				<TextField disabled={!editable} type={type} fullWidth defaultValue={value} variant="outlined" />

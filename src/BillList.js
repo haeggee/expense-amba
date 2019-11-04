@@ -31,6 +31,10 @@ const useStyles = makeStyles(theme => ({
 export function BillList(props) {
     const classes = useStyles();
     const { group, value, index } = props;
+
+    const deleteBill = bill => {
+        
+    }
     return (
         <div className={classes.container} hidden={index !== value}>
             {group.bills.length !== 0 ? group.bills.map((bill) => {
@@ -41,27 +45,25 @@ export function BillList(props) {
                             aria-controls="panel1a-content"
                         >
                             <Typography className={classes.firstheading}>
-                                {bill.title}
-                                <div className={classes.subtitle}>paid by: <strong>{bill.payer.name}</strong></div>
+                                {bill.title} <br/>
+                                <span className={classes.subtitle}>paid by: <strong>{bill.payer.name}</strong></span>
                             </Typography>
                             <Typography className={classes.secondheading}>
-                                CAD${bill.amount}
-                                <div className={classes.subtitle}>{bill.date.toDateString()}</div>
+                                CAD${bill.amount} <br/>
+                                <span className={classes.subtitle}>{bill.date.toDateString()}</span>
                             </Typography>
                         </ExpansionPanelSummary>
                         <ExpansionPanelDetails>
                             <Divider />
                             <Typography className={classes.description}> Paid for: {/*bill.toPayeesString()*/} </Typography>
-                            <List>{bill.payees.map((payee) => {
+                            <ul>{bill.payees.map((payee, index) => {
                                 return (
-                                    <ListItem>
-                                        <ListItemText>
-                                            {payee.name}: CAD${(bill.amount / bill.payees.length).toFixed(2)}
-                                        </ListItemText>
-                                    </ListItem>
+                                    <li>
+                                        {payee.name}: CAD${(bill.amount / bill.payees.length).toFixed(2)}
+                                    </li>
                                 )
                             })}
-                            </List>
+                            </ul>
                         </ExpansionPanelDetails>
                         <ExpansionPanelActions>
                             <Button> Edit </Button>
@@ -75,7 +77,7 @@ export function BillList(props) {
                 </Typography>
                 </Container>
             }
-        </div>)
+        </div >)
 
 }
 

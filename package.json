@@ -6,19 +6,20 @@
     "@date-io/date-fns": "^1.3.11",
     "@material-ui/core": "^4.5.2",
     "@material-ui/icons": "^4.5.1",
+    "@material-ui/lab": "^4.0.0-alpha.30",
     "@material-ui/pickers": "^3.2.7",
+    "apexcharts": "^3.6.6",
     "date-fns": "^2.6.0",
     "material-ui-icons": "^1.0.0-beta.36",
     "react": "^16.10.2",
+    "react-apexcharts": "^1.3.3",
     "react-dom": "^16.10.2",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.2.0",
     "react-select": "^3.0.8",
     "react-uid": "^2.2.0",
     "reactide-config": "^1.0.2",
-    "webfontloader": "^1.6.28",
-    "react-apexcharts": "^1.3.3",
-    "apexcharts": "^3.6.6"
+    "webfontloader": "^1.6.28"
   },
   "scripts": {
     "start": "react-scripts start",

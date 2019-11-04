@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useContext} from "react"
 import "./App.css";
 import { CustomButton } from "./GUI/Theme";
 import PaymentDialog from "./GUI/PaymentDialog";
@@ -17,6 +17,8 @@ import AddIcon from '@material-ui/icons/Add'
 import CreateAddMemberDialog from './GUI/AddMemberDialog';
 import DeleteIcon from '@material-ui/icons/Delete'
 import DeleteGroupDialog from './GUI/DeleteGroupDialog'
+import ServerInterface from './ServerInterface'
+import {UserContext} from "./UserContext"
 
 const useStyles = makeStyles(theme => ({
   gridcontainer: {
@@ -60,6 +62,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+
 /**
  * Returns a string of all the members of a group.
  * @param {group} the group object
@@ -101,24 +104,11 @@ function a11yProps(index) {
 }
 
 export function Overview(props) {
-  /* MOCK DATA ----------------------------*/
-
-  // list of current members of the systems, here we should get the data from the server later
-  // A possible way of implementing it?
-  const members = [new User("Alice`s username", "password", "Alice", "Alice.gmail.com"), new User("Bob`s username", "password", "Bob", "Bob.gmail.com"), new User("Jame`s username", "password", "James", "James.gmail.com"),
-  new User("Maria`s username", "password", "Maria", "Maria.gmail.com"), new User("Thoma`s username", "password", "Thomas", "Thomas.gmail.com"), new User("Jennifer`s username", "password", "Jennifer", "Jennifer.gmail.com")]
-  const billsGroup1 =
-    [new Bill(0, "Uber", 20.0, new Date('2019-10-01'), members[0], members),
-    new Bill(1, "Dinner", 35.0, new Date('2019-10-12'), members[1], [members[0], members[1], members[2]]),
-    new Bill(2, "Movie tickets", 15.0, new Date('2019-10-25'), members[4], [members[4], members[0], members[5]])]
-  const debtsGroup1 = [new Debtor(members[0], 0), new Debtor(members[1], -20), new Debtor(members[2], 15), new Debtor(members[3], 3.33), new Debtor(members[4], -6.67), new Debtor(members[5], 8.33)]
-  let groups = [new Group(0, "Family", members, billsGroup1, debtsGroup1), new Group(1, "TO", [members[0], members[2], members[3], members[4], members[5]], [], []), new Group(2, "Team 42", [members[0], members[1]], [], [])]
 
   // Let this be the current user.
-  const user = members[0];
-
-  /* END OF MOCK DATA ----------------------*/
-
+  const value = useContext(UserContext)
+  const user = value.user // current user
+  const members = ServerInterface.getAllUsers()
 
   // openDeleteGroup indicates whether or not to open the delete group dialog
 
@@ -221,41 +211,24 @@ export function Overview(props) {
    */
   function createBillHandler(group, title, amount, members, date) {
 
-    // create array of debtors if it does not already exist
-    if (group.debtors.length == 0) {
-      for (let i = 0; i < group.groupMembers.length; i++) {
-        group.debtors.push(new Debtor(group.groupMembers[i], 0));
-      }
-    }
     // amount each member has to pay to current user (the + converts this to a integer)
     const owed = +(amount / (members.length)).toFixed(2)
 
-    for (let i = 0; i < group.debtors.length; i++) {
-      // special case for current user: he is owed money 
-      if (group.debtors[i].username == user.username) {
-        // subtract owed because he doesnt have to owe money to himself
-        //group.debtors[i].amount -= (+amount - owed);
-        //continue;
-      }
-      let participant = false
-      // determine if this debtor took part in the bill
-      for (let j = 0; j < members.length; j++) {
-        if (members[j].username == group.debtors[i].username) { participant = true; }
-      }
-	  
+    for (let i = 0; i < group.groupMembers.length; i++) {
+
 	  // this debtor is the user
-	  if (group.debtors[i].username == user.username) {
+	  if (group.groupMembers[i].username === user.username) {
 		// user participated
-		if (participant) {
+		if (members.includes(user)) {
 			// subtract owed because he doesnt have to owe money to himself
-			group.debtors[i].amount -= (+amount - owed);
+			group.groupMembers[i].debt -= (+amount - owed);
 		} else {
 			// user is not paying for himself
-			group.debtors[i].amount -= (+amount);
+			group.groupMembers[i].debt -= (+amount);
 		}
 	  } else {
-		if (participant) {
-		  group.debtors[i].amount += owed;
+		if (members.includes(group.groupMembers[i])) {
+		  group.groupMembers[i].debt += owed;
 		}
 	  }
     }
@@ -265,18 +238,18 @@ export function Overview(props) {
 
     // add bill to group
     group.bills.push(bill);
-    console.log(currentGroups)
+    // console.log(currentGroups)
   }
-  
+
   /**
    * Handler that pays people.
    * Creates Bill doing so.
    */
   function payPersonHandler(group, title, amount, members, date) {
-	createBillHandler(group, title, amount, members, date);
+    createBillHandler(group, title, amount, members, date);
   }
 
-  const [currentGroups, setGroups] = React.useState(groups);
+  const [currentGroups, setGroups] = React.useState(user.groups);
 
   /*
   index of the current group
@@ -386,8 +359,8 @@ export function Overview(props) {
                   group={currentGroups[selectedIndex]}
                   currentUser={user}
                   createBillHandler={createBillHandler}
-				  payPersonHandler={payPersonHandler}
-				/>
+                  payPersonHandler={payPersonHandler}
+                />
                 <CreateGroupDialog
                   open={openGroup}
                   closeHandler={closeGroupDialog}
