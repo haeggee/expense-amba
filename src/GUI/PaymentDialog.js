@@ -28,7 +28,7 @@ import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/picker
 import DateFnsUtils from '@date-io/date-fns'
 import { CustomHeader } from "./Header"
 import Box from "@material-ui/core/Box";
-
+import FormHelperText from '@material-ui/core/FormHelperText'
 
 /*
 Some styles for this part only
@@ -82,22 +82,17 @@ function PayBill(props) {
 
 	const closeHandler = props.closeHandler
 
-	const [billValues, setBillValues] = React.useState({
-		title: '',
-		amount: '',
-	})
-
-	const handleBillChange = prop => event => {
-		setBillValues({ ...setBillValues, [prop]: event.target.value });
-	}
-
 	const [title, setTitle] = React.useState("")
+	const [titleError, setTitleError] = React.useState(false)
+	const [titleErrorMessage, setTitleErrorMessage] = React.useState("")
 
 	const handleTitleChange = event => {
 		setTitle(event.target.value)
 	}
 
-	const [amount, setAmount] = React.useState('')
+	const [amount, setAmount] = React.useState(0)
+	const [amountError, setAmountError] = React.useState(false)
+	const [amountErrorMessage, setAmountErrorMessage] = React.useState("")
 
 	const handleAmountChange = event => {
 		setAmount(event.target.value)
@@ -112,16 +107,45 @@ function PayBill(props) {
 	// list of users in this bill
 	const [members, setMembers] = React.useState([]);
 
+	const [membersError, setMembersError] = React.useState(false)
+	const [membersErrorMessage, setMemberErrorsMessage] = React.useState("")
+
 	const handleMembersChange = event => {
 		setMembers(event.target.value);
 	};
 
 	// Create the new bill with given info
 	function acceptButtonPressed() {
-		const billMembers = members;
-		// console.log(group)
-		createBillHandler(group, title, amount, billMembers, selectedDate);
-		closeHandler();
+		let otherUserIncluded = false;
+		for (let i = 0; i < members.length; i++) {
+			if (members[i].username !== currentUser.username) {
+				otherUserIncluded = true;
+			}
+		}
+		if (title.length !== 0 && amount > 0 && otherUserIncluded) {
+			const billMembers = members;
+			createBillHandler(group, title, amount, billMembers, selectedDate);
+			closeHandler();
+		} else {
+			setTitleError(true);
+			setTitleErrorMessage("Title must have at least 1 character")
+			setAmountError(true);
+			setAmountErrorMessage("Value must be greater than 0")
+			setMembersError(true);
+			setMemberErrorsMessage("Must include at least one other user")
+			if (title.length !== 0) {
+				setTitleError(false);
+				setTitleErrorMessage("")
+			}
+			if (amount > 0) {
+				setAmountError(false);
+				setAmountErrorMessage("")
+			}
+			if (otherUserIncluded) {
+				setMembersError(false);
+				setMemberErrorsMessage("")
+			}
+		}
 	}
 
 	const ITEM_HEIGHT = 48;
@@ -141,8 +165,10 @@ function PayBill(props) {
 				<Grid container>
 					<Grid item xs={6}>
 						<h4>Title</h4>
-						<TextField className={classes.field} variant="outlined"
-							onChange={handleTitleChange} placeholder="Enter title for the bill" />
+						<TextField error={titleError}
+							className={classes.field} variant="outlined"
+							onChange={handleTitleChange} placeholder="Enter title for the bill"
+							helperText={titleErrorMessage} />
 					</Grid>
 					<Grid item xs={6} >
 						<h4>Date</h4>
@@ -163,12 +189,14 @@ function PayBill(props) {
 				</Grid>
 			</CardContent>
 			<CardContent>
-			<Grid container>
+				<Grid container>
 					<Grid item xs={6}>
 						<h4>Payment Amount</h4>
 
-						<TextField className={classes.field} variant="outlined"
+						<TextField error={amountError}
+							className={classes.field} variant="outlined"
 							type='number' onChange={handleAmountChange}
+							helperText={amountErrorMessage}
 							InputProps={{
 								startAdornment: <InputAdornment position="start">CAD$</InputAdornment>,
 							}} />
@@ -177,7 +205,7 @@ function PayBill(props) {
 					<Grid item xs={6}>
 						<h4>Participants</h4>
 						<form autoComplete="off">
-							<FormControl className={classes.field}>
+							<FormControl error={membersError} className={classes.field}>
 								<InputLabel htmlFor="select-multiple-chip">Click to add users</InputLabel>
 								<Select
 									multiple
@@ -199,6 +227,8 @@ function PayBill(props) {
 										}
 									})}
 								</Select>
+
+								<FormHelperText id="my-helper-text">{membersErrorMessage}</FormHelperText>
 							</FormControl>
 						</form>
 					</Grid>
@@ -268,23 +298,23 @@ function PayPerson(props) {
 	const handleOpen = () => {
 		setOpen(true);
 	};
-	
+
 	// Create the new bill with given info
 	function acceptButtonPressed() {
 		payPersonHandler(group, "Reimbursement from " + user.name + " to " + name.name, amount, [name], selectedDate);
 		closeHandler();
 		console.log(name)
 	}
-	
+
 	const ITEM_HEIGHT = 48;
 	const ITEM_PADDING_TOP = 8;
 	const MenuProps = {
-	PaperProps: {
-	  style: {
-		maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-		width: 250,
-	  },
-	},
+		PaperProps: {
+			style: {
+				maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+				width: 250,
+			},
+		},
 	};
 
 	return (
@@ -327,7 +357,7 @@ function PayPerson(props) {
 							id="select-outlined"
 							labelWidth={labelWidth}
 							renderValue={
-								function(selected) {
+								function (selected) {
 									return (<Chip key={selected.username} label={selected.name} className={classes.chip} />)
 								}
 							}
@@ -380,7 +410,7 @@ export default function PaymentDialog(props) {
 
 	// the current user that is logged in
 	const user = props.currentUser;
-	
+
 	const payPersonHandler = props.payPersonHandler
 
 	return (
