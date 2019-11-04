@@ -23,6 +23,8 @@ export default class ServerInterface {
 
     static _largestGroupID = 2
 
+    static _largestBillID = 2
+
     static getNextGroupID(){
         this._largestGroupID ++
         return this._largestGroupID
@@ -56,6 +58,17 @@ export default class ServerInterface {
 
     static numGroups(){
         return this.groupList.length
+    }
+
+    static requestBillCreation(group, title, amount, date, payer, payees){
+        this._largestBillID ++
+        const bill = new Bill(this._largestBillID, title, amount, date, payer, payees, group)
+        group.addBill(bill)
+        return bill
+    }
+
+    static requestBillDeletion(bill){
+        bill.group.removeBill(bill)
     }
 
 }

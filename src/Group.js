@@ -14,7 +14,7 @@ export default class Group {
     constructor(groupID, name, members, bills, debts) {
         this.groupID = groupID
         this.name = name
-        this.bills = bills
+        this.bills = []
         this.groupMembers = []
         for (let i = 0; i < members.length; i++) {
         	if (debts) {
@@ -27,6 +27,11 @@ export default class Group {
         // add more fields here later as needed
         for (let i = 0; i < members.length; i++) {
             this.groupMembers[i].user._addToGroup(this)
+        }
+        if (bills) {
+            for (let i = 0; i < bills.length; i++) {
+                this.addBill(bills[i])
+            }
         }
     }
 
@@ -51,8 +56,41 @@ export default class Group {
     }
 
     addBill(bill) {
+        // amount each member has to pay to current user (the + converts this to a integer)
+        const owed = +(bill.amount / (bill.payees.length)).toFixed(2)
+
+        for (let i = 0; i < this.groupMembers.length; i++) {
+            const member = this.groupMembers[i]
+            if (member.user === bill.payer) {
+                member.debt -= +bill.amount
+            }
+            if (bill.payees.includes(member.user)){
+                member.debt += owed
+            }
+            member.debt = Math.round(member.debt*100) / 100
+        }
+
+        bill.group = this
     	this.bills.push(bill)
+
 	}
+
+	removeBill(bill) {
+        const owed = +(bill.amount / (bill.payees.length)).toFixed(2)
+
+        for (let i = 0; i < this.groupMembers.length; i++) {
+            const member = this.groupMembers[i]
+            if (member.user === bill.payer) {
+                member.debt += +bill.amount
+            }
+            if (bill.payees.includes(member.user)){
+                member.debt -= owed
+            }
+            member.debt = Math.round(member.debt*100) / 100
+        }
+
+        this.bills = this.bills.filter(value => value !== bill)
+    }
 }
 
 class GroupMember {

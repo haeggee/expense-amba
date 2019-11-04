@@ -1,7 +1,8 @@
-import React from 'react';
+import React, {useState} from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { Container, Button, Divider, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, ExpansionPanelActions, Typography } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
+import ServerInterface from "./ServerInterface"
 
 const useStyles = makeStyles(theme => ({
     container: {
@@ -32,8 +33,13 @@ export function BillList(props) {
     const classes = useStyles();
     const { group, value, index } = props;
 
-    const deleteBill = bill => {
-        
+    const [changed, setChanged] = useState(false)
+
+    const deleteBillHandler = bill => {
+        return () => {
+            ServerInterface.requestBillDeletion(bill)
+            setChanged(!changed)
+        }
     }
     return (
         <div className={classes.container} hidden={index !== value}>
@@ -66,8 +72,7 @@ export function BillList(props) {
                             </ul>
                         </ExpansionPanelDetails>
                         <ExpansionPanelActions>
-                            <Button> Edit </Button>
-                            <Button color="primary"> Delete </Button>
+                            <Button onClick={deleteBillHandler(bill)} color="primary"> Delete </Button>
                         </ExpansionPanelActions>
                     </ExpansionPanel>
                 )

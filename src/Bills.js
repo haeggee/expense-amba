@@ -13,13 +13,14 @@ export default class Bill {
 	 * @param {payer} The User paying.
 	 * @param {payees} Array of users receiving the payment.
 	 */
-	constructor(billID, title, amount, date, payer, payees) {
+	constructor(billID, title, amount, date, payer, payees, group) {
 		this.billID = billID
 		this.title = title
 		this.amount = amount
 		this.date = date
 		this.payer = payer
 		this.payees = payees
+		this.group = group
 	}
 
 	toPayeesString() {

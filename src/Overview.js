@@ -78,20 +78,6 @@ const groupMembersString = function (group, currentUser) {
   return text;
 };
 
-/**
- * Generates a unique id for a bill.
- * @param {group} The group that the current user is in.
- */
-const generateBillID = function (group) {
-  let id = 0;
-  for (let i = 0; i < group.bills.length; i++) {
-    if (group.bills[i].billID <= id) {
-      id = group.bills[i].billID + 1;
-    }
-  }
-  return id;
-}
-
 
 function a11yProps(index) {
   return {
@@ -207,35 +193,8 @@ export function Overview(props) {
    * @param {date} The date this bill is created on. 
    */
   function createBillHandler(group, title, amount, members, date) {
-
-    // amount each member has to pay to current user (the + converts this to a integer)
-    const owed = +(amount / (members.length)).toFixed(2)
-
-    for (let i = 0; i < group.groupMembers.length; i++) {
-
-	  // this debtor is the user
-	  if (group.groupMembers[i].user.username === user.username) {
-		// user participated
-		if (members.includes(user)) {
-			// subtract owed because he doesnt have to owe money to himself
-			group.groupMembers[i].debt -= (+amount - owed);
-		} else {
-			// user is not paying for himself
-			group.groupMembers[i].debt -= (+amount);
-		}
-	  } else {
-		if (members.includes(group.groupMembers[i])) {
-		  group.groupMembers[i].debt += owed;
-		}
-	  }
-    }
-
-    // now create the bill
-    const bill = new Bill(generateBillID(group), title, amount, date, user, members);
-
-    // add bill to group
-    group.bills.push(bill);
-    // console.log(currentGroups)
+    ServerInterface.requestBillCreation(group, title, amount, date, user, members)
+    console.log(group)
   }
 
   /**
