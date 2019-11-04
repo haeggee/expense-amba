@@ -2,7 +2,6 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
-import Divider from '@material-ui/core/Divider';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
@@ -12,7 +11,6 @@ import Slide from '@material-ui/core/Slide';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import TextField from '@material-ui/core/TextField';
 import { CustomButton } from "./Theme";
@@ -23,10 +21,9 @@ import Chip from '@material-ui/core/Chip';
 import Input from '@material-ui/core/Input';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
-import { InputAdornment, Menu } from '@material-ui/core';
+import { InputAdornment } from '@material-ui/core';
 import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
 import DateFnsUtils from '@date-io/date-fns'
-import { CustomHeader } from "./Header"
 import Box from "@material-ui/core/Box";
 import FormHelperText from '@material-ui/core/FormHelperText'
 
@@ -222,7 +219,7 @@ function PayBill(props) {
 									MenuProps={MenuProps}>
 									<MenuItem key={currentUser.username} value={currentUser}>You</MenuItem>
 									{groupMembers.map(function (user) {
-										if (user.username != currentUser.username) {
+										if (user.username !== currentUser.username) {
 											return (<MenuItem key={user.username} value={user}>{user.username}</MenuItem>)
 										}
 									})}
@@ -386,7 +383,7 @@ function PayPerson(props) {
 						>
 
 							{groupMembers.map(function (member) {
-								if (user.username != member.username) {
+								if (user.username !== member.username) {
 									return (<MenuItem value={member}>{member.username}</MenuItem>)
 								}
 							})}
