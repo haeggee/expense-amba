@@ -261,6 +261,7 @@ export function LoginScreen(props) {
           <TextField
             id="outlined-helperText"
             label="Password"
+            type="password"
             className={classes.textField}
             onChange={_onSignUpPasswordClick}
             helperText=""
@@ -300,6 +301,7 @@ export function LoginScreen(props) {
           <TextField
             id="outlined-helperText"
             label="Password"
+            type="password"
             className={classes.textField}
             onChange={_onLoginPasswordClick}
             helperText=""
