@@ -61,7 +61,7 @@ function DialogContents(props) {
     // get members that are not in the group already
     const filteredUsers = users.filter(user => {
         for (let i = 0; i < group.groupMembers.length; i++) {
-            if (group.groupMembers[i].username === user.username) {
+            if (group.groupMembers[i].user.username === user.username) {
                 return false;
             }
         }

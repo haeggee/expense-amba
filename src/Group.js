@@ -59,8 +59,6 @@ class GroupMember {
     constructor(user, debt) {
         this.user = user
         this.debt = debt ? debt : 0
-		this.username = user.username
-		this.name = user.name
     }
 
 }
