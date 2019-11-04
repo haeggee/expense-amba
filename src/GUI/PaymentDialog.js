@@ -259,11 +259,16 @@ function PayPerson(props) {
 	const user = props.currentUser;
 
 	// When user selects person from the menu, display it on the text input.
-	const [name, setName] = React.useState('');
+	const [name, setName] = React.useState(undefined);
+	const [nameError, setNameError] = React.useState(false)
+	const [nameErrorMessage, setNameErrorMessage] = React.useState("")
 	//open and close menu
 	const [open, setOpen] = React.useState(false);
 	// amount input
 	const [amount, setAmount] = React.useState(undefined);
+
+	const [amountError, setAmountError] = React.useState(false)
+	const [amountErrorMessage, setAmountErrorMessage] = React.useState("")
 
 	// state of label of name input
 	const inputLabel = React.useRef(null);
@@ -301,9 +306,23 @@ function PayPerson(props) {
 
 	// Create the new bill with given info
 	function acceptButtonPressed() {
-		payPersonHandler(group, "Reimbursement from " + user.name + " to " + name.name, amount, [name], selectedDate);
-		closeHandler();
-		console.log(name)
+		if (name !== undefined && amount > 0) {
+			payPersonHandler(group, "Reimbursement from " + user.name + " to " + name.name, amount, [name], selectedDate);
+			closeHandler();
+		} else {
+			setAmountError(true);
+			setAmountErrorMessage("Value must be greater than 0")
+			setNameError(true)
+			setNameErrorMessage("Must pick one member")
+			if (name !== undefined) {
+				setNameError(false)
+				setNameErrorMessage("")
+			}
+			if (amount > 0) {
+				setAmountError(false);
+				setAmountErrorMessage("")
+			}
+		}
 	}
 
 	const ITEM_HEIGHT = 48;
@@ -339,13 +358,15 @@ function PayPerson(props) {
 				<Box flexDirection="row">
 
 					<h4>Payment amount</h4>
-					<TextField variant="outlined" className={classes.leftComponent}
+					<TextField error={amountError}
+						variant="outlined" className={classes.leftComponent}
 						type='number' value={amount} onChange={handleAmountChange}
+						helperText={amountErrorMessage}
 						InputProps={{
 							startAdornment: <InputAdornment position="start">CAD$</InputAdornment>,
 						}} />
 
-					<FormControl className={classes.rightComponent} variant="outlined">
+					<FormControl error={nameError} className={classes.rightComponent} variant="outlined">
 						<InputLabel ref={inputLabel}
 							htmlFor="select-outlined">Name</InputLabel>
 						<Select
@@ -369,8 +390,9 @@ function PayPerson(props) {
 									return (<MenuItem value={member}>{member.username}</MenuItem>)
 								}
 							})}
-
 						</Select>
+						<FormHelperText id="my-helper-text">{nameErrorMessage}</FormHelperText>
+							
 					</FormControl>
 				</Box>
 			</CardContent>
