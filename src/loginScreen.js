@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import "./App.css";
-import { Box, makeStyles, Divider, Container } from "@material-ui/core";
+import { Box, makeStyles, Divider } from "@material-ui/core";
 import { CustomHeader } from "./GUI/Header";
 import { CustomButton } from "./GUI/Theme";
 import Grid from "@material-ui/core/Grid";
@@ -60,7 +60,6 @@ export function LoginScreen(props) {
 
   //Relevant functions for the page
   const _onLoginUsernameClick = e => {
-    let a = params.loginUsername;
     let b = params.loginPassword;
     let c = params.signUpUsername;
     let d = params.signUpEmail;
@@ -78,7 +77,6 @@ export function LoginScreen(props) {
 
   const _onLoginPasswordClick = e => {
     let a = params.loginUsername;
-    let b = params.loginPassword;
     let c = params.signUpUsername;
     let d = params.signUpEmail;
     let f = params.signUpPassword;
@@ -96,7 +94,6 @@ export function LoginScreen(props) {
   const _onSignUpUsernameClick = e => {
     let a = params.loginUsername;
     let b = params.loginPassword;
-    let c = params.signUpUsername;
     let d = params.signUpEmail;
     let f = params.signUpPassword;
     let g = params.signUpName;
@@ -115,7 +112,6 @@ export function LoginScreen(props) {
     let b = params.loginPassword;
     let c = params.signUpUsername;
     let d = params.signUpEmail;
-    let f = params.signUpPassword;
     let g = params.signUpName;
     setParams({
       loginUsername: a,
@@ -131,7 +127,6 @@ export function LoginScreen(props) {
     let a = params.loginUsername;
     let b = params.loginPassword;
     let c = params.signUpUsername;
-    let d = params.signUpEmail;
     let f = params.signUpPassword;
     let g = params.signUpName;
     setParams({
@@ -150,7 +145,6 @@ export function LoginScreen(props) {
     let c = params.signUpUsername;
     let d = params.signUpEmail;
     let f = params.signUpPassword;
-    let g = params.signUpName;
     setParams({
       loginUsername: a,
       loginPassword: b,
@@ -191,7 +185,7 @@ export function LoginScreen(props) {
         setError({ errorText: 'No such user exists' })
         return
       }
-      if (params.loginPassword != userFound.password) {
+      if (params.loginPassword !== userFound.password) {
         setError({ errorText: 'Incorrect Password' })
       }
     }

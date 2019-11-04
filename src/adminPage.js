@@ -1,8 +1,7 @@
-import React, { useContext } from "react";
+import React from "react";
 import "./App.css";
-import { Box, makeStyles, Divider, Container } from "@material-ui/core";
+import { makeStyles, Divider } from "@material-ui/core";
 import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import { CustomHeader } from "./GUI/Header";
 import { CustomButton } from "./GUI/Theme";
@@ -12,13 +11,7 @@ import Footer from "./GUI/Footer";
 import { Typography } from '@material-ui/core';
 import User from './User';
 import Group from './Group';
-import Chip from '@material-ui/core/Chip';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import Input from '@material-ui/core/Input';
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
-import { InputAdornment, Menu } from '@material-ui/core';
+
 
 
 const cardStyle = makeStyles({
@@ -75,30 +68,68 @@ export function AdminPage(props) {
     const [UserModifyText, setUserModifyText] = React.useState({ a: "" })
     const [GroupErrorText, setGroupErrorText] = React.useState({ a: "" })
 
-    const [setUser, setsetUser] = React.useState("")
+    const [userClicked, setuserClicked] = React.useState({ username: "" });
+    const [groupClicked, setgroupClicked] = React.useState({ groupName: "" });
 
     // Functions handling clicks
     const _handleUserClick = e => {
-        setUserErrorText({ a: "Deleted the User" })
-        setUserModifyText({ a: "" })
-        setGroupErrorText({ a: "" })
+        let givenUsername = userClicked.username
+        let index = null;
+        for (let i = 0; i < userList.length; i++) {
+            if (userList[i].username === givenUsername) {
+                index = i
+            }
+        }
+        if (index != null) {
+            let newUserL = userList.splice(index, 1)
+            setUserList(newUserL)
+            setUserErrorText({ a: "Deleted the User" })
+            setUserModifyText({ a: "" })
+            setGroupErrorText({ a: "" })
+        }
+        else {
+            setUserErrorText({ a: "The user doesn't exist" })
+            setUserModifyText({ a: "" })
+            setGroupErrorText({ a: "" })
+        }
     }
 
     const _handleGroupClick = e => {
-        setGroupErrorText({ a: "Deleted the Group" })
-        setUserErrorText({ a: "" })
-        setUserModifyText({ a: "" })
+
+        const givenGrpName = groupClicked.groupName
+        let index = null;
+        for (let i = 0; i < groupList.length; i++) {
+            if (groupList[i].name === givenGrpName) {
+                index = i
+            }
+        }
+        if (index != null) {
+            let newGroupL = groupList.splice(index, 1)
+            setGroupList(newGroupL)
+            setGroupErrorText({ a: "Deleted the Group" })
+            setUserErrorText({ a: "" })
+            setUserModifyText({ a: "" })
+        }
+        else {
+            setGroupErrorText({ a: "The group doesn't exist" })
+            setUserErrorText({ a: "" })
+            setUserModifyText({ a: "" })
+        }
     }
 
     const _handleModifyClick = e => {
         setUserModifyText({ a: "Modified the User" })
         setUserErrorText({ a: "" })
         setGroupErrorText({ a: "" })
+        // Functionality to be added - Gets the users by server call and modifies the values
     }
 
-    const _handleUsersChange = e => {
-        let userSelect = e.target.value;
-        setsetUser(userSelect)
+    const DeleteTextHandler = e => {
+        setuserClicked({ username: e.target.value })
+    }
+
+    const GroupDeleteHandler = e => {
+        setgroupClicked({ groupName: e.target.value })
     }
 
     //Returned DOM
@@ -123,7 +154,7 @@ export function AdminPage(props) {
 
                         <br />
                         <h4 className={styles.alignLeft}> User Name</h4>
-                        <TextField fullWidth variant="outlined" />
+                        <TextField fullWidth variant="outlined" onChange={DeleteTextHandler} />
                         <CustomButton className={styles.buttonStyle} onClick={_handleUserClick}>Delete User Account</CustomButton>
                         <Typography color='error'>
                             {UserErrorText.a}
@@ -136,7 +167,7 @@ export function AdminPage(props) {
                         <Divider />
                         <br />
                         <h4 className={styles.alignLeft}> Group name</h4>
-                        <TextField fullWidth variant="outlined" />
+                        <TextField fullWidth variant="outlined" id={GroupDeleteHandler} />
                         <CustomButton className={styles.buttonStyle} onClick={_handleGroupClick}>Delete Group Account</CustomButton>
                         <Typography color='error'>
                             {GroupErrorText.a}
