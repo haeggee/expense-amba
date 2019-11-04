@@ -24,12 +24,13 @@ const useStyle = makeStyles(theme => ({
     },
     card: {
         width: '30vw',
-        height: '30vh'
+        height: '30vh',
+        alignContent: 'center'
     },
     container: {
         width: '100vw',
         direction: 'row',
-        marginBottom: '5vh'
+        marginBottom: '5vh',
     },
     grow: {
         transformOrigin: '0 0 0'
@@ -75,7 +76,7 @@ function Home(props) {
                 </Fade>
             </div>
 
-            <GridContainer>
+            <GridContainer >
                 <GrowGrid item displayOffset={firstRowOffset} timeout={1000}>
                     <StyledCard className={classes.paper}>
                         <Typography variant={"h5"} className={classes.alignCenter}>
@@ -137,7 +138,8 @@ function GridContainer(props) {
     return (
         <Grid container
             alignContent={"flex-start"}
-            direction={'row'}
+            alignItems="center"
+            direction={"row"}
             justify={"center"}
             spacing={10}
             className={classes.container}>

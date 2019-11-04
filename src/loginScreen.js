@@ -34,6 +34,10 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+
+/**
+ * Login screen.
+ */ 
 export function LoginScreen(props) {
 
   //Data for page and user context
@@ -251,6 +255,7 @@ export function LoginScreen(props) {
           <TextField
             id="outlined-helperText"
             label="Password"
+            type="password"
             className={classes.textField}
             onChange={_onSignUpPasswordClick}
             helperText=""
@@ -290,6 +295,7 @@ export function LoginScreen(props) {
           <TextField
             id="outlined-helperText"
             label="Password"
+            type="password"
             className={classes.textField}
             onChange={_onLoginPasswordClick}
             helperText=""
