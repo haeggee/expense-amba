@@ -17,7 +17,8 @@ export default class ServerInterface {
             new Bill(1, "Dinner", 35.0, new Date('2019-10-12'), this.userList[1], [this.userList[0], this.userList[1], this.userList[2]]),
             new Bill(2, "Movie tickets", 15.0, new Date('2019-10-25'), this.userList[4], [this.userList[4], this.userList[0], this.userList[5]])]
 
-    static groupList = [new Group(0, "Family", this.userList, this.billsGroup0, [0,-20,15,3.33,-6.67,8.33]),
+    static groupList = [new Group(0, "Family", this.userList, this.billsGroup0,
+        [0, 0, 0, 0, 0, 0]),
         new Group(1, "TO", [this.userList[0], this.userList[2], this.userList[3], this.userList[4], this.userList[5]], [], []),
         new Group(2, "Team 42", [this.userList[0], this.userList[1]], [], [])]
 

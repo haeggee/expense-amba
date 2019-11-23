@@ -165,28 +165,6 @@ function DialogContents(props) {
 
                         <FormHelperText id="my-helper-text">{noMembersText}</FormHelperText>
                     </FormControl>
-                    {/* Somehow autocomplete feature shows list behind the dialog. commented out
-
-          <Autocomplete
-            multiple
-            options={filteredUsers}
-            getOptionLabel={user => user.username}
-            defaultValue={[]}
-            input={<Input id="select-multiple-chip" />}
-            value={members}
-            onChange={handleMembersChange}
-            filterSelectedOptions
-            renderInput={params => (
-              <TextField
-                {...params}
-                variant="outlined"
-                label="Select Users"
-                placeholder="Username"
-                margin="normal"
-                fullWidth
-              />
-            )}
-          /> */}
                 </form>
             </CardContent>
             <CardContent>
