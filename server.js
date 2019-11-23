@@ -92,7 +92,7 @@ app.get('/users/logout', (req, res) => {
 
 //***             open question: redirects do not work together with react-router-dom;
 //***             will probably have to use redirect features of react-router-dom*/
-app.get('/', sessionChecker, (req, res) => {
+app.get('*', sessionChecker, (req, res) => {
 	res.sendFile(__dirname + '/build/index.html')
 })
 
