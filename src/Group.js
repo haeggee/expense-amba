@@ -61,9 +61,11 @@ export default class Group {
 
         for (let i = 0; i < this.groupMembers.length; i++) {
             const member = this.groupMembers[i]
+            // The payer is owed money
             if (member.user === bill.payer) {
                 member.debt -= +bill.amount
             }
+            // payer does not owe money to himself
             if (bill.payees.includes(member.user)){
                 member.debt += owed
             }

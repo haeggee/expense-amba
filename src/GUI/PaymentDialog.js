@@ -111,6 +111,19 @@ function PayBill(props) {
 		setMembers(event.target.value);
 	};
 
+	// Gets the number of decimal places in the number
+	function getDecimalPlaces(number) {
+		let e = 1, places = 0;
+		while (Math.round(number * e) / e !== +number) {
+			e *= 10
+			places++
+			if (places > 2) {
+				return places
+			}
+		}
+		return places
+	}
+
 	// Create the new bill with given info
 	function acceptButtonPressed() {
 		let otherUserIncluded = false;
@@ -124,23 +137,31 @@ function PayBill(props) {
 			createBillHandler(group, title, amount, billMembers, selectedDate);
 			closeHandler();
 		} else {
-			setTitleError(true);
-			setTitleErrorMessage("Title must have at least 1 character")
-			setAmountError(true);
-			setAmountErrorMessage("Value must be greater than 0")
-			setMembersError(true);
-			setMemberErrorsMessage("Must include at least one other user")
-			if (title.length !== 0) {
-				setTitleError(false);
-				setTitleErrorMessage("")
+			setTitleError(false);
+			setTitleErrorMessage("")
+			setAmountError(false);
+			setAmountErrorMessage("")
+			setMembersError(false);
+			setMemberErrorsMessage("")
+
+			if (title.length === 0) {
+				setTitleError(true);
+				setTitleErrorMessage("Title must have at least 1 character")
 			}
-			if (amount > 0) {
-				setAmountError(false);
-				setAmountErrorMessage("")
+			if (amount === 0) {
+				setAmountError(true);
+				setAmountErrorMessage("Value must be greater than 0")
 			}
-			if (otherUserIncluded) {
-				setMembersError(false);
-				setMemberErrorsMessage("")
+			if (!otherUserIncluded) {
+				setMembersError(true);
+				setMemberErrorsMessage("Must include at least one other user")
+			} else if (getDecimalPlaces(amount) > 2) {
+				setAmountError(true);
+				setAmountErrorMessage("Not a valid amount of money")
+			} else if (getDecimalPlaces(amount / members.length) > 2) {
+				// Cant evenly divide up the amount
+				setAmountError(true);
+				setAmountErrorMessage("Can't evenly divide up that amount of money with that many people")
 			}
 		}
 	}
