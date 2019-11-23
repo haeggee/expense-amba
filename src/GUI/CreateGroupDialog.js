@@ -232,7 +232,7 @@ export default function CreateGroupDialog(props) {
                 </AppBar>
 
                 <DialogContents className={classes.dialogPaper} users={users} currentUser={user}
-                                groupCreatedListener={groupCreatedListener} groups={groups}
+                                groupCreatedListener={groupCreatedListener}
                                 closeHandler={closeHandler}/>
 
             </Dialog>

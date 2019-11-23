@@ -12,6 +12,11 @@ const useStyles = makeStyles(theme => ({
 
 // returns string array representing names of all members of the group
 function getMembersNames(group) {
+	// the group is null, so we are not supposed to display anything
+	if (group == null) {
+		return ["No group"];
+	}
+
 	let names = [];
 	for (let i = 0; i < group.groupMembers.length; i ++) {
 		names.push(group.groupMembers[i].user.name);
@@ -19,8 +24,14 @@ function getMembersNames(group) {
 	return names;
 }
 
-// returns array representing amount owed by each group member. The array is ordered in such a way that it corresponds to members in the groupMember array.
+// returns array representing amount owed by each group member. The array is ordered in such a way that it corresponds
+// to members in the groupMember array.
 function getMoneyOwedBy(group) {
+	// the group is null, so we are not supposed to display anything
+	if (group == null) {
+		return [];
+	}
+
 	let money = [];
 	for (let i = 0; i < group.groupMembers.length; i ++) {
 		const debt = group.groupMembers[i].debt
@@ -30,13 +41,18 @@ function getMoneyOwedBy(group) {
 		else {
 			money.push(-debt)
 		}
-
 	}
 	return money;
 }
 
-// returns array representing amount owed to each group member by everyone else in the group. The array is ordered in such a way that it corresponds to members in the groupMember array.
+// returns array representing amount owed to each group member by everyone else in the group. The array is ordered in
+// such a way that it corresponds to members in the groupMember array.
 function getMoneyOwedTo(group) {
+	// the group is null, so we are not supposed to display anything
+	if (group == null) {
+		return [];
+	}
+
 	let money = [];
 	for (let i = 0; i < group.groupMembers.length; i ++) {
 		const debt = group.groupMembers[i].debt
@@ -52,6 +68,11 @@ function getMoneyOwedTo(group) {
 
 // returns the absolute of the maximum amount owed to or owed by anyone in the group. If nothing is owed, return 5
 function getMaxAmountOwed(group) {
+	// the group is null, so we are not supposed to display anything
+	if (group == null) {
+		return 5;
+	}
+
 	return group.groupMembers.reduce((max, member) => {
 		const amount = Math.abs(member.debt)
 		return max > amount ? max : amount

@@ -8,7 +8,6 @@ import { Fab, Box, Typography, AppBar, Tabs, Tab, Paper, Grid, Divider, ListItem
   from '@material-ui/core';
 import Balances from './Balances';
 import BillList from './BillList';
-import Bill from './Bills';
 import { CustomHeader } from "./GUI/Header"
 import AddIcon from '@material-ui/icons/Add'
 import CreateAddMemberDialog from './GUI/AddMemberDialog';
@@ -115,16 +114,14 @@ export function Overview(props) {
   };
 
   const deleteCurrentGroup = () => {
-    // console.log(groups)
     currentGroups.splice(selectedIndex, 1);
     // since the groupid identifies the highlight in in the list, update ids
     for (let i = 0; i < currentGroups.length; i++) {
       currentGroups[i].groupID = i;
     }
     setSelectedIndex(0);
-    console.log(currentGroups)
     closeDeleteGroupDialog();
-  }
+  };
   // openPayments indicates whether or not to open the payments dialog popup
 
   const [openPayments, setopenPayments] = React.useState(false);
@@ -147,15 +144,16 @@ export function Overview(props) {
   const [openGroup, setOpenGroup] = React.useState(false);
 
   /* 
-	Handles whenever create group button is clicked to open dialog to make payment.
-	*/
+  Handles whenever create group button is clicked to open dialog to make payment.
+  */
   const openGroupDialog = () => {
+    console.log("wtf why no open")
     setOpenGroup(true);
   };
 
   /* 
-	Handles closing dialog when Dialog requests it.
-	*/
+  Handles closing dialog when Dialog requests it.
+  */
   const closeGroupDialog = () => {
     setOpenGroup(false);
   };
@@ -164,15 +162,15 @@ export function Overview(props) {
   const [openAddMembers, setOpenAddMembers] = React.useState(false);
 
   /* 
-	Handles whenever create group button is clicked to open dialog to make payment.
-	*/
+  Handles whenever create group button is clicked to open dialog to make payment.
+  */
   const openAddMembersDialog = () => {
     setOpenAddMembers(true)
   };
 
-	/* 
-	Handles closing dialog when Dialog requests it.
-	*/
+  /*
+  Handles closing dialog when Dialog requests it.
+  */
   const closeAddMembersDialog = () => {
     setOpenAddMembers(false)
   };
@@ -231,6 +229,7 @@ export function Overview(props) {
 
   // the styles for the components
   const classes = useStyles();
+
   return (
     <div>
       <CustomHeader />
@@ -262,11 +261,12 @@ export function Overview(props) {
             {/* right Grid that shows the overview and diagram */}
 
             <Grid item xs={8}>
+              {currentGroups.length != 0 ?
               <Paper className={classes.paperGroupOverview}>
                 <AppBar className={classes.AppBar}>
                   <Grid container>
-                    <Grid item xs={10}
-                    ><Typography variant="h6" className={classes.title}>
+                    <Grid item xs={10}>
+                      <Typography variant="h6" className={classes.title}>
                         <strong>{currentGroups[selectedIndex].name}</strong>
                       </Typography>
                       <Typography variant="subtitle1" className={classes.subtitle}>
@@ -320,14 +320,6 @@ export function Overview(props) {
                   createBillHandler={createBillHandler}
                   payPersonHandler={payPersonHandler}
                 />
-                <CreateGroupDialog
-                  open={openGroup}
-                  closeHandler={closeGroupDialog}
-                  users={members}
-                  currentUser={user}
-                  groups={currentGroups}
-                  groupCreatedListener={onGroupCreated}
-                />
                 <CreateAddMemberDialog
                   open={openAddMembers}
                   closeHandler={closeAddMembersDialog}
@@ -339,8 +331,33 @@ export function Overview(props) {
                   closeHandler={closeDeleteGroupDialog}
                   deleteGroup={deleteCurrentGroup}
                   group={currentGroups[selectedIndex]} />
-              </Paper>
+              </Paper> :
+                  <Paper className={classes.paperGroupOverview}>
+                    <AppBar className={classes.AppBar}>
+                      <Grid container>
+                        <Grid item xs={10}>
+                          <Typography variant="h6" className={classes.title}>
+                            <strong>You are currently not in any groups.</strong>
+                          </Typography>
+                        </Grid>
+                      </Grid>
+                    </AppBar>
+                    <Balances
+                        group={null}
+                        value={0}
+                        index={0}
+                    />
+                  </Paper>}
             </Grid>
+            <CreateGroupDialog
+                open={openGroup}
+                closeHandler={closeGroupDialog}
+                users={members}
+                currentUser={user}
+                groups={currentGroups}
+                groupCreatedListener={onGroupCreated}
+            />
+
           </Grid>
         </Card>
       </Container>
