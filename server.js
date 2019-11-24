@@ -92,9 +92,9 @@ app.get('/users/logout', (req, res) => {
 
 //***             open question: redirects do not work together with react-router-dom;
 //***             will probably have to use redirect features of react-router-dom*/
-app.get('*', sessionChecker, (req, res) => {
-	res.sendFile(__dirname + '/build/index.html')
-})
+// app.get('*', sessionChecker, (req, res) => {
+// 	res.sendFile(__dirname + '/build/index.html')
+// })
 
 // // login route serves the login page
 // app.get('/login', sessionChecker, (req, res) => {
@@ -119,24 +119,49 @@ app.use("/js", express.static(__dirname + '/public/js'))
 
 /*** API Routes below ************************************/
 
+//a helper that gets the corresponding resource by id and sends it back to the client
+function returnResById(model, id, res){
+    if (!ObjectID.isValid(id)) {
+        res.status(404).send()  // if invalid id, definitely can't find resource, 404.
+    }
+    model.findById(id).then(
+        result => {
+            console.log("result", result)
+            if (!result) {
+                res.status(404).send()
+            }
+            else {
+                res.send(result)
+            }
+        },
+        err => {
+            res.status(400).send(err)
+        }
+    )
+}
+
 // a POST route to *create* a group
 app.post('/group', (req, res) => {
-	// log(req.body)
-	// TODO
+	const group = new Group({
+        name: req.body.name
+    })
+    group.save().then(
+        (result) => {
+            res.send(result)
+        },
+        (err) => {
+            res.status(400).send(err)
+        }
+    )
 })
 
-// a GET route to get all groups
-app.get('/groups', (req, res) => {
-	// TODO
-})
+
 
 /// a GET route to get a group by their id.
 // id is treated as a wildcard parameter, which is why there is a colon : beside it.
 // (in this case, the database id, but you can make your own id system for your project)
 app.get('/group/:id', (req, res) => {
-	/// req.params has the wildcard parameters in the url, in this case, id.
-	// log(req.params.id)
-
+	returnResById(Group, req.params.id, res)
 })
 
 /// a DELETE route to remove a group by their id.
@@ -152,7 +177,7 @@ app.delete('/bill/:id', (req, res) => {
 
 // a PATCH route for changing properties of a resource.
 // (alternatively, a PUT is used more often for replacing entire resources).
-app.patch('/users/:id', (req, res) => {
+app.patch('/user/:id', (req, res) => {
 	const id = req.params.id
 	// TODO
 	
@@ -162,9 +187,33 @@ app.patch('/users/:id', (req, res) => {
 /** User routes below **/
 // Set up a POST route to *create* a user of the web app 
 app.post('/users', (req, res) => {
-	log(req.body)
-	// TODO
+	const user = new User({
+        name: req.body.name,
+        username: req.body.username,
+        password: req.body.password,
+        email: req.body.email
+    })
+    user.save().then(
+        (result) => {
+            res.send(result)
+        },
+        (err) => {
+            res.status(400).send(err)
+        }
+    )
 })
+
+//for test only
+app.get('/users', (req, res)=>{
+    User.find().then(
+        (users) => {
+            res.send(users)
+        },
+        (error) => {
+            res.status(400).send(error)
+        }
+    )
+    })
 
 /*************************************************/
 // Express server listening...
