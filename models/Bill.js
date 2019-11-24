@@ -22,12 +22,13 @@ const BillSchema = mongoose.Schema({
         type: [String],
         required: true
     },
-    groupID: {
-        type: [String],
-        required: true
+    group: {
+        type: mongoose.Schema.Types.ObjectID,
+        required: true,
+        ref: 'Group'
     }
 
 })
 
 const Bill = new mongoose.model('Bill', BillSchema)
-module.exports = {Bill, BillSchema}
+module.exports = {Bill}

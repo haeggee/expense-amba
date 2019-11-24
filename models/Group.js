@@ -1,5 +1,4 @@
 const mongoose = require('mongoose')
-const BillSchema = require('./Bill')
 
 const GroupSchema = new mongoose.Schema({
     name: {
@@ -10,10 +9,16 @@ const GroupSchema = new mongoose.Schema({
         unique: false
     },
     members: [{
-        userID: String,
+        user:{
+            type: mongoose.Schema.Types.ObjectID,
+            ref: 'User'
+        },
         balance: Number
     }],
-    bills: [BillSchema]
+    bills: [{
+        type: mongoose.Schema.Types.ObjectID,
+        ref: 'Bill'
+    }]
 })
 
 const Group = new mongoose.model('Group', GroupSchema)

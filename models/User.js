@@ -27,9 +27,10 @@ const UserSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    groupIDs: {
-        type: [String]
-    }
+    groups: [{
+        type: mongoose.Schema.Types.ObjectID,
+        ref: 'Group'
+    }]
 })
 
 UserSchema.pre('save', function(next) {

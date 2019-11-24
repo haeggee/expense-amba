@@ -143,7 +143,18 @@ function returnResById(model, id, res){
 // a POST route to *create* a group
 app.post('/group', (req, res) => {
 	const group = new Group({
-        name: req.body.name
+        name: req.body.name,
+        members: [],
+        bills: []
+    })
+    req.body.members.forEach(member => {
+        group.members.push({
+            user: member.user,
+            balance: member.balance
+        })
+    })
+    req.body.bills.forEach(billId => {
+        group.bills.push(billId)
     })
     group.save().then(
         (result) => {
@@ -161,7 +172,24 @@ app.post('/group', (req, res) => {
 // id is treated as a wildcard parameter, which is why there is a colon : beside it.
 // (in this case, the database id, but you can make your own id system for your project)
 app.get('/group/:id', (req, res) => {
-	returnResById(Group, req.params.id, res)
+    const id = req.params.id
+    if (!ObjectID.isValid(id)) {
+        res.status(404).send()  // if invalid id, definitely can't find resource, 404.
+    }
+    Group.findById(id).populate('members.user').then(
+        result => {
+            console.log("result", result)
+            if (!result) {
+                res.status(404).send()
+            }
+            else {
+                res.send(result)
+            }
+        },
+        err => {
+            res.status(400).send(err)
+        }
+    )
 })
 
 /// a DELETE route to remove a group by their id.
