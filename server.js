@@ -148,10 +148,7 @@ app.post('/group', (req, res) => {
         bills: []
     })
     req.body.members.forEach(member => {
-        group.members.push({
-            user: member.user,
-            balance: member.balance
-        })
+        group.members.push(member)
     })
     req.body.bills.forEach(billId => {
         group.bills.push(billId)
@@ -178,7 +175,6 @@ app.get('/group/:id', (req, res) => {
     }
     Group.findById(id).populate('members.user').then(
         result => {
-            console.log("result", result)
             if (!result) {
                 res.status(404).send()
             }
