@@ -17,7 +17,7 @@ const { Group } = require('./models/Group')
 const { ObjectID } = require('mongodb')
 
 // body-parser: middleware for parsing HTTP JSON body into a usable object
-const bodyParser = require('body-parser') 
+const bodyParser = require('body-parser')
 app.use(bodyParser.json())
 
 // express-session for managing user sessions
@@ -45,18 +45,18 @@ const sessionChecker = (req, res, next) => {
         res.redirect('/overview'); // redirect to dashboard if logged in.
     } else {
         next(); // next() moves on to the route.
-    }    
+    }
 };
 
 // A route to login and create a session
 app.post('/users/login', (req, res) => {
-	const email = req.body.email
+    const username = req.body.username
     const password = req.body.password
 
     // Use the static method on the User model to find a user
     // by their email and password
-	User.findByEmailPassword(email, password).then((user) => {
-	    if (!user) {
+    User.findByUsernamePassword(username, password).then((user) => {
+        if (!user) {
             res.redirect('/');
         } else {
             // Add the user's id to the session cookie.
@@ -65,20 +65,20 @@ app.post('/users/login', (req, res) => {
             res.redirect('/overview');
         }
     }).catch((error) => {
-		res.status(400).redirect('/');
+        res.status(400).redirect('/');
     })
 })
 
 // A route to logout a user
 app.get('/users/logout', (req, res) => {
-	// Remove the session
-	req.session.destroy((error) => {
-		if (error) {
-			res.status(500).send(error)
-		} else {
-			res.redirect('/')
-		}
-	})
+    // Remove the session
+    req.session.destroy((error) => {
+        if (error) {
+            res.status(500).send(error)
+        } else {
+            res.redirect('/')
+        }
+    })
 })
 
 
@@ -120,7 +120,7 @@ app.use("/js", express.static(__dirname + '/public/js'))
 /*** API Routes below ************************************/
 
 //a helper that gets the corresponding resource by id and sends it back to the client
-function returnResById(model, id, res){
+function returnResById(model, id, res) {
     if (!ObjectID.isValid(id)) {
         res.status(404).send()  // if invalid id, definitely can't find resource, 404.
     }
@@ -142,7 +142,7 @@ function returnResById(model, id, res){
 
 // a POST route to *create* a group
 app.post('/group', (req, res) => {
-	const group = new Group({
+    const group = new Group({
         name: req.body.name,
         members: [],
         bills: []
@@ -183,35 +183,50 @@ app.get('/group/:id', (req, res) => {
             }
         },
         err => {
-            res.status(400).send(err)
+            res.status(500).send(err) // server error
         }
     )
 })
 
 /// a DELETE route to remove a group by their id.
 app.delete('/group/:id', (req, res) => {
-	const id = req.params.id
-	// TODO
+    const id = req.params.id
+    // TODO
 })
 
 app.delete('/bill/:id', (req, res) => {
-	const id = req.params.id
-	// TODO
+    const id = req.params.id
+    // TODO
 })
 
 // a PATCH route for changing properties of a resource.
 // (alternatively, a PUT is used more often for replacing entire resources).
 app.patch('/user/:id', (req, res) => {
-	const id = req.params.id
-	// TODO
-	
+    const id = req.params.id
+    // TODO
+    if (!ObjectID.isValid(id)) {
+        res.status(404).send()
+    }
+    const { name, username, password, email, groups } = req.body
+    const body = { name, username, password, email, groups }
+    // Update the student by their id.
+    User.findByIdAndUpdate(id, { $set: body }, { new: true }).then((user) => {
+        if (!user) {
+            res.status(404).send()
+        } else {
+            res.send(user)
+        }
+    }).catch((error) => {
+        res.status(400).send() // bad request for changing the user
+    })
+
 })
 
 
 /** User routes below **/
 // Set up a POST route to *create* a user of the web app 
 app.post('/users', (req, res) => {
-	const user = new User({
+    const user = new User({
         name: req.body.name,
         username: req.body.username,
         password: req.body.password,
@@ -227,24 +242,25 @@ app.post('/users', (req, res) => {
     )
 })
 
-//for test only
-app.get('/users', (req, res)=>{
+// for test only
+// get all users
+app.get('/users', (req, res) => {
     User.find().then(
         (users) => {
             res.send(users)
         },
         (error) => {
-            res.status(400).send(error)
+            res.status(500).send(error) // server error
         }
     )
-    })
+})
 
 /*************************************************/
 // Express server listening...
 const port = process.env.PORT || 3001
 app.listen(port, () => {
-	log(`Listening on port ${port}...`)
-}) 
+    log(`Listening on port ${port}...`)
+})
 
 
 
