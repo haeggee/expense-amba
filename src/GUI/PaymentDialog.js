@@ -97,8 +97,8 @@ function PayBill(props) {
 
 	const [selectedDate, setSelectedDate] = React.useState(new Date())
 
-	const handleDateChange = event => {
-		setSelectedDate(event.target.value);
+	const handleDateChange = date => {
+		setSelectedDate(date);
 	}
 
 	// list of users in this bill

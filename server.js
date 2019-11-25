@@ -38,15 +38,6 @@ app.use(session({
     }
 }));
 
-// Our own express middleware to check for 
-// an active user on the session cookie (indicating a logged in user.)
-const sessionChecker = (req, res, next) => {
-    if (req.session.user) {
-        res.redirect('/overview'); // redirect to dashboard if logged in.
-    } else {
-        next(); // next() moves on to the route.
-    }
-};
 
 // A route to login and create a session
 app.post('/users/login', (req, res) => {
@@ -106,7 +97,7 @@ app.get('/users/check-session', (req, res) => {
 app.use("/js", express.static(__dirname + '/public/js'))
 
 // // login route serves the login page
-app.get('/login', sessionChecker, (req, res) => {
+app.get('/login', (req, res) => {
     if (req.session.user) {
         res.redirect('/overview') // if already logged in, go to overview
     } else {
@@ -135,6 +126,7 @@ app.get('/accountsview', (req, res) => {
 
 app.get('/admin', (req, res) => {
     if (req.session.user) {
+        // another check needed to see if user actually is admin
         res.sendFile(__dirname + '/build/index.html')
     } else {
         res.redirect('/login')
