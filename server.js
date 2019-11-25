@@ -65,7 +65,7 @@ app.post('/users/login', (req, res) => {
             res.redirect('/overview');
         }
     }).catch((error) => {
-        res.status(400).redirect('/');
+        res.status(400).redirect('/login');
     })
 })
 
@@ -81,6 +81,15 @@ app.get('/users/logout', (req, res) => {
     })
 })
 
+// A route to check if a user is logged in on the session cookie
+app.get('/users/check-session', (req, res) => {
+    // Remove the session
+    if (req.session.user) {
+        res.send({ screen: 'auth' });
+    } else {
+        res.redirect('/')
+    }
+})
 
 /*** Webpage routes below **********************************/
 // Inject the sessionChecker middleware to any routes that require it.
@@ -92,28 +101,46 @@ app.get('/users/logout', (req, res) => {
 
 //***             open question: redirects do not work together with react-router-dom;
 //***             will probably have to use redirect features of react-router-dom*/
-// app.get('*', sessionChecker, (req, res) => {
-// 	res.sendFile(__dirname + '/build/index.html')
-// })
-
-// // login route serves the login page
-// app.get('/login', sessionChecker, (req, res) => {
-// 	res.redirect('/login')
-// })
-
-// // dashboard route will check if the user is logged in and server
-// // the dashboard page
-// app.get('/overview', (req, res) => {
-// 	if (req.session.user) {
-// 		res.redirect('/overview')
-// 	} else {
-// 		res.redirect('/login')
-// 	}
-
-// })
 
 // static js directory
 app.use("/js", express.static(__dirname + '/public/js'))
+
+// // login route serves the login page
+app.get('/login', sessionChecker, (req, res) => {
+    if (req.session.user) {
+        res.redirect('/overview') // if already logged in, go to overview
+    } else {
+        res.sendFile(__dirname + '/build/index.html')
+    }
+})
+
+// overview, accountsview and admin routes will check if the user is logged in and server
+app.get('/overview', (req, res) => {
+    if (req.session.user) {
+        res.sendFile(__dirname + '/build/index.html')
+    } else {
+        res.redirect('/login')
+    }
+
+})
+
+app.get('/accountsview', (req, res) => {
+    if (req.session.user) {
+        res.sendFile(__dirname + '/build/index.html')
+    } else {
+        res.redirect('/login')
+    }
+
+})
+
+app.get('/admin', (req, res) => {
+    if (req.session.user) {
+        res.sendFile(__dirname + '/build/index.html')
+    } else {
+        res.redirect('/login')
+    }
+
+})
 
 /*********************************************************/
 
