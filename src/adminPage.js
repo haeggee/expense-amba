@@ -11,7 +11,8 @@ import Footer from "./GUI/Footer";
 import { Typography } from '@material-ui/core';
 import User from './User';
 import Group from './Group';
-
+import { getState } from "statezero"
+import { useHistory } from "react-router-dom";
 
 
 const cardStyle = makeStyles({
@@ -40,7 +41,14 @@ const cardStyle = makeStyles({
 export function AdminPage(props) {
 
     const styles = cardStyle()
-
+    const history = useHistory()
+    const currentUser = getState("user")
+    // if user is not admin, redirect to home
+    if(!currentUser) {
+        history.push('/')
+    } else if (currentUser.username !== 'admin') {
+        history.push('/')
+    }
 
     /* Mock data for users, later requires a server call to get and set users
      from database. Currently defined as local state for front end, so doesnt change the data in actual users

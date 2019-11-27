@@ -74,7 +74,7 @@ export function LoginScreen(props) {
     let g = params.signUpName;
     setParams({
       loginUsername: e.target.value,
-      loginPassword: b,3000
+      loginPassword: b,
       signUpUsername: c,
       signUpEmail: d,
       signUpPassword: f,
