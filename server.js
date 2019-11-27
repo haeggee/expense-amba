@@ -182,8 +182,6 @@ app.post('/group', (req, res) => {
     )
 })
 
-
-
 /// a GET route to get a group by their id.
 // id is treated as a wildcard parameter, which is why there is a colon : beside it.
 // (in this case, the database id, but you can make your own id system for your project)
@@ -200,9 +198,8 @@ app.get('/group/:id', (req, res) => {
             else {
                 res.send(result)
             }
-        },
-        err => {
-            res.status(500).send(err) // server error
+        }, (err) => {
+            res.status(400).send(err) // server error
         }
     )
 })
@@ -210,19 +207,84 @@ app.get('/group/:id', (req, res) => {
 /// a DELETE route to remove a group by their id.
 app.delete('/group/:id', (req, res) => {
     const id = req.params.id
-    // TODO
+    if (!ObjectID.isValid(id)) {
+        res.status(404).send()  // if invalid id, definitely can't find resource, 404.
+    }
+    Group.findByIdAndRemove(id).then((group) => {
+        if (!group) {res.status(404).send()}
+        else {
+            // remove all the bills in the group
+            group.bills.forEach(billId => {
+                Bill.findByIdAndRemove(billId)
+            })
+            res.send(group)
+        }
+    }).catch((error) => {
+        res.status(400).send() // bad request
+    })
+})
+
+// POST a new bill
+app.post('/bill', (req, res) => {
+    const bill = new Bill({
+        title: req.body.title,
+        amount: req.body.amount,
+        date: req.body.date,
+        payerID: req.body.payerID,
+        payeeIDs: req.body.payeeIDs,
+        group: req.body.group
+    })
+    bill.save().then((result) => {
+        // update groups array
+        Group.findById(bill.group).then((group) => {
+            console.log(group)
+            if (!group) {
+                res.status(404).send()
+            } else {
+                group.bills.push(result._id)
+                // save the group
+                group.save().then(null, (err) => {
+                    res.status(400).send(err)
+                })
+            }
+        })
+        res.send(result)
+    }, (error) => {
+        res.status(400).send()
+    })
 })
 
 app.delete('/bill/:id', (req, res) => {
     const id = req.params.id
-    // TODO
+    if (!ObjectID.isValid(id)) {
+        res.status(404).send()  // if invalid id, definitely can't find resource, 404.
+    }
+    Bill.findByIdAndRemove(id).then((bill) => {
+        // remove bill from group
+        Group.findById(bill.group).then((group) => {
+            if (!group) {
+                res.status(404).send()
+            } else {
+                // remove bill from bills array
+                const index = group.bills.indexOf(id)
+                group.bills.splice(index, 1)
+                // save the group
+                group.save().then(null, (err) => {
+                    res.status(400).send(err)
+                })
+            }
+        })
+        res.send(bill)
+    }).catch((error) => {
+        res.status(404).send()
+    })
 })
 
 // a PATCH route for changing properties of a resource.
 // (alternatively, a PUT is used more often for replacing entire resources).
 app.patch('/user/:id', (req, res) => {
     const id = req.params.id
-    // TODO
+    // for best practice
     if (!ObjectID.isValid(id)) {
         res.status(404).send()
     }
@@ -280,10 +342,3 @@ const port = process.env.PORT || 3001
 app.listen(port, () => {
     log(`Listening on port ${port}...`)
 })
-
-
-
-
-
-
-
