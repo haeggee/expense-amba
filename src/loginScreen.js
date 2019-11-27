@@ -74,7 +74,7 @@ export function LoginScreen(props) {
     let g = params.signUpName;
     setParams({
       loginUsername: e.target.value,
-      loginPassword: b,
+      loginPassword: b,3000
       signUpUsername: c,
       signUpEmail: d,
       signUpPassword: f,
@@ -168,7 +168,7 @@ export function LoginScreen(props) {
     // check if state changes and redirect if successful login
     subscribe((nextState, prevState) => {
       if (nextState) { // checks if now a user exists
-        history.push('/overview')
+        nextState.username === 'admin' ? history.push('/admin') : history.push('/overview')
       }
     }, "user")
 

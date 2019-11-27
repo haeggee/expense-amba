@@ -86,57 +86,6 @@ app.get('/users/check-session', (req, res) => {
     }
 })
 
-/*** Webpage routes below **********************************/
-// Inject the sessionChecker middleware to any routes that require it.
-// sessionChecker will run before the route handler and check if we are
-// logged in, ensuring that we go to the dashboard if that is the case.
-
-// The various redirects will ensure a proper flow between login and dashboard
-// pages so that your users have a proper experience on the front-end.
-
-//***             open question: redirects do not work together with react-router-dom;
-//***             will probably have to use redirect features of react-router-dom*/
-
-// static js directory
-app.use("/js", express.static(__dirname + '/public/js'))
-
-// // login route serves the login page
-app.get('/login', (req, res) => {
-    if (req.session.user) {
-        res.redirect('/overview') // if already logged in, go to overview
-    } else {
-        res.sendFile(__dirname + '/build/index.html')
-    }
-})
-
-// overview, accountsview and admin routes will check if the user is logged in and server
-app.get('/overview', (req, res) => {
-    if (req.session.user) {
-        res.sendFile(__dirname + '/build/index.html')
-    } else {
-        res.redirect('/login')
-    }
-
-})
-
-app.get('/accountsview', (req, res) => {
-    if (req.session.user) {
-        res.sendFile(__dirname + '/build/index.html')
-    } else {
-        res.redirect('/login')
-    }
-
-})
-
-app.get('/admin', (req, res) => {
-    if (req.session.user) {
-        // another check needed to see if user actually is admin
-        res.sendFile(__dirname + '/build/index.html')
-    } else {
-        res.redirect('/login')
-    }
-
-})
 
 /*********************************************************/
 
@@ -339,6 +288,62 @@ app.get('/users', (req, res) => {
         }
     )
 })
+
+/*** Webpage routes below **********************************/
+// Inject the sessionChecker middleware to any routes that require it.
+// sessionChecker will run before the route handler and check if we are
+// logged in, ensuring that we go to the dashboard if that is the case.
+
+// The various redirects will ensure a proper flow between login and dashboard
+// pages so that your users have a proper experience on the front-end.
+
+//***             open question: redirects do not work together with react-router-dom;
+//***             will probably have to use redirect features of react-router-dom*/
+
+// static js directory
+app.use("/js", express.static(__dirname + '/public/js'))
+
+// // login route serves the login page
+app.get('/login', (req, res) => {
+    if (req.session.user) {
+        res.redirect('/overview') // if already logged in, go to overview
+    } else {
+        res.sendFile(__dirname + '/build/index.html')
+    }
+})
+
+// overview, accountsview and admin routes will check if the user is logged in and server
+app.get('/overview', (req, res) => {
+    if (req.session.user) {
+        res.sendFile(__dirname + '/build/index.html')
+    } else {
+        res.redirect('/login')
+    }
+
+})
+
+app.get('/accountsview', (req, res) => {
+    if (req.session.user) {
+        res.sendFile(__dirname + '/build/index.html')
+    } else {
+        res.redirect('/login')
+    }
+
+})
+
+app.get('/admin', (req, res) => {
+    if (req.session.user) {
+        // another check needed to see if user actually is admin
+        res.sendFile(__dirname + '/build/index.html')
+    } else {
+        res.redirect('/login')
+    }
+
+})
+// All routes other than above will go to index.html
+app.get("*", (req, res) => {
+    res.sendFile(__dirname + "/client/build/index.html");
+});
 
 /*************************************************/
 // Express server listening...

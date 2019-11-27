@@ -91,7 +91,7 @@ export default class ServerInterface {
     }
 
     static userLogout() {
-        const url = "http://localhost:3001/users/logout";
+        const url = "/users/logout";
 
         fetch(url)
             .then(res => {
