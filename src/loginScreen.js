@@ -12,6 +12,7 @@ import Footer from './GUI/Footer';
 import { Typography } from '@material-ui/core';
 // getState is used to get the value of a state path
 import { getState, subscribe } from "statezero";
+import ServerInterface from './ServerInterface'
 
 // Style sheet
 const useStyles = makeStyles(theme => ({
@@ -163,7 +164,7 @@ export function LoginScreen(props) {
 
   const _handleSignClick = () => {
     // call server to try to login
-    contextValue.userLogin(params.loginUsername, params.loginPassword);
+    ServerInterface.userLogin(params.loginUsername, params.loginPassword);
     // check if state changes and redirect if successful login
     subscribe((nextState, prevState) => {
       if (nextState) { // checks if now a user exists
@@ -210,9 +211,15 @@ export function LoginScreen(props) {
   const _handleRegisterClick = () => {
     // Functionality to be added: Once clicked, it appends info to user database from server
     //Requires server call
-    let newList = userList.userListA;
-    newList.push(new User(params.signUpUsername, params.signUpPassword, params.signUpName, params.signUpEmail))
-    setUserList({ userListA: newList })
+    // let newList = userList.userListA;
+    // newList.push(new User(params.signUpUsername, params.signUpPassword, params.signUpName, params.signUpEmail))
+    // setUserList({ userListA: newList })
+    ServerInterface.userRegister(params.signUpUsername, params.signUpName, params.signUpEmail, params.signUpPassword);
+    subscribe((nextState, prevState) => {
+      if (nextState) { // checks if now a user exists
+        history.push('/overview')
+      }
+    }, "user")
   };
 
   //returned DOM

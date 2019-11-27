@@ -64,6 +64,32 @@ export default class ServerInterface {
         })
     }
 
+    static userRegister(username, name, email, password) {
+        const url = 'http://localhost:3001/users'
+        const data = { username: username, password: password, name: name, email: email }
+        const request = new Request(url, {
+            method: 'post',
+            body: JSON.stringify(data),
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json'
+            },
+        })
+        fetch(request).then((res) => {
+            if (res.status === 200) {
+                console.log('user found')
+                return res.json();
+            } else {
+                alert('Registration failed. Try a different username and/or email.')
+                return null;
+            }
+        }).then((json) => {
+            setState("user", json)
+        }).catch((error) => {
+            console.log(error);
+        })
+    }
+
 
     static getUserGroupsByUserName(username) {
         const user = this.getUserByUsername(username)
