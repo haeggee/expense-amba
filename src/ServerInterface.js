@@ -2,7 +2,7 @@ import User from "./User"
 import Group from "./Group"
 import Bill from "./Bills"
 
-import { setState } from "./actions/helpers";
+import { setState, setEmptyState } from "./actions/helpers";
 
 
 export default class ServerInterface {
@@ -65,7 +65,7 @@ export default class ServerInterface {
     }
 
     static userRegister(username, name, email, password) {
-        const url = 'http://localhost:3001/users'
+        const url = '/users'
         const data = { username: username, password: password, name: name, email: email }
         const request = new Request(url, {
             method: 'post',
@@ -90,6 +90,17 @@ export default class ServerInterface {
         })
     }
 
+    static userLogout() {
+        const url = "http://localhost:3001/users/logout";
+
+        fetch(url)
+            .then(res => {
+                setEmptyState();
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }
 
     static getUserGroupsByUserName(username) {
         const user = this.getUserByUsername(username)

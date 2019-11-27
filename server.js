@@ -71,7 +71,7 @@ app.get('/users/logout', (req, res) => {
         if (error) {
             res.status(500).send(error)
         } else {
-            res.redirect('/')
+            res.send()
         }
     })
 })

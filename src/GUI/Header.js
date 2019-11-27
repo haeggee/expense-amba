@@ -8,6 +8,8 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import { CustomButton } from "./Theme";
 import { useHistory } from "react-router-dom";
 import WebFont from "webfontloader";
+import ServerInterface from "../ServerInterface"
+import { subscribe } from 'statezero'
 
 WebFont.load({
   google: {
@@ -72,8 +74,8 @@ export function CustomHeader(props) {
               const buttonLogout = (
                 <CustomButton
                   onClick={() => {
-                    value.userLogin(undefined);
-                    history.push("/");
+                    ServerInterface.userLogout();
+                    subscribe(() => history.push('/'))
                   }}
                 >
                   Logout
