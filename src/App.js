@@ -17,12 +17,11 @@ class App extends React.Component {
     this.state = {
       userName: "Alice's Username", //undefined for no user login
       user: ServerInterface.userList[0], //User object
-      userLogin: username => {
-        const user = ServerInterface.getUserByUsername(username)
-        this.setState({ userName: username, user: user });
+      userLogin: (username, password) => {
+        ServerInterface.userLogin(username, password)
       }
-    };
-  }
+    }
+  };
 
   render() {
     return (
@@ -36,6 +35,7 @@ class App extends React.Component {
                 <Route exact path="/accountsview" component={Accountsview} />
                 <Route exact path="/login" component={LoginScreen} />
                 <Route exact path="/admin" component={AdminPage} />
+                <Route render={() => <div>404 Not found</div>} />}
               </Switch>
             </BrowserRouter>
           </div>

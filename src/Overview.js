@@ -261,7 +261,7 @@ export function Overview(props) {
             {/* right Grid that shows the overview and diagram */}
 
             <Grid item xs={8}>
-              {currentGroups.length != 0 ?
+              {currentGroups.length !== 0 ?
               <Paper className={classes.paperGroupOverview}>
                 <AppBar className={classes.AppBar}>
                   <Grid container>

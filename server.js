@@ -16,6 +16,10 @@ const { Group } = require('./models/Group')
 // to validate object IDs
 const { ObjectID } = require('mongodb')
 
+// cors to bypass security
+const cors = require('cors');
+app.use(cors());
+
 // body-parser: middleware for parsing HTTP JSON body into a usable object
 const bodyParser = require('body-parser')
 app.use(bodyParser.json())
@@ -48,15 +52,15 @@ app.post('/users/login', (req, res) => {
     // by their email and password
     User.findByUsernamePassword(username, password).then((user) => {
         if (!user) {
-            res.redirect('/');
+            res.status(400).send()
         } else {
             // Add the user's id to the session cookie.
             // We can check later if this exists to ensure we are logged in.
             req.session.user = user._id;
-            res.redirect('/overview');
+            res.send(user)
         }
     }).catch((error) => {
-        res.status(400).redirect('/login');
+        res.status(400).send()
     })
 })
 
@@ -76,7 +80,7 @@ app.get('/users/logout', (req, res) => {
 app.get('/users/check-session', (req, res) => {
     // Remove the session
     if (req.session.user) {
-        res.send({ screen: 'auth' });
+        res.send({ id: req.session.user });
     } else {
         res.redirect('/')
     }
@@ -199,7 +203,7 @@ app.get('/group/:id', (req, res) => {
                 res.send(result)
             }
         }, (err) => {
-            res.status(400).send(err) // server error
+            res.status(400).send(err) // this should be 500 for server error
         }
     )
 })
@@ -220,7 +224,7 @@ app.delete('/group/:id', (req, res) => {
             res.send(group)
         }
     }).catch((error) => {
-        res.status(400).send() // bad request
+        res.status(400).send() // this should be 500 for server error
     })
 })
 
@@ -234,7 +238,7 @@ app.post('/bill', (req, res) => {
         payeeIDs: req.body.payeeIDs,
         group: req.body.group
     })
-    bill.save().then((result) => {
+    bill.save().then((bill) => {
         // update groups array
         Group.findById(bill.group).then((group) => {
             console.log(group)
@@ -276,7 +280,7 @@ app.delete('/bill/:id', (req, res) => {
         })
         res.send(bill)
     }).catch((error) => {
-        res.status(404).send()
+        res.status(404).send() // this should be 500 for server error
     })
 })
 

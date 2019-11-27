@@ -10,6 +10,8 @@ import { UserContext } from "./UserContext";
 import User from './User';
 import Footer from './GUI/Footer';
 import { Typography } from '@material-ui/core';
+// getState is used to get the value of a state path
+import { getState, subscribe } from "statezero";
 
 // Style sheet
 const useStyles = makeStyles(theme => ({
@@ -37,12 +39,12 @@ const useStyles = makeStyles(theme => ({
 
 /**
  * Login screen.
- */ 
+ */
 export function LoginScreen(props) {
 
   //Data for page and user context
   const classes = useStyles();
-  let history = useHistory();
+  let history = useHistory()
   const [userList, setUserList] = React.useState({
     userListA: []
   });
@@ -160,39 +162,49 @@ export function LoginScreen(props) {
   }
 
   const _handleSignClick = () => {
+    // call server to try to login
+    contextValue.userLogin(params.loginUsername, params.loginPassword);
+    // check if state changes and redirect if successful login
+    subscribe((nextState, prevState) => {
+      if (nextState) { // checks if now a user exists
+        history.push('/overview')
+      }
+    }, "user")
+
+
     // Get the listof usernames/admins and passwords from server to check
     // Requires server call
+    // setError({ errorText: 'User and password combination not correct' })
+    // if (params.loginUsername === "user" && params.loginPassword === "user") {
+    //   contextValue.userLogin("Alice`s username")
+    //   history.push("/overview");
+    // } else if (
+    //   params.loginUsername === "admin" &&
+    //   params.loginPassword === "admin"
+    // ) {
+    //   contextValue.userLogin(params.loginUsername)
+    //   history.push("/admin");
+    // }
 
-    if (params.loginUsername === "user" && params.loginPassword === "user") {
-      contextValue.userLogin("Alice`s username")
-      history.push("/overview");
-    } else if (
-      params.loginUsername === "admin" &&
-      params.loginPassword === "admin"
-    ) {
-      contextValue.userLogin(params.loginUsername)
-      history.push("/admin");
-    }
+    // else {
+    //   let userFound = null
+    //   var i;
+    //   let myList = userList.userListA;
 
-    else {
-      let userFound = null
-      var i;
-      let myList = userList.userListA;
+    //   for (i = 0; i < myList.length; i++) {
 
-      for (i = 0; i < myList.length; i++) {
-
-        if (params.loginUsername === myList[i].username) {
-          userFound = myList[i]
-        }
-      }
-      if (userFound == null) {
-        setError({ errorText: 'No such user exists' })
-        return
-      }
-      if (params.loginPassword !== userFound.password) {
-        setError({ errorText: 'Incorrect Password' })
-      }
-    }
+    //     if (params.loginUsername === myList[i].username) {
+    //       userFound = myList[i]
+    //     }
+    //   }
+    //   if (userFound == null) {
+    //     setError({ errorText: 'No such user exists' })
+    //     return
+    //   }
+    //   if (params.loginPassword !== userFound.password) {
+    //     setError({ errorText: 'Incorrect Password' })
+    //   }
+    // }
   };
 
   const _handleRegisterClick = () => {
