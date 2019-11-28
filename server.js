@@ -91,59 +91,44 @@ app.get('/users/check-session', (req, res) => {
 
 /*** API Routes below ************************************/
 
-//a helper that gets the corresponding resource by id and sends it back to the client
-function returnResById(model, id, res) {
-    if (!ObjectID.isValid(id)) {
-        res.status(404).send()  // if invalid id, definitely can't find resource, 404.
-    }
-    model.findById(id).then(
-        result => {
-            console.log("result", result)
-            if (!result) {
-                res.status(404).send()
-            }
-            else {
-                res.send(result)
-            }
-        },
-        err => {
-            res.status(400).send(err)
-        }
-    )
-}
 
-// a POST route to *create* a group
+/**
+ * a POST route to *create* a group
+ * body should be in the format:
+ * {
+ *     name: name,
+ *     users: a list of users with _id field included
+ * }
+  */
+
 app.post('/group', (req, res) => {
     const group = new Group({
         name: req.body.name,
         members: [],
         bills: []
     })
-    req.body.members.forEach(member => {
-        group.members.push(member)
-    })
-    req.body.bills.forEach(billId => {
-        group.bills.push(billId)
+    req.body.users.forEach(user => {
+        group.members.push({user: user._id, balance: 0})
     })
     group.save().then(
         (result) => {
-            res.send(result)
-        },
-        (err) => {
-            res.status(400).send(err)
+            return result.populate('members.user', 'name').execPopulate()
         }
-    )
+    ).then(result =>{
+        res.send(result)
+    }).catch(error => {
+        res.status(400).send(error)
+    })
 })
 
 /// a GET route to get a group by their id.
-// id is treated as a wildcard parameter, which is why there is a colon : beside it.
-// (in this case, the database id, but you can make your own id system for your project)
+// only 'name' and 'username' fields of users are populated.
 app.get('/group/:id', (req, res) => {
     const id = req.params.id
     if (!ObjectID.isValid(id)) {
         res.status(404).send()  // if invalid id, definitely can't find resource, 404.
     }
-    Group.findById(id).populate('members.user').then(
+    Group.findById(id).populate('members.user', ['name', 'username']).then(
         result => {
             if (!result) {
                 res.status(404).send()
@@ -155,6 +140,33 @@ app.get('/group/:id', (req, res) => {
             res.status(400).send(err) // this should be 500 for server error
         }
     )
+})
+
+/**
+ * the body should look like
+ * {
+ *     addUsers: an array of users to be added
+ * }
+ * the group is returned as response.
+ * note that only 'name' and 'username' fields are populated for users
+ */
+app.patch('/group/:id', (req, res) => {
+    const id = req.params.id
+    if (!ObjectID.isValid(id)){
+        res.status(404).send()
+    }else {
+        const memberArray = req.body.addUsers.map((user) => {return {user: user._id, balance: 0}})
+        Group.findByIdAndUpdate(id, {$addToSet: {members: {$each: memberArray}}}).then(
+            result => {
+                return result.populate('members.user', ['name', 'username']).execPopulate()
+            }
+        ).then(result => {
+            res.send(result)
+        }).catch(error => {
+            res.status(400).send(error)
+        })
+
+    }
 })
 
 /// a DELETE route to remove a group by their id.
@@ -279,7 +291,7 @@ app.post('/users', (req, res) => {
 // for test only
 // get all users
 app.get('/users', (req, res) => {
-    User.find().then(
+    User.find(undefined, {name: 1, username: 1}).then(
         (users) => {
             res.send(users)
         },

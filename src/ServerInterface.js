@@ -3,6 +3,7 @@ import Group from "./Group"
 import Bill from "./Bills"
 
 import { setState, setEmptyState } from "./actions/helpers";
+import {getState} from "statezero/src"
 
 
 export default class ServerInterface {
@@ -77,7 +78,6 @@ export default class ServerInterface {
         })
         fetch(request).then((res) => {
             if (res.status === 200) {
-                console.log('user found')
                 return res.json();
             } else {
                 alert('Registration failed. Try a different username and/or email.')
@@ -102,31 +102,106 @@ export default class ServerInterface {
             });
     }
 
-    static getUserGroupsByUserName(username) {
-        const user = this.getUserByUsername(username)
-        return user.groups
+    /**
+     * create a group in db and set state
+     * @param name
+     * @param users :An array of users to be added to the group.
+     *               Current user will be automatically added if not in the array
+     */
+    static requestGroupCreation(name, users){
+        const url = '/group'
+        const currUser = getState('user')
+        if (!users.find(user => user._id === currUser._id)){
+            users.push(currUser)
+        }
+        const data = { name: name, users: users }
+        const request = new Request(url, {
+            method: 'post',
+            body: JSON.stringify(data),
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json'
+            },
+        })
+        fetch(request).then((res) => {
+            if (res.status === 200) {
+                return res.json();
+            } else {
+                alert('Group creation failed. Please try again.')
+                return null;
+            }
+        }).then((json) => {
+            const groups = getState('groups')
+            groups.push(json)
+            setState('groups', groups)
+        }).catch((error) => {
+            console.log(error);
+        })
     }
 
-    static getAllUsers() {
-        return this.userList
+    /**
+     * add a list of users to the group and set state
+     * @param users
+     * @param group
+     */
+    static addUsersToGroup(users, group){
+        const url = '/group'
+        const currUser = getState('user')
+        const data = { addUsers: users }
+        const request = new Request(url, {
+            method: 'patch',
+            body: JSON.stringify(data),
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json'
+            },
+        })
+        fetch(request).then((res) => {
+            if (res.status === 200) {
+                return res.json();
+            } else {
+                alert('Cannot add the users. Please try again.')
+                return null;
+            }
+        }).then((json) => {
+            const groups = getState('groups')
+            groups.push(json)
+            setState('groups', groups)
+        }).catch((error) => {
+            console.log(error);
+        })
     }
 
-    static getAllGroups() {
-        return this.groupList
+    /**
+     * get all users from the server.
+     * Note that users will only contain 'username' and 'name' fields for security reasons
+     * @param setter: callback function
+     */
+    static getAllUsers(setter){
+        const url = '/users'
+        const request = new Request(url, {
+            method: 'get',
+            body: JSON.stringify({}),
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json'
+            },
+        })
+        fetch(request).then((res) => {
+            if (res.status === 200) {
+                return res.json()
+            } else {
+                alert('Cannot fetch all users.')
+                return null;
+            }
+        }).then((json) => {
+            setter(json)
+        }).catch((error) => {
+            console.log(error);
+        })
     }
 
-    static addUser(user) {
-        this.userList.push(user)
-    }
-
-    static addGroup(group) {
-        this.groupList.push(group)
-    }
-
-    static numGroups() {
-        return this.groupList.length
-    }
-
+    //TODO: change this to a server call
     static requestBillCreation(group, title, amount, date, payer, payees) {
         this._largestBillID++
         const bill = new Bill(this._largestBillID, title, amount, date, payer, payees, group)
@@ -134,6 +209,7 @@ export default class ServerInterface {
         return bill
     }
 
+    //TODO: change this to a server call
     static requestBillDeletion(bill) {
         bill.group.removeBill(bill)
     }

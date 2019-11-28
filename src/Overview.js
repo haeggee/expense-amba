@@ -93,7 +93,9 @@ export function Overview(props) {
   // Let this be the current user.
   const value = useContext(UserContext)
   const user = value.user // current user
-  const members = ServerInterface.getAllUsers()
+
+  let members
+  ServerInterface.getAllUsers((result) => members = result)
 
   // openDeleteGroup indicates whether or not to open the delete group dialog
 
