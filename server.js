@@ -47,7 +47,6 @@ app.use(session({
 app.post('/users/login', (req, res) => {
     const username = req.body.username
     const password = req.body.password
-
     // Use the static method on the User model to find a user
     // by their email and password
     User.findByUsernamePassword(username, password).then((user) => {
@@ -189,7 +188,7 @@ app.delete('/group/:id', (req, res) => {
     })
 })
 
-// POST a new bill
+// POST a new bill.
 app.post('/bill', (req, res) => {
     const bill = new Bill({
         title: req.body.title,
@@ -202,7 +201,6 @@ app.post('/bill', (req, res) => {
     bill.save().then((bill) => {
         // update groups array
         Group.findById(bill.group).then((group) => {
-            console.log(group)
             if (!group) {
                 res.status(404).send()
             } else {
