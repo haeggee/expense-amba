@@ -185,7 +185,7 @@ app.delete('/group/:id', (req, res) => {
             res.send(group)
         }
     }).catch((error) => {
-        res.status(400).send() // this should be 500 for server error
+        res.status(500).send() // this should be 500 for server error
     })
 })
 
@@ -206,16 +206,16 @@ app.post('/bill', (req, res) => {
             if (!group) {
                 res.status(404).send()
             } else {
-                group.bills.push(result._id)
+                group.bills.push(bill._id)
                 // save the group
                 group.save().then(null, (err) => {
-                    res.status(400).send(err)
+                    res.status(500).send(err)
                 })
             }
         })
-        res.send(result)
+        res.send(bill)
     }, (error) => {
-        res.status(400).send()
+        res.status(500).send()
     })
 })
 
@@ -241,7 +241,7 @@ app.delete('/bill/:id', (req, res) => {
         })
         res.send(bill)
     }).catch((error) => {
-        res.status(404).send() // this should be 500 for server error
+        res.status(500).send() // this should be 500 for server error
     })
 })
 
@@ -340,7 +340,6 @@ app.get('/accountsview', (req, res) => {
     } else {
         res.redirect('/login')
     }
-
 })
 
 app.get('/admin', (req, res) => {
@@ -350,7 +349,6 @@ app.get('/admin', (req, res) => {
     } else {
         res.redirect('/login')
     }
-
 })
 // All routes other than above will go to index.html
 app.get("*", (req, res) => {
