@@ -10,6 +10,7 @@ import { useHistory } from "react-router-dom";
 import WebFont from "webfontloader";
 import ServerInterface from "../ServerInterface"
 import { subscribe } from 'statezero'
+import {getState} from "statezero/src"
 
 WebFont.load({
   google: {
@@ -47,74 +48,69 @@ export function CustomHeader(props) {
         >
           AM.BA
         </Box>
-        <UserContext.Consumer>
-          {value => {
-            return (
-              <Link
-                to={value.userName ? "/overview" : "/"}
-                className={classes.absolute}
-              >
-                <Box width={120} height={40} />
-              </Link>
-            );
-          }}
-        </UserContext.Consumer>
-        <UserContext.Consumer>
-          {value => {
-            if (value.userName) {
-              const buttonAccount = (
-                <CustomButton
-                  onClick={() => {
-                    history.push("/accountsview");
-                  }}
-                >
-                  Account
-                  </CustomButton>
-              )
-              const buttonLogout = (
-                <CustomButton
-                  onClick={() => {
-                    ServerInterface.userLogout();
-                    subscribe(() => history.push('/'))
-                  }}
-                >
-                  Logout
-                  </CustomButton>
-              )
-              if (history.location.pathname === '/accountsview' || history.location.pathname === '/admin') {
-                return (
-                  <div>
-                    {buttonLogout}
-                  </div>
-                )
-              }
-              else {
-                return (
-                  <div>
-                    {buttonAccount}
-                    {buttonLogout}
-                  </div>
-                )
-              }
-            } else {
-              if (history.location.pathname === '/login') {
-                return <div />
-              }
-              else {
-                return (
-                  <CustomButton
-                    onClick={() => {
-                      history.push("/login");
-                    }}
-                  >
-                    Register/Login
-                    </CustomButton>
-                );
-              }
-            }
-          }}
-        </UserContext.Consumer>
+            <Link
+              to={getState('user') ? "/overview" : "/"}
+              className={classes.absolute}
+            >
+              <Box width={120} height={40} />
+            </Link>
+        <AppBarButtons/>
       </Toolbar>
     </AppBar>
   );
+}
+
+function AppBarButtons() {
+    let history = useHistory()
+    if (getState('user')) {
+        const buttonAccount = (
+            <CustomButton
+                onClick={() => {
+                    history.push("/accountsview");
+                }}
+            >
+                Account
+            </CustomButton>
+        )
+        const buttonLogout = (
+            <CustomButton
+                onClick={() => {
+                    ServerInterface.userLogout();
+                    subscribe((user) => {
+                        if (!user) history.push('/')
+                    }, 'user')
+                }}
+            >
+                Logout
+            </CustomButton>
+        )
+        if (history.location.pathname === '/accountsview' || history.location.pathname === '/admin') {
+            return (
+                <div>
+                    {buttonLogout}
+                </div>
+            )
+        } else {
+            return (
+                <div>
+                    {buttonAccount}
+                    {buttonLogout}
+                </div>
+            )
+        }
+    } else {
+        if (history.location.pathname === '/login') {
+            return <div/>
+        } else {
+            return (
+                <CustomButton
+                    onClick={() => {
+                        history.push("/login");
+                    }}
+                >
+                    Register/Login
+                </CustomButton>
+            );
+        }
+    }
 }

@@ -57,7 +57,12 @@ app.post('/users/login', (req, res) => {
             // Add the user's id to the session cookie.
             // We can check later if this exists to ensure we are logged in.
             req.session.user = user._id;
-            res.send(user)
+            user.populate('groups').populate('groups.bills').populate('groups.members.user',['username', 'name']).execPopulate().then(
+                result => {
+                    res.send(result)
+                }
+            )
+
         }
     }).catch((error) => {
         res.status(400).send()
@@ -119,6 +124,9 @@ app.post('/group', (req, res) => {
     }).catch(error => {
         res.status(400).send(error)
     })
+
+    const userIDs = req.body.users.map((user)=>user._id)
+    User.updateMany({_id: {$in: userIDs}}, {$addToSet: {groups: group._id}})
 })
 
 /// a GET route to get a group by their id.
@@ -152,18 +160,23 @@ app.get('/group/:id', (req, res) => {
  */
 app.patch('/group/:id', (req, res) => {
     const id = req.params.id
-    if (!ObjectID.isValid(id)){
+    if (!ObjectID.isValid(id)) {
         res.status(404).send()
+
     }else {
-        const memberArray = req.body.addUsers.map((user) => {return {user: user._id, balance: 0}})
-        Group.findByIdAndUpdate(id, {$addToSet: {members: {$each: memberArray}}}).then(
-            result => {
-                return result.populate('members.user', ['name', 'username']).execPopulate()
-            }
-        ).then(result => {
-            res.send(result)
+        const userIDs = req.body.addUsers.map((user) => user._id)
+        Group.findById(id).then(group => {
+            User.find({_id: {$in: userIDs}}).then(users => {
+                const members = users.map((user)=>{return {user: user._id, balance: 0}})
+                Group.findByIdAndUpdate(id,{$addToSet: {members: {$each: members}}}, {new: true}).then(result => {
+                    return result.populate('members.user', ['name', 'username']).execPopulate()
+                }).then(result => {
+                    res.send(result)
+                })
+                User.updateMany({_id: {$in: userIDs}}, {$addToSet: {groups: group._id}})
+            })
         }).catch(error => {
-            res.status(400).send(error)
+            res.status(404).send(error)
         })
 
     }
@@ -189,37 +202,52 @@ app.delete('/group/:id', (req, res) => {
     })
 })
 
-// POST a new bill
-app.post('/bill', (req, res) => {
+/**
+ * post a new bill
+ * format:
+ * {
+ *     title: title
+ *     amount: amount
+ *     date: Date
+ *     payer: user who pays
+ *     payees : array of users who was paid for
+ *     group: the group which this bill belongs to
+ * }
+ */
+app.post('/bills', (req, res) => {
     const bill = new Bill({
         title: req.body.title,
         amount: req.body.amount,
         date: req.body.date,
-        payerID: req.body.payerID,
-        payeeIDs: req.body.payeeIDs,
-        group: req.body.group
+        payer: req.body.payer._id,
+        payees: [],
+        group: req.body.group._id
+    })
+    req.body.payees.forEach(payee => {
+        bill.payees.push(payee._id)
     })
     bill.save().then((bill) => {
         // update groups array
         Group.findById(bill.group).then((group) => {
-            console.log(group)
             if (!group) {
                 res.status(404).send()
             } else {
-                group.bills.push(result._id)
+                group.bills.push(bill._id)
                 // save the group
                 group.save().then(null, (err) => {
                     res.status(400).send(err)
                 })
             }
         })
-        res.send(result)
-    }, (error) => {
-        res.status(400).send()
+        bill.populate('payer', 'name').populate('payees', 'name').populate('group').execPopulate().then(
+            res.send(bill)
+        )
+    }).catch(error => {
+        res.status(400).send(error)
     })
 })
 
-app.delete('/bill/:id', (req, res) => {
+app.delete('/bills/:id', (req, res) => {
     const id = req.params.id
     if (!ObjectID.isValid(id)) {
         res.status(404).send()  // if invalid id, definitely can't find resource, 404.

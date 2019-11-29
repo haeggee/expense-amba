@@ -15,6 +15,7 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import DeleteGroupDialog from './GUI/DeleteGroupDialog'
 import ServerInterface from './ServerInterface'
 import {UserContext} from "./UserContext"
+import {getState, subscribe} from "statezero/src"
 
 const useStyles = makeStyles(theme => ({
   gridcontainer: {
@@ -91,8 +92,8 @@ function a11yProps(index) {
 export function Overview(props) {
 
   // Let this be the current user.
-  const value = useContext(UserContext)
-  const user = value.user // current user
+  let user = getState('user')
+  subscribe((newUser)=>{user = newUser}, 'user')
 
   let members
   ServerInterface.getAllUsers((result) => members = result)
@@ -208,7 +209,8 @@ export function Overview(props) {
     createBillHandler(group, title, amount, members, date);
   }
 
-  const [currentGroups, setGroups] = React.useState(user.groups);
+  const [currentGroups, setGroups] = React.useState(user ? user.groups : []);
+  subscribe((groups)=>{setGroups(groups)}, 'groups')
 
   /*
   index of the current group

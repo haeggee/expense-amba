@@ -60,6 +60,8 @@ export default class ServerInterface {
             }
         }).then((json) => {
             setState("user", json)
+            setState('groups', json.groups)
+            console.log(json.groups)
         }).catch((error) => {
             console.log(error);
         })
@@ -132,8 +134,11 @@ export default class ServerInterface {
             }
         }).then((json) => {
             const groups = getState('groups')
+            const user = getState('user')
             groups.push(json)
+            user.groups.push(json)
             setState('groups', groups)
+            setState('user', user)
         }).catch((error) => {
             console.log(error);
         })
@@ -181,7 +186,6 @@ export default class ServerInterface {
         const url = '/users'
         const request = new Request(url, {
             method: 'get',
-            body: JSON.stringify({}),
             headers: {
                 'Accept': 'application/json, text/plain, */*',
                 'Content-Type': 'application/json'
@@ -203,10 +207,37 @@ export default class ServerInterface {
 
     //TODO: change this to a server call
     static requestBillCreation(group, title, amount, date, payer, payees) {
-        this._largestBillID++
-        const bill = new Bill(this._largestBillID, title, amount, date, payer, payees, group)
-        group.addBill(bill)
-        return bill
+        const url = '/bills'
+        const data = {
+            title: title,
+            amount: amount,
+            date: date,
+            payer: payer,
+            payees: payees,
+            group: group
+        }
+        const request = new Request(url, {
+            method: 'post',
+            body: JSON.stringify(data),
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json'
+            },
+        })
+        fetch(request).then((res) => {
+            if (res.status === 200) {
+                return res.json()
+            } else {
+                alert('Cannot create bill.')
+                return null;
+            }
+        }).then((json) => {
+            const bills = getState('bills')
+            bills.push(json)
+            setState(bills)
+        }).catch((error) => {
+            console.log(error);
+        })
     }
 
     //TODO: change this to a server call

@@ -8,6 +8,7 @@ import Grid from "@material-ui/core/Grid"
 import { CustomHeader } from "./GUI/Header"
 import { useHistory } from "react-router-dom";
 import { UserContext } from "./UserContext";
+import {getState} from "statezero/src"
 
 // themes and styles class
 const themes = makeStyles({
@@ -29,8 +30,7 @@ export function Accountsview(props) {
 	const className = themes()
 	let history = useHistory();
 
-	const contextValue = useContext(UserContext)
-	const user = contextValue.user
+	const user = getState('user')
 
 	const [values, setValues] = React.useState({
 		editable: false,

@@ -14,14 +14,17 @@ const BillSchema = mongoose.Schema({
         type: Date,
         required: true
     },
-    payerID: {
-        type: String,
+    payer: {
+        type: mongoose.Schema.Types.ObjectID,
+        ref: 'User',
         required: true
     },
-    payeeIDs: {
-        type: [String],
-        required: true
-    },
+    payees: [
+        {
+            type: mongoose.Schema.Types.ObjectID,
+            ref: 'User'
+        }
+    ],
     group: {
         type: mongoose.Schema.Types.ObjectID,
         required: true,

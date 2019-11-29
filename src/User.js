@@ -12,7 +12,8 @@ export default class User {
 	 * @param {name} The name of this user.
 	 * @param {email} The email address of this user.
 	 */
-	constructor(username, password, name, email) {
+	constructor(id, username, password, name, email) {
+		this.id = id
 		this.username = username
 		this.password = password
 		this.name = name

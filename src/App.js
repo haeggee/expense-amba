@@ -14,13 +14,7 @@ import ServerInterface from "./ServerInterface"
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      userName: "Alice's Username", //undefined for no user login
-      user: ServerInterface.userList[0], //User object
-      userLogin: (username, password) => {
-        ServerInterface.userLogin(username, password)
-      }
-    }
+
   };
 
   render() {
