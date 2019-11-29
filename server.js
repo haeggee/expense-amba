@@ -47,7 +47,6 @@ app.use(session({
 app.post('/users/login', (req, res) => {
     const username = req.body.username
     const password = req.body.password
-
     // Use the static method on the User model to find a user
     // by their email and password
     User.findByUsernamePassword(username, password).then((user) => {
@@ -57,12 +56,12 @@ app.post('/users/login', (req, res) => {
             // Add the user's id to the session cookie.
             // We can check later if this exists to ensure we are logged in.
             req.session.user = user._id;
+            res.send(user)
             user.populate('groups').populate('groups.bills').populate('groups.members.user',['username', 'name']).execPopulate().then(
                 result => {
                     res.send(result)
                 }
             )
-
         }
     }).catch((error) => {
         res.status(400).send()
@@ -198,7 +197,7 @@ app.delete('/group/:id', (req, res) => {
             res.send(group)
         }
     }).catch((error) => {
-        res.status(400).send() // this should be 500 for server error
+        res.status(500).send() // this should be 500 for server error
     })
 })
 
@@ -235,7 +234,7 @@ app.post('/bills', (req, res) => {
                 group.bills.push(bill._id)
                 // save the group
                 group.save().then(null, (err) => {
-                    res.status(400).send(err)
+                    res.status(500).send(err)
                 })
             }
         })
@@ -243,7 +242,7 @@ app.post('/bills', (req, res) => {
             res.send(bill)
         )
     }).catch(error => {
-        res.status(400).send(error)
+        res.status(500).send(error)
     })
 })
 
@@ -269,7 +268,7 @@ app.delete('/bills/:id', (req, res) => {
         })
         res.send(bill)
     }).catch((error) => {
-        res.status(404).send() // this should be 500 for server error
+        res.status(500).send() // this should be 500 for server error
     })
 })
 
@@ -368,7 +367,6 @@ app.get('/accountsview', (req, res) => {
     } else {
         res.redirect('/login')
     }
-
 })
 
 app.get('/admin', (req, res) => {
@@ -378,7 +376,6 @@ app.get('/admin', (req, res) => {
     } else {
         res.redirect('/login')
     }
-
 })
 // All routes other than above will go to index.html
 app.get("*", (req, res) => {
