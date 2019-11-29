@@ -8,7 +8,7 @@ import {getState} from "statezero/src"
 
 export default class ServerInterface {
 
-    static userList = [new User("Alice`s username", "password", "Alice", "Alice.gmail.com"),
+    static userList = [new User("Alice`s username", "password", "fucker", "Alice.gmail.com"),
     new User("Bob`s username", "password", "Bob", "Bob.gmail.com"),
     new User("Jame`s username", "password", "James", "James.gmail.com"),
     new User("Maria`s username", "password", "Maria", "Maria.gmail.com"),
@@ -40,6 +40,7 @@ export default class ServerInterface {
     }
 
     static userLogin(username, password) {
+        console.log("testing")
         const url = '/users/login'
         const data = { username: username, password: password }
         const request = new Request(url, {
@@ -181,7 +182,6 @@ export default class ServerInterface {
         const url = '/users'
         const request = new Request(url, {
             method: 'get',
-            body: JSON.stringify({}),
             headers: {
                 'Accept': 'application/json, text/plain, */*',
                 'Content-Type': 'application/json'
@@ -201,17 +201,60 @@ export default class ServerInterface {
         })
     }
 
-    //TODO: change this to a server call
     static requestBillCreation(group, title, amount, date, payer, payees) {
-        this._largestBillID++
-        const bill = new Bill(this._largestBillID, title, amount, date, payer, payees, group)
-        group.addBill(bill)
-        return bill
+
+        const url = "/bill"
+
+        const data = {title: title, amount: amount, date: date, payerID: payer, payeeIDs: payees, group: group}
+        const request = new Request(url, {
+            method: 'post',
+            body: JSON.stringify(data),
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json'
+            },
+        })
+
+        fetch(request).then((res) => {
+            if (res.status === 200) {
+                return res.json();
+            } else {
+                alert('Bill creation failed. Please try again.')
+                return null;
+            }
+        }).then((json) => {
+            const groups = getState('groups')
+            const index = groups.indexOf(group)
+            groups[index].bills.push(json)
+            setState('groups', groups)
+        }).catch((error) => {
+            console.log(error);
+        })
     }
 
-    //TODO: change this to a server call
     static requestBillDeletion(bill) {
-        bill.group.removeBill(bill)
-    }
+        const url = "/bill"
 
+        const data = {id: bill._id}
+        const request = new Request(url, {
+            method: 'delete',
+            body: JSON.stringify(data),
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json'
+            },
+        })
+
+        fetch(request).then((res) => {
+            if (res.status === 200) {
+                return res.json();
+            } else {
+                alert('Bill creation failed. Please try again.')
+                return null;
+            }
+        }).then((json) => {
+        }).catch((error) => {
+            console.log(error);
+        })
+    }
 }

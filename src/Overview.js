@@ -96,6 +96,8 @@ export function Overview(props) {
 
   let members
   ServerInterface.getAllUsers((result) => members = result)
+  console.log(members)
+  console.log("in overview")
 
   // openDeleteGroup indicates whether or not to open the delete group dialog
 
