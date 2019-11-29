@@ -211,7 +211,7 @@ export function Overview(props) {
     createBillHandler(group, title, amount, members, date);
   }
 
-  const [currentGroups, setGroups] = React.useState(user ? user.groups : []);
+  const [currentGroups, setGroups] = React.useState(getState('groups'));
   subscribe((groups)=>{setGroups(groups)}, 'groups')
 
   /*

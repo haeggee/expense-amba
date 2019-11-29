@@ -56,7 +56,6 @@ app.post('/users/login', (req, res) => {
             // Add the user's id to the session cookie.
             // We can check later if this exists to ensure we are logged in.
             req.session.user = user._id;
-            res.send(user)
             user.populate('groups').populate('groups.bills').populate('groups.members.user',['username', 'name']).execPopulate().then(
                 result => {
                     res.send(result)
