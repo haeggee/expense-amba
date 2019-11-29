@@ -2,8 +2,8 @@ import User from "./User"
 import Group from "./Group"
 import Bill from "./Bills"
 
-import { setState, setEmptyState } from "./actions/helpers";
-import {getState} from "statezero/src"
+import { setEmptyState } from "./actions/helpers";
+import {getState, setState} from "statezero"
 
 
 export default class ServerInterface {
@@ -53,7 +53,6 @@ export default class ServerInterface {
         })
         fetch(request).then((res) => {
             if (res.status === 200) {
-                console.log('user found')
                 return res.json();
             } else {
                 alert('Username and password combination incorrect')
@@ -61,8 +60,7 @@ export default class ServerInterface {
             }
         }).then((json) => {
             setState("user", json)
-            setState('groups', json.groups)
-            console.log(json.groups)
+            setState("groups", json.groups)
         }).catch((error) => {
             console.log(error);
         })

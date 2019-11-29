@@ -15,7 +15,7 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import DeleteGroupDialog from './GUI/DeleteGroupDialog'
 import ServerInterface from './ServerInterface'
 import {UserContext} from "./UserContext"
-import {getState, subscribe} from "statezero/src"
+import {getState, subscribe} from "statezero"
 
 const useStyles = makeStyles(theme => ({
   gridcontainer: {

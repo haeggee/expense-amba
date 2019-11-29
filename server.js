@@ -56,7 +56,7 @@ app.post('/users/login', (req, res) => {
             // Add the user's id to the session cookie.
             // We can check later if this exists to ensure we are logged in.
             req.session.user = user._id;
-            user.populate('groups').populate('groups.bills').populate('groups.members.user',['username', 'name']).execPopulate().then(
+            user.populate('groups').populate('groups.bills').populate('groups.groupMembers.user',['username', 'name']).execPopulate().then(
                 result => {
                     res.send(result)
                 }
@@ -103,19 +103,19 @@ app.get('/users/check-session', (req, res) => {
  *     users: a list of users with _id field included
  * }
   */
-
+//TODO: add group to its groupMembers' field
 app.post('/group', (req, res) => {
     const group = new Group({
         name: req.body.name,
-        members: [],
+        groupMembers: [],
         bills: []
     })
     req.body.users.forEach(user => {
-        group.members.push({user: user._id, balance: 0})
+        group.groupMembers.push({user: user._id, balance: 0})
     })
     group.save().then(
         (result) => {
-            return result.populate('members.user', 'name').execPopulate()
+            return result.populate('groupMembers.user', 'name').execPopulate()
         }
     ).then(result =>{
         res.send(result)
@@ -134,7 +134,7 @@ app.get('/group/:id', (req, res) => {
     if (!ObjectID.isValid(id)) {
         res.status(404).send()  // if invalid id, definitely can't find resource, 404.
     }
-    Group.findById(id).populate('members.user', ['name', 'username']).then(
+    Group.findById(id).populate('groupMembers.user', ['name', 'username']).then(
         result => {
             if (!result) {
                 res.status(404).send()
@@ -165,9 +165,9 @@ app.patch('/group/:id', (req, res) => {
         const userIDs = req.body.addUsers.map((user) => user._id)
         Group.findById(id).then(group => {
             User.find({_id: {$in: userIDs}}).then(users => {
-                const members = users.map((user)=>{return {user: user._id, balance: 0}})
-                Group.findByIdAndUpdate(id,{$addToSet: {members: {$each: members}}}, {new: true}).then(result => {
-                    return result.populate('members.user', ['name', 'username']).execPopulate()
+                const groupMembers = users.map((user)=>{return {user: user._id, balance: 0}})
+                Group.findByIdAndUpdate(id,{$addToSet: {groupMembers: {$each: groupMembers}}}, {new: true}).then(result => {
+                    return result.populate('groupMembers.user', ['name', 'username']).execPopulate()
                 }).then(result => {
                     res.send(result)
                 })

@@ -1,5 +1,6 @@
 import set from "lodash-es/set";
-import { action } from "statezero";
+import { action, setState } from "statezero";
+import {getState} from "statezero"
 
 // Initialize all state paths used by your app as empty.
 // These are the states that you can filter using filterState()
@@ -15,7 +16,7 @@ export const setEmptyState = () => {
 
 // Helper method to set a state path.
 // Usage: setState(STATE_PATH_NAME, STATE_PATH_VALUE);
-export const setState = action(({ commit, state }, path, value) => {
-    set(state, path, value);
-    commit(state);
-});
+// export const setState = action(({ commit, state }, path, value) => {
+//     set(state, path, value);
+//     commit(state);
+// });

@@ -10,7 +10,7 @@ import { useHistory } from "react-router-dom";
 import WebFont from "webfontloader";
 import ServerInterface from "../ServerInterface"
 import { subscribe } from 'statezero'
-import {getState} from "statezero/src"
+import {getState} from "statezero"
 
 WebFont.load({
   google: {
