@@ -28,7 +28,6 @@ app.use(bodyParser.json())
 const session = require('express-session')
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(express.static(__dirname + '/build'))
 
 /*** Session handling **************************************/
 // Create a session cookie
@@ -56,7 +55,7 @@ app.post('/users/login', (req, res) => {
             // Add the user's id to the session cookie.
             // We can check later if this exists to ensure we are logged in.
             req.session.user = user._id;
-            user.populate('groups').populate('groups.bills').populate('groups.groupMembers.user',['username', 'name']).execPopulate().then(
+            user.populate('groups').populate('groups.bills').populate('groups.groupMembers.user', ['username', 'name']).execPopulate().then(
                 result => {
                     res.send(result)
                 }
@@ -85,7 +84,7 @@ app.get('/users/check-session', (req, res) => {
     if (req.session.user) {
         res.send({ id: req.session.user });
     } else {
-        res.redirect('/')
+        res.status(401).send();
     }
 })
 
@@ -112,16 +111,16 @@ app.post('/group', (req, res) => {
     })
 
     req.body.groupMembers.forEach(user => {
-        group.groupMembers.push({user: user._id, balance: 0})
+        group.groupMembers.push({ user: user._id, balance: 0 })
     })
     group.save().then((result) => {
 
         // add group id to each group member
         req.body.groupMembers.forEach(id => {
-            User.findByIdAndUpdate(id, {$addToSet: {groups: {$each: [result._id]}}}, {new: true})
+            User.findByIdAndUpdate(id, { $addToSet: { groups: { $each: [result._id] } } }, { new: true })
         })
         return result.populate('groupMembers.user', 'name').execPopulate()
-    }).then(result =>{
+    }).then(result => {
         res.send(result)
     }).catch(error => {
         res.status(400).send(error)
@@ -147,7 +146,7 @@ app.get('/group/:id', (req, res) => {
                 res.send(result)
             }
         }, (err) => {
-            res.status(400).send(err) // this should be 500 for server error
+            res.status(500).send(err) // this should be 500 for server error
         }
     )
 })
@@ -165,17 +164,17 @@ app.patch('/group/:id', (req, res) => {
     if (!ObjectID.isValid(id)) {
         res.status(404).send()
 
-    }else {
+    } else {
         const userIDs = req.body.addUsers.map((user) => user._id)
         Group.findById(id).then(group => {
-            User.find({_id: {$in: userIDs}}).then(users => {
-                const groupMembers = users.map((user)=>{return {user: user._id, balance: 0}})
-                Group.findByIdAndUpdate(id,{$addToSet: {groupMembers: {$each: groupMembers}}}, {new: true}).then(result => {
+            User.find({ _id: { $in: userIDs } }).then(users => {
+                const groupMembers = users.map((user) => { return { user: user._id, balance: 0 } })
+                Group.findByIdAndUpdate(id, { $addToSet: { groupMembers: { $each: groupMembers } } }, { new: true }).then(result => {
                     return result.populate('groupMembers.user', ['name', 'username']).execPopulate()
                 }).then(result => {
                     res.send(result)
                 })
-                User.updateMany({_id: {$in: userIDs}}, {$addToSet: {groups: group._id}})
+                User.updateMany({ _id: { $in: userIDs } }, { $addToSet: { groups: group._id } })
             })
         }).catch(error => {
             res.status(404).send(error)
@@ -191,7 +190,7 @@ app.delete('/group/:id', (req, res) => {
         res.status(404).send()  // if invalid id, definitely can't find resource, 404.
     }
     Group.findByIdAndRemove(id).then((group) => {
-        if (!group) {res.status(404).send()}
+        if (!group) { res.status(404).send() }
         else {
             // remove all the bills in the group
             group.bills.forEach(billId => {
@@ -318,10 +317,35 @@ app.post('/users', (req, res) => {
     )
 })
 
+
+/// a GET route to get a user by their id.
+app.get('/users/:id', (req, res) => {
+    const id = req.params.id
+    if (!ObjectID.isValid(id)) {
+        res.status(404).send()  // if invalid id, definitely can't find resource, 404.
+    }
+    User.findById(id).then(
+        user => {
+            if (!user) {
+                res.status(404).send()
+            }
+            else {
+                user.populate('groups').populate('groups.bills').populate('groups.groupMembers.user', ['username', 'name']).execPopulate().then(
+                    result => {
+                        res.send(result)
+                    }
+                )
+            }
+        }, (err) => {
+            res.status(500).send(err)
+        }
+    )
+})
+
 // for test only
 // get all users
 app.get('/users', (req, res) => {
-    User.find(undefined, {name: 1, username: 1}).then(
+    User.find(undefined, { name: 1, username: 1 }).then(
         (users) => {
             res.send(users)
         },
@@ -345,25 +369,41 @@ app.get('/users', (req, res) => {
 // static js directory
 app.use("/js", express.static(__dirname + '/public/js'))
 
-// // login route serves the login page
-app.get('/login', (req, res) => {
-    if (req.session.user) {
-        res.redirect('/overview') // if already logged in, go to overview
-    } else {
-        res.sendFile(__dirname + '/build/index.html')
-    }
-})
 
-// overview, accountsview and admin routes will check if the user is logged in and server
+app.use(express.static(__dirname + '/build'))
+
+// // login route serves the login page
+// app.get('/login', (req, res) => {
+//     if (req.session.user) {
+//         res.redirect('/overview') // if already logged in, go to overview
+//     } else {
+//         res.sendFile(__dirname + '/build/index.html')
+//     }
+// })
+
+
+// overview, accountsview and admin routes will check if the user is logged in
+
+// Overview: only send if user logged in is not admin
 app.get('/overview', (req, res) => {
     if (req.session.user) {
-        res.sendFile(__dirname + '/build/index.html')
+        User.findById(req.session.user).then(
+            user => {
+                if (user.username !== 'admin') {
+                    res.sendFile(__dirname + '/build/index.html')
+                } else {
+                    res.redirect('/admin') // go to admin page
+                }
+            }
+        ).catch(error => {
+            res.status(500).send(error) // server error
+        })
     } else {
         res.redirect('/login')
     }
-
 })
 
+// accountsview for all logged in users
 app.get('/accountsview', (req, res) => {
     if (req.session.user) {
         res.sendFile(__dirname + '/build/index.html')
@@ -372,17 +412,27 @@ app.get('/accountsview', (req, res) => {
     }
 })
 
+// admin page only if logged in user is admin
 app.get('/admin', (req, res) => {
     if (req.session.user) {
-        // another check needed to see if user actually is admin
-        res.sendFile(__dirname + '/build/index.html')
+        User.findById(req.session.user).then(
+            user => {
+                if (user.username === 'admin') {
+                    res.sendFile(__dirname + '/build/index.html')
+                } else {
+                    res.redirect('/overview')
+                }
+            }
+        ).catch(error => {
+            res.status(500).send(error) // server error
+        })
     } else {
         res.redirect('/login')
     }
 })
 // All routes other than above will go to index.html
 app.get("*", (req, res) => {
-    res.sendFile(__dirname + "/client/build/index.html");
+    res.sendFile(__dirname + "/build/index.html");
 });
 
 /*************************************************/

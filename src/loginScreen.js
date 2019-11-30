@@ -43,9 +43,24 @@ const useStyles = makeStyles(theme => ({
  */
 export function LoginScreen(props) {
 
+  let history = useHistory()
+  //check if user already logged in
+  const currentUser = getState("user")
+  // if user is logged in, redirect to either overview or overview
+  if (currentUser) {
+    history.push('/overview')
+  } else if (currentUser && currentUser.username === 'admin') {
+    history.push('/admin')
+  }
+  // if not, check if the state changes in the future to redirect
+  subscribe((nextState, prevState) => {
+    if (nextState) { // checks if a user exists
+      nextState.username === 'admin' ? history.push('/admin') : history.push('/overview')
+    }
+  }, "user")
+
   //Data for page and user context
   const classes = useStyles();
-  let history = useHistory()
   const [userList, setUserList] = React.useState({
     userListA: []
   });
@@ -166,12 +181,6 @@ export function LoginScreen(props) {
     // call server to try to login
     ServerInterface.userLogin(params.loginUsername, params.loginPassword);
     // check if state changes and redirect if successful login
-    subscribe((nextState, prevState) => {
-      if (nextState) { // checks if now a user exists
-        nextState.username === 'admin' ? history.push('/admin') : history.push('/overview')
-      }
-    }, "user")
-
 
     // Get the listof usernames/admins and passwords from server to check
     // Requires server call
@@ -215,11 +224,6 @@ export function LoginScreen(props) {
     // newList.push(new User(params.signUpUsername, params.signUpPassword, params.signUpName, params.signUpEmail))
     // setUserList({ userListA: newList })
     ServerInterface.userRegister(params.signUpUsername, params.signUpName, params.signUpEmail, params.signUpPassword);
-    subscribe((nextState, prevState) => {
-      if (nextState) { // checks if now a user exists
-        history.push('/overview')
-      }
-    }, "user")
   };
 
   //returned DOM

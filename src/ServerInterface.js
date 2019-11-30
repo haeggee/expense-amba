@@ -3,7 +3,7 @@ import Group from "./Group"
 import Bill from "./Bills"
 
 import { setEmptyState } from "./actions/helpers";
-import {getState, setState} from "statezero"
+import { getState, setState } from "statezero"
 
 
 export default class ServerInterface {
@@ -39,6 +39,29 @@ export default class ServerInterface {
         return users[0]
     }
 
+    /**
+     * Makes server call to get user with userID of DB
+     * @param  id 
+     */
+    static getUserById(id) {
+        const url = '/users/' + id;
+        fetch(url).then((res) => {
+            if (res.status === 200) {
+                const result = res.json();
+                return result;
+            }
+        }).then((json) => {
+            setState("user", json)
+            setState("groups", json.groups)
+        }).catch((error) => {
+            console.log(error);
+        })
+    }
+    /**
+     * Make server call to login after user input
+     * @param {String} username 
+     * @param {String} password 
+     */
     static userLogin(username, password) {
         const url = '/users/login'
         const data = { username: username, password: password }
@@ -66,6 +89,13 @@ export default class ServerInterface {
         })
     }
 
+    /**
+     * Creates new user in DB and directs to overview
+     * @param {String} username 
+     * @param {String} name 
+     * @param {String} email 
+     * @param {String} password 
+     */
     static userRegister(username, name, email, password) {
         const url = '/users'
         const data = { username: username, password: password, name: name, email: email }
@@ -91,6 +121,9 @@ export default class ServerInterface {
         })
     }
 
+    /**
+     * Logout user, redirect to homepage and delete state as well as cookie.
+     */
     static userLogout() {
         const url = "/users/logout";
 
@@ -104,15 +137,33 @@ export default class ServerInterface {
     }
 
     /**
+     * Check if cookie exists, and set data accordingly.
+     */
+    static checkCookie = () => {
+        const url = "/users/check-session";
+        fetch(url).then(res => {
+            if (res.status === 200) {
+                return res.json();
+            }
+        }).then(json => {
+            if (json && json.id) {
+                this.getUserById(json.id)
+            }
+        }).catch((error) => {
+            console.log(error);
+        })
+    }
+
+    /**
      * create a group in db and set state
      * @param name
      * @param users :An array of users to be added to the group.
      *               Current user will be automatically added if not in the array
      */
-    static requestGroupCreation(name, users){
+    static requestGroupCreation(name, users) {
         const url = '/group'
         const currUser = getState('user')
-        if (!users.find(user => user._id === currUser._id)){
+        if (!users.find(user => user._id === currUser._id)) {
             users.push(currUser)
         }
         const data = { name: name, groupMembers: users, bills: [] }
@@ -161,7 +212,7 @@ export default class ServerInterface {
      * @param users
      * @param group
      */
-    static addUsersToGroup(users, group){
+    static addUsersToGroup(users, group) {
         const url = '/group'
         const currUser = getState('user')
         const data = { addUsers: users }
@@ -197,7 +248,7 @@ export default class ServerInterface {
      * Note that users will only contain 'username' and 'name' fields for security reasons
      * @param setter: callback function
      */
-    static getAllUsers(setter){
+    static getAllUsers(setter) {
         const url = '/users'
         console.log("getting users")
         const request = new Request(url, {
@@ -261,7 +312,7 @@ export default class ServerInterface {
     static requestBillDeletion(bill) {
         const url = "/bill"
 
-        const data = {id: bill._id}
+        const data = { id: bill._id }
         const request = new Request(url, {
             method: 'delete',
             body: JSON.stringify(data),

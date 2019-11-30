@@ -1,6 +1,6 @@
 import React from "react";
 import "./App.css";
-import { Route, Switch, BrowserRouter } from "react-router-dom";
+import { Route, Switch, BrowserRouter, Redirect } from "react-router-dom";
 import Home from "./Home";
 import Overview from "./Overview";
 import Accountsview from "./AccountsView";
@@ -10,6 +10,7 @@ import { UserContext } from "./UserContext";
 import LoginScreen from "./loginScreen";
 import AdminPage from "./adminPage"
 import ServerInterface from "./ServerInterface"
+import { getState } from 'statezero'
 
 class App extends React.Component {
   constructor(props) {
@@ -18,6 +19,7 @@ class App extends React.Component {
   };
 
   render() {
+    
     return (
       <UserContext.Provider value={this.state}>
         <ThemeProvider theme={theme}>

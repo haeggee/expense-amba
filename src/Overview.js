@@ -1,4 +1,4 @@
-import React, {useContext} from "react"
+import React, { useContext } from "react"
 import "./App.css";
 import { CustomButton } from "./GUI/Theme";
 import PaymentDialog from "./GUI/PaymentDialog";
@@ -14,9 +14,10 @@ import CreateAddMemberDialog from './GUI/AddMemberDialog';
 import DeleteIcon from '@material-ui/icons/Delete'
 import DeleteGroupDialog from './GUI/DeleteGroupDialog'
 import ServerInterface from './ServerInterface'
-import {UserContext} from "./UserContext"
-import {getState, subscribe} from "statezero"
+import { UserContext } from "./UserContext"
+import { getState, subscribe } from "statezero"
 import Group from "./Group";
+import { useHistory } from 'react-router-dom'
 
 const useStyles = makeStyles(theme => ({
   gridcontainer: {
@@ -94,8 +95,12 @@ export function Overview(props) {
 
   // Let this be the current user.
   let user = getState('user')
-  subscribe((newUser)=>{user = newUser}, 'user')
+  subscribe((newUser) => { user = newUser }, 'user')
 
+  let history = useHistory();
+  if (user && user.username === 'admin') {
+    history.push('/admin')
+  }
   const [members, setMembers] = React.useState(undefined)
 
   // it appears that this is continuously being called. Making server calls over and over again is not efficient.
@@ -192,7 +197,7 @@ export function Overview(props) {
     setGroups(newGroups);
 
     setSelectedIndex(newGroups.length - 1);
-	console.log(group)
+    console.log(group)
   }
 
   /**
@@ -231,7 +236,7 @@ export function Overview(props) {
   }
 
   const [currentGroups, setGroups] = React.useState(getState('groups'));
-  subscribe((groups)=>{setGroups(groups)}, 'groups')
+  subscribe((groups) => { setGroups(groups) }, 'groups')
 
   /*
   index of the current group
@@ -287,100 +292,100 @@ export function Overview(props) {
 
             <Grid item xs={8}>
               {currentGroups.length !== 0 ?
-              <Paper className={classes.paperGroupOverview}>
-                <AppBar className={classes.AppBar}>
-                  <Grid container>
-                    <Grid item xs={10}>
-                      <Typography variant="h6" className={classes.title}>
-                        <strong>{currentGroups[selectedIndex].name}</strong>
-                      </Typography>
-                      <Typography variant="subtitle1" className={classes.subtitle}>
-                        <em>Members:</em> {groupMembersString(currentGroups[selectedIndex], user)}
-                        <Box component="span" m={1}>
-                          <Fab display="flex" flexDirection="row-reverse" size="small" color="third"
-                            aria-label="add" onClick={openAddMembersDialog}>
-                            <AddIcon />
-                          </Fab>
-                        </Box>
-                      </Typography>
-                    </Grid>
-
-                    <Grid item xs={2}>
-                      <Button className={classes.deleteButton} startIcon={<DeleteIcon />} onClick={openDeleteGroupDialog}> Delete </Button>
-                    </Grid>
-                  </Grid>
-                </AppBar>
-
-                <Box display="flex" flexDirection="row-reverse">
-                  <Tabs value={tabIndex} onChange={handleTabChange}>
-                    <Tab label="Balances" {...a11yProps(0)} />
-                    <Tab label="Bills" {...a11yProps(1)} />
-                  </Tabs>
-                </Box>
-
-                <Balances
-                  group={currentGroups[selectedIndex]}
-                  value={tabIndex}
-                  index={0}
-                />
-
-                <BillList
-                  group={currentGroups[selectedIndex]}
-                  value={tabIndex}
-                  index={1}
-                />
-
-                <Container className={classes.addButton}>
-                  <CustomButton onClick={openPaymentsDialog}>
-                    Add another payment
-                  </CustomButton>
-                </Container>
-
-                {/* Pass in handler that closes Dialog when the Dialog requests it. */}
-                <PaymentDialog
-                  open={openPayments}
-                  closeHandler={closePaymentsDialog}
-                  group={currentGroups[selectedIndex]}
-                  currentUser={user}
-                  createBillHandler={createBillHandler}
-                  payPersonHandler={payPersonHandler}
-                />
-                <CreateAddMemberDialog
-                  open={openAddMembers}
-                  closeHandler={closeAddMembersDialog}
-                  users={members}
-                  group={currentGroups[selectedIndex]}
-                />
-                <DeleteGroupDialog
-                  open={openDeleteGroup}
-                  closeHandler={closeDeleteGroupDialog}
-                  deleteGroup={deleteCurrentGroup}
-                  group={currentGroups[selectedIndex]} />
-              </Paper> :
-                  <Paper className={classes.paperGroupOverview}>
-                    <AppBar className={classes.AppBar}>
-                      <Grid container>
-                        <Grid item xs={10}>
-                          <Typography variant="h6" className={classes.title}>
-                            <strong>You are currently not in any groups.</strong>
-                          </Typography>
-                        </Grid>
+                <Paper className={classes.paperGroupOverview}>
+                  <AppBar className={classes.AppBar}>
+                    <Grid container>
+                      <Grid item xs={10}>
+                        <Typography variant="h6" className={classes.title}>
+                          <strong>{currentGroups[selectedIndex].name}</strong>
+                        </Typography>
+                        <Typography variant="subtitle1" className={classes.subtitle}>
+                          <em>Members:</em> {groupMembersString(currentGroups[selectedIndex], user)}
+                          <Box component="span" m={1}>
+                            <Fab display="flex" flexDirection="row-reverse" size="small" color="third"
+                              aria-label="add" onClick={openAddMembersDialog}>
+                              <AddIcon />
+                            </Fab>
+                          </Box>
+                        </Typography>
                       </Grid>
-                    </AppBar>
-                    <Balances
-                        group={null}
-                        value={0}
-                        index={0}
-                    />
-                  </Paper>}
+
+                      <Grid item xs={2}>
+                        <Button className={classes.deleteButton} startIcon={<DeleteIcon />} onClick={openDeleteGroupDialog}> Delete </Button>
+                      </Grid>
+                    </Grid>
+                  </AppBar>
+
+                  <Box display="flex" flexDirection="row-reverse">
+                    <Tabs value={tabIndex} onChange={handleTabChange}>
+                      <Tab label="Balances" {...a11yProps(0)} />
+                      <Tab label="Bills" {...a11yProps(1)} />
+                    </Tabs>
+                  </Box>
+
+                  <Balances
+                    group={currentGroups[selectedIndex]}
+                    value={tabIndex}
+                    index={0}
+                  />
+
+                  <BillList
+                    group={currentGroups[selectedIndex]}
+                    value={tabIndex}
+                    index={1}
+                  />
+
+                  <Container className={classes.addButton}>
+                    <CustomButton onClick={openPaymentsDialog}>
+                      Add another payment
+                  </CustomButton>
+                  </Container>
+
+                  {/* Pass in handler that closes Dialog when the Dialog requests it. */}
+                  <PaymentDialog
+                    open={openPayments}
+                    closeHandler={closePaymentsDialog}
+                    group={currentGroups[selectedIndex]}
+                    currentUser={user}
+                    createBillHandler={createBillHandler}
+                    payPersonHandler={payPersonHandler}
+                  />
+                  <CreateAddMemberDialog
+                    open={openAddMembers}
+                    closeHandler={closeAddMembersDialog}
+                    users={members}
+                    group={currentGroups[selectedIndex]}
+                  />
+                  <DeleteGroupDialog
+                    open={openDeleteGroup}
+                    closeHandler={closeDeleteGroupDialog}
+                    deleteGroup={deleteCurrentGroup}
+                    group={currentGroups[selectedIndex]} />
+                </Paper> :
+                <Paper className={classes.paperGroupOverview}>
+                  <AppBar className={classes.AppBar}>
+                    <Grid container>
+                      <Grid item xs={10}>
+                        <Typography variant="h6" className={classes.title}>
+                          <strong>You are currently not in any groups.</strong>
+                        </Typography>
+                      </Grid>
+                    </Grid>
+                  </AppBar>
+                  <Balances
+                    group={null}
+                    value={0}
+                    index={0}
+                  />
+                </Paper>}
             </Grid>
             <CreateGroupDialog
-                open={openGroup}
-                closeHandler={closeGroupDialog}
-                users={members}
-                currentUser={user}
-                groups={currentGroups}
-                groupCreatedListener={createGroupHandler}
+              open={openGroup}
+              closeHandler={closeGroupDialog}
+              users={members}
+              currentUser={user}
+              groups={currentGroups}
+              groupCreatedListener={createGroupHandler}
             />
 
           </Grid>

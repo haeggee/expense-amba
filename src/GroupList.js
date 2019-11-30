@@ -23,7 +23,7 @@ export function GroupList(props) {
             <ListItem key={uid(group)}
               button
               selected={group.groupID === groupID} /* highlights selected group*/
-              onClick={event => handleListItemClick(event, group.groupID)}
+              onClick={event => handleListItemClick(event, groups.indexOf(group))}
             >
               <ListItemIcon>
                 {/* use first two letters as short avatar left of name*/}
