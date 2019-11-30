@@ -26,7 +26,7 @@ export default class Group {
         }
         // add more fields here later as needed
         for (let i = 0; i < members.length; i++) {
-            this.groupMembers[i].user._addToGroup(this)
+            this.groupMembers[i].user.groups.push(groupID)
         }
         if (bills) {
             for (let i = 0; i < bills.length; i++) {
@@ -37,7 +37,7 @@ export default class Group {
 
     addMember(user, debt) {
         this.groupMembers.push(new GroupMember(user, debt))
-        user._addToGroup(this)
+        user.groups.push(this.groupID)
     }
 
     addMembers(users) {

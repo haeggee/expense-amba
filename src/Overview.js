@@ -16,6 +16,7 @@ import DeleteGroupDialog from './GUI/DeleteGroupDialog'
 import ServerInterface from './ServerInterface'
 import {UserContext} from "./UserContext"
 import {getState, subscribe} from "statezero"
+import Group from "./Group";
 
 const useStyles = makeStyles(theme => ({
   gridcontainer: {
@@ -95,10 +96,15 @@ export function Overview(props) {
   let user = getState('user')
   subscribe((newUser)=>{user = newUser}, 'user')
 
-  let members
-  ServerInterface.getAllUsers((result) => members = result)
-  console.log(members)
-  console.log("in overview")
+  const [members, setMembers] = React.useState(undefined)
+
+  // it appears that this is continuously being called. Making server calls over and over again is not efficient.
+  // only do it once. If you uncomment out the if statement below, there is a server call every second, which is not good.
+  if (members === undefined) {
+    ServerInterface.getAllUsers((result) => {
+      setMembers(result)
+    })
+  }
 
   // openDeleteGroup indicates whether or not to open the delete group dialog
 
@@ -152,7 +158,6 @@ export function Overview(props) {
   Handles whenever create group button is clicked to open dialog to make payment.
   */
   const openGroupDialog = () => {
-    console.log("wtf why no open")
     setOpenGroup(true);
   };
 
@@ -209,6 +214,20 @@ export function Overview(props) {
    */
   function payPersonHandler(group, title, amount, members, date) {
     createBillHandler(group, title, amount, members, date);
+  }
+
+  /**
+   * Handler that creates a new group.
+   * @param groupID
+   * @param name
+   * @param groupUsers
+   */
+  function createGroupHandler(name, groupUsers) {
+    let groupID = ServerInterface.getNextGroupID();
+    ServerInterface.requestGroupCreation(name, groupUsers);
+    // create group with bills array initially empty.
+    // const group = new Group(groupID, name, groupUsers, [])
+    // onGroupCreated()
   }
 
   const [currentGroups, setGroups] = React.useState(getState('groups'));
@@ -361,7 +380,7 @@ export function Overview(props) {
                 users={members}
                 currentUser={user}
                 groups={currentGroups}
-                groupCreatedListener={onGroupCreated}
+                groupCreatedListener={createGroupHandler}
             />
 
           </Grid>

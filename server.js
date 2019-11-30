@@ -110,21 +110,25 @@ app.post('/group', (req, res) => {
         groupMembers: [],
         bills: []
     })
-    req.body.users.forEach(user => {
+
+    req.body.groupMembers.forEach(user => {
         group.groupMembers.push({user: user._id, balance: 0})
     })
-    group.save().then(
-        (result) => {
-            return result.populate('groupMembers.user', 'name').execPopulate()
-        }
-    ).then(result =>{
+    group.save().then((result) => {
+
+        // add group id to each group member
+        req.body.groupMembers.forEach(id => {
+            User.findByIdAndUpdate(id, {$addToSet: {groups: {$each: [result._id]}}}, {new: true})
+        })
+        return result.populate('groupMembers.user', 'name').execPopulate()
+    }).then(result =>{
         res.send(result)
     }).catch(error => {
         res.status(400).send(error)
     })
 
-    const userIDs = req.body.users.map((user)=>user._id)
-    User.updateMany({_id: {$in: userIDs}}, {$addToSet: {groups: group._id}})
+    // const userIDs = req.body.users.map((user)=>user._id)
+    // User.updateMany({_id: {$in: userIDs}}, {$addToSet: {groups: group._id}})
 })
 
 /// a GET route to get a group by their id.
