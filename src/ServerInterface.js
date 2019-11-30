@@ -40,7 +40,6 @@ export default class ServerInterface {
     }
 
     static userLogin(username, password) {
-        console.log("testing")
         const url = '/users/login'
         const data = { username: username, password: password }
         const request = new Request(url, {
@@ -53,7 +52,8 @@ export default class ServerInterface {
         })
         fetch(request).then((res) => {
             if (res.status === 200) {
-                return res.json();
+                const result = res.json();
+                return result;
             } else {
                 alert('Username and password combination incorrect')
                 return null;
@@ -115,7 +115,7 @@ export default class ServerInterface {
         if (!users.find(user => user._id === currUser._id)){
             users.push(currUser)
         }
-        const data = { name: name, users: users }
+        const data = { name: name, groupMembers: users, bills: [] }
         const request = new Request(url, {
             method: 'post',
             body: JSON.stringify(data),
@@ -132,12 +132,25 @@ export default class ServerInterface {
                 return null;
             }
         }).then((json) => {
-            const groups = getState('groups')
+            let groups = getState('groups')
             const user = getState('user')
-            groups.push(json)
-            user.groups.push(json)
-            setState('groups', groups)
-            setState('user', user)
+            if (groups === undefined) {
+                groups = []
+            }
+            // this isnt working
+            // groups.push(json)
+            // user.groups.push(json)
+            const newGroups = [json, ...groups]
+            const newUserGroups = [json, ...user.groups]
+            const newUser = {
+                name: user.name,
+                username: user.username,
+                password: user.password,
+                email: user.email,
+                groups: newUserGroups
+            }
+            setState('groups', newGroups)
+            setState('user', newUser)
         }).catch((error) => {
             console.log(error);
         })
@@ -168,7 +181,10 @@ export default class ServerInterface {
                 return null;
             }
         }).then((json) => {
-            const groups = getState('groups')
+            let groups = getState('groups')
+            if (groups === undefined) {
+                groups = []
+            }
             groups.push(json)
             setState('groups', groups)
         }).catch((error) => {
@@ -183,6 +199,7 @@ export default class ServerInterface {
      */
     static getAllUsers(setter){
         const url = '/users'
+        console.log("getting users")
         const request = new Request(url, {
             method: 'get',
             headers: {
@@ -191,6 +208,7 @@ export default class ServerInterface {
             },
         })
         fetch(request).then((res) => {
+            console.log("got request " + res.status)
             if (res.status === 200) {
                 return res.json()
             } else {

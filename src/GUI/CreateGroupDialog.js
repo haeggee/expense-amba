@@ -75,13 +75,10 @@ function DialogContents(props) {
      */
     const createGroup = function () {
         if (name.length !== 0 && members.length !== 0) {
-            let groupID = ServerInterface.getNextGroupID()
-            //Add current user to the group
+            // Add current user to the group
             const groupUsers = [currentUser, ...members]
-            // create group with bills array initially empty.
-            const group = new Group(groupID, name, groupUsers, [])
 
-            groupCreatedListener(group)
+            groupCreatedListener(name, groupUsers)
             closeHandler()
         }
         setNameError(true)
