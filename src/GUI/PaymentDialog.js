@@ -454,8 +454,6 @@ export default function PaymentDialog(props) {
 	// group members of the group
 	const members = props.groupMembers
 
-	console.log(members)
-
 	// the current user that is logged in
 	const user = props.currentUser;
 

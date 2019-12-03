@@ -127,6 +127,9 @@ export function Overview(props) {
   // all the group members of the currently selected group.
   const [members, setMembers] = React.useState(undefined)
 
+  // all the bills in the database (more efficient to only get bills for a certain group, but this is easier)
+  const [bills, setBills] = React.useState(undefined)
+
   // it appears that this is continuously being called. Making server calls over and over again is not efficient.
   // only do it once. If you uncomment out the if statement below, there is a server call every second, which is not good.
   if (users === undefined) {
@@ -143,16 +146,21 @@ export function Overview(props) {
     })
   }
 
+  // same as above
+  if (bills === undefined) {
+    setBills([])
+    ServerInterface.getAllBills((result) => {
+      console.log(result)
+      setBills(result)
+    })
+  }
+
   /**
    * Updates the group members in this group.
    */
   const updateGroupMembers = (group, users) => {
     // obtain the group members for this new group
     let newMembers = []
-
-    console.log("updating group members")
-    console.log(group)
-    console.log(users)
 
     if (users === undefined) {
       setMembers([])
@@ -173,13 +181,6 @@ export function Overview(props) {
   subscribe((groups) => {
     setGroups(groups)
   }, "groups")
-
-  // similarly, only call this once in the beginning
- /* if (members === undefined ) {
-    if (currentGroups !== undefined && currentGroups.length >= 0) {
-      updateGroupMembers(currentGroups[0])
-    }
-  }*/
 
   // openDeleteGroup indicates whether or not to open the delete group dialog
 
@@ -288,6 +289,43 @@ export function Overview(props) {
    */
   function createBillHandler(group, title, amount, members, date) {
     ServerInterface.requestBillCreation(group, title, amount, date, user, members)
+    ServerInterface.getAllBills((result) => {
+      console.log(result)
+      setBills(result)
+    })
+  }
+
+  function deleteBillHandler(bill) {
+    console.log("deleting bill")
+    ServerInterface.requestBillDeletion(bill)
+    let newBills = []
+    for (let i = 0; i < bills.length; i ++) {
+      if (bill._id !== bills[i]._id) {
+        newBills.push(bills[i])
+      }
+    }
+    setBills(newBills)
+    // go through groups and delete bill
+    let newGroups = []
+    for (let i = 0; i < currentGroups.length; i ++) {
+      if (bill.group === currentGroups[i]._id) {
+        const newGroupBills = []
+        // only keep the bills that we didnt delete
+        for (let j = 0; j <  currentGroups[i].bills.length; j ++) {
+          if (currentGroups[i].bills[j]._id !== bill._id) {
+            newGroupBills.push(currentGroups[i].bills[j])
+          }
+        }
+        newGroups.push({
+          _id: bill.group,
+          name:  currentGroups[i].name,
+          bills: newGroupBills
+        })
+      } else {
+        newGroups.push(currentGroups[i])
+      }
+    }
+    setGroups(newGroups)
   }
 
   /**
@@ -411,8 +449,11 @@ export function Overview(props) {
 
                   <BillList
                     group={currentGroups[selectedIndex]}
+                    bills={bills}
                     value={tabIndex}
                     index={1}
+                    members={members}
+                    deleteBillHandler={deleteBillHandler}
                   />
 
                   <Container className={classes.addButton}>

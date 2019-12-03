@@ -145,7 +145,6 @@ export default class ServerInterface {
      */
     static getAllUsers(setter) {
         const url = '/users'
-        console.log("getting users")
         const request = new Request(url, {
             method: 'get',
             headers: {
@@ -302,7 +301,7 @@ export default class ServerInterface {
      * Removes a group.
      * @param group The group to remove.
      */
-    static requestGroupDeletion(group) {
+    static requestGroupDeletion(group, callback) {
         let url = "/group/"
         url += group._id;
 
@@ -318,6 +317,7 @@ export default class ServerInterface {
                 return null;
             }
         }).then((json) => {
+            callback()
         }).catch((error) => {
             console.log(error);
         })
@@ -397,7 +397,8 @@ export default class ServerInterface {
                 const group = groups[i]
                 // found the group, add to the groups bills array
                 if (group._id === json.group) {
-                    const newBills = [json, ...group.bills]
+                    const newBills = [json._id, ...group.bills]
+                    console.log(json)
                     // create a copy of the old group but with the new bill added.
                     // gotta create a new object because group is read only.
                     const newGroup = {
@@ -411,6 +412,7 @@ export default class ServerInterface {
                     newGroups.push(group)
                 }
             }
+            console.log(newGroups)
             setState('groups', newGroups)
 
         }).catch((error) => {
@@ -418,28 +420,60 @@ export default class ServerInterface {
         })
     }
 
-    //TODO: set states accordingly
-    static requestBillDeletion(bill) {
-        const url = "/bill"
-
-        const data = { id: bill._id }
+    /**
+     * get all bills from the server.
+     * @param setter: callback function
+     */
+    static getAllBills(setter) {
+        const url = '/bills'
         const request = new Request(url, {
-            method: 'delete',
-            body: JSON.stringify(data),
+            method: 'get',
             headers: {
                 'Accept': 'application/json, text/plain, */*',
                 'Content-Type': 'application/json'
             },
+        })
+        fetch(request).then((res) => {
+            if (res.status === 200) {
+                return res.json()
+            } else {
+                alert('Cannot fetch all bills.')
+                return null;
+            }
+        }).then((json) => {
+            setter(json)
+            //setState("bills", json)
+
+        }).catch((error) => {
+            console.log(error);
+        })
+    }
+
+
+    static requestBillDeletion(bill) {
+        let url = "/bills/"
+        url += bill._id
+        const request = new Request(url, {
+            method: 'delete'
         })
 
         fetch(request).then((res) => {
             if (res.status === 200) {
                 return res.json();
             } else {
-                alert('Bill creation failed. Please try again.')
+                alert('Bill deletion failed. Please try again.')
                 return null;
             }
         }).then((json) => {
+
+          /*  const bills = getState("bills")
+            let newBills = []
+            for (let i = 0; i < bills.length; i ++) {
+                if (json._id !== bills[i]._id) {
+                    newBills.push(bills[i])
+                }
+            }
+            setState("bills", newBills)*/
         }).catch((error) => {
             console.log(error);
         })

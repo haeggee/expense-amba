@@ -105,7 +105,6 @@ app.get('/users/check-session', (req, res) => {
  *     groupMembers: a list of users with _id field included
  * }
   */
-//TODO: add group to its groupMembers' field
 app.post('/group', (req, res) => {
     const group = new Group({
         name: req.body.name,
@@ -252,6 +251,15 @@ app.post('/bills', (req, res) => {
     }).catch(error => {
         res.status(500).send(error)
     })
+})
+
+// gets all the bills in the db
+app.get('/bills', (req, res) => {
+
+    Bill.find({}, function(err, bills) {
+        console.log(bills)
+        res.send(bills);
+    });
 })
 
 app.delete('/bills/:id', (req, res) => {
