@@ -63,18 +63,39 @@ const useStyles = makeStyles(theme => ({
 
 
 /**
- * Returns a string of all the members of a group.
- * @param {group} the group object
- * @param {currentUser} The user that is using this app that is a part of this group. We assume a group has at least one member.
+ * Returns list of user names of all the users in this group.
+ * @param group The group.
+ * @param allUsers List of all users.
  */
-const groupMembersString = function (group, currentUser) {
+const getGroupMembersUsernames = function(group, allUsers) {
+  let members = []
+  if (allUsers === undefined) {return []}
+  for (let i = 0; i < group.groupMembers.length; i++) {
+    for (let j = 0; j < allUsers.length; j ++) {
+      if (group.groupMembers[i].user === allUsers[j]._id) {
+        members.push(allUsers[j])
+      }
+    }
+  }
+  return members
+}
+
+/**
+ * Returns a string of all the members of a group.
+ *
+ * @param group the group object
+ * @param currentUser The user that is using this app that is a part of this group. We assume a group has at least one member.
+ * @param allUsers List of all users.
+ */
+const groupMembersString = function (group, currentUser, allUsers) {
+  const groupMembers = getGroupMembersUsernames(group, allUsers)
   let text = "You";
 
-  for (let i = 0; i < group.groupMembers.length; i++) {
+  for (let i = 0; i < groupMembers.length; i++) {
     // all usernames are unique, so we can use them to compare users
-    if (currentUser.username !== group.groupMembers[i].user.username) {
+    if (currentUser.username !== groupMembers[i].username) {
       // only add to string if this is not the current user
-      text += ", " + group.groupMembers[i].user.name;
+      text += ", " + groupMembers[i].name;
     }
   }
   return text;
@@ -122,9 +143,9 @@ export function Overview(props) {
     setOpenDeleteGroup(true)
   };
 
-	/* 
-	Handles closing dialog when Dialog requests it.
-	*/
+  /*
+  Handles closing dialog when Dialog requests it.
+  */
   const closeDeleteGroupDialog = () => {
     setOpenDeleteGroup(false)
   };
@@ -210,7 +231,6 @@ export function Overview(props) {
    */
   function createBillHandler(group, title, amount, members, date) {
     ServerInterface.requestBillCreation(group, title, amount, date, user, members)
-    console.log(group)
   }
 
   /**
@@ -300,7 +320,7 @@ export function Overview(props) {
                           <strong>{currentGroups[selectedIndex].name}</strong>
                         </Typography>
                         <Typography variant="subtitle1" className={classes.subtitle}>
-                          <em>Members:</em> {groupMembersString(currentGroups[selectedIndex], user)}
+                          <em>Members:</em> {groupMembersString(currentGroups[selectedIndex], user, members)}
                           <Box component="span" m={1}>
                             <Fab display="flex" flexDirection="row-reverse" size="small" color="third"
                               aria-label="add" onClick={openAddMembersDialog}>

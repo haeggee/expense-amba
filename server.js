@@ -102,7 +102,7 @@ app.get('/users/check-session', (req, res) => {
  * body should be in the format:
  * {
  *     name: name,
- *     users: a list of users with _id field included
+ *     groupMembers: a list of users with _id field included
  * }
   */
 //TODO: add group to its groupMembers' field
@@ -120,9 +120,10 @@ app.post('/group', (req, res) => {
 
         // add group id to each group member
         req.body.groupMembers.forEach(id => {
-            User.findByIdAndUpdate(id, { $addToSet: { groups: { $each: [result._id] } } }, { new: true })
+            User.findByIdAndUpdate(id, { $addToSet: { groups: { $each: [result._id] } } }, { new: true }).then((u) => {
+            })
         })
-        return result.populate('groupMembers.user', 'name').execPopulate()
+        return result
     }).then(result => {
         res.send(result)
     }).catch(error => {
@@ -284,7 +285,8 @@ app.post('/users', (req, res) => {
         name: req.body.name,
         username: req.body.username,
         password: req.body.password,
-        email: req.body.email
+        email: req.body.email,
+        groups: []
     })
     user.save().then(
         (result) => {
@@ -355,17 +357,12 @@ app.get('/users/:id', (req, res) => {
     )
 })
 
-// for test only
 // get all users
 app.get('/users', (req, res) => {
-    User.find(undefined, { name: 1, username: 1 }).then(
-        (users) => {
-            res.send(users)
-        },
-        (error) => {
-            res.status(500).send(error) // server error
-        }
-    )
+
+    User.find({}, function(err, users) {
+        res.send(users);
+    });
 })
 
 /*** Webpage routes below **********************************/

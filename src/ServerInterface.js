@@ -284,6 +284,7 @@ export default class ServerInterface {
             const newGroups = [json, ...groups]
             const newUserGroups = [json, ...user.groups]
             const newUser = {
+                id_: user._id,
                 name: user.name,
                 username: user.username,
                 password: user.password,
