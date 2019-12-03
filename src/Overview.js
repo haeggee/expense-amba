@@ -16,6 +16,7 @@ import DeleteGroupDialog from './GUI/DeleteGroupDialog'
 import ServerInterface from './ServerInterface'
 import { getState, subscribe } from "statezero"
 import { useHistory } from 'react-router-dom'
+import { setEmptyState } from "./actions/helpers";
 
 const useStyles = makeStyles(theme => ({
   gridcontainer: {
@@ -65,11 +66,11 @@ const useStyles = makeStyles(theme => ({
  * @param group The group.
  * @param allUsers List of all users.
  */
-const getGroupMembersUsernames = function(group, allUsers) {
+const getGroupMembersUsernames = function (group, allUsers) {
   let members = []
-  if (allUsers === undefined) {return []}
+  if (allUsers === undefined) { return [] }
   for (let i = 0; i < group.groupMembers.length; i++) {
-    for (let j = 0; j < allUsers.length; j ++) {
+    for (let j = 0; j < allUsers.length; j++) {
       if (group.groupMembers[i].user === allUsers[j]._id) {
         members.push(allUsers[j])
       }
@@ -166,8 +167,8 @@ export function Overview(props) {
       return
     }
 
-    for (let i = 0; i < group.groupMembers.length; i ++) {
-      for (let j = 0; j < users.length; j ++) {
+    for (let i = 0; i < group.groupMembers.length; i++) {
+      for (let j = 0; j < users.length; j++) {
         if (group.groupMembers[i].user === users[j]._id) {
           newMembers.push(users[j])
         }
@@ -206,13 +207,14 @@ export function Overview(props) {
 
     // since the groupid identifies the highlight in in the list, update ids
     //for (let i = 0; i < newGroups.length; i++) {
-      //newGroups[i].groupID = i;
+    //newGroups[i].groupID = i;
     //}
     ServerInterface.requestGroupDeletion(deletedGroups[0])
     setSelectedIndex(0);
     setGroups(newGroups);
+    setState('groups', newGroups)
     closeDeleteGroupDialog();
-    if (newGroups.length <= 0) {return}
+    if (newGroups.length <= 0) { return }
     updateGroupMembers(newGroups[selectedIndex], users)
   };
   // openPayments indicates whether or not to open the payments dialog popup
@@ -295,7 +297,7 @@ export function Overview(props) {
   function deleteBillHandler(bill) {
     ServerInterface.requestBillDeletion(bill)
     let newBills = []
-    for (let i = 0; i < bills.length; i ++) {
+    for (let i = 0; i < bills.length; i++) {
       if (bill._id !== bills[i]._id) {
         newBills.push(bills[i])
       }
@@ -303,20 +305,22 @@ export function Overview(props) {
     setBills(newBills)
     // go through groups and delete bill
     let newGroups = []
-    for (let i = 0; i < currentGroups.length; i ++) {
+    for (let i = 0; i < currentGroups.length; i++) {
       if (bill.group === currentGroups[i]._id) {
         const newGroupBills = []
         // only keep the bills that we didnt delete
-        for (let j = 0; j <  currentGroups[i].bills.length; j ++) {
+        for (let j = 0; j < currentGroups[i].bills.length; j++) {
           if (currentGroups[i].bills[j] !== bill._id) {
             newGroupBills.push(currentGroups[i].bills[j])
           }
         }
         newGroups.push({
           _id: bill.group,
+
           name:  currentGroups[i].name,
           bills: newGroupBills,
           groupMembers: currentGroups[i].groupMembers
+
         })
       } else {
         newGroups.push(currentGroups[i])

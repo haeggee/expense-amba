@@ -39,7 +39,7 @@ export default class ServerInterface {
         return users[0]
     }
 
-/** ** -- USER FUNCTIONS --------------------------- */
+    /** ** -- USER FUNCTIONS --------------------------- */
     /**
      * Makes server call to get user with userID of DB
      * @param  id 
@@ -64,7 +64,7 @@ export default class ServerInterface {
      * @param {String} password 
      */
     static userLogin(username, password) {
-        const url = 'http://localhost:3001/users/login'
+        const url = '/users/login'
         const data = { username: username, password: password }
         const request = new Request(url, {
             method: 'post',
@@ -171,7 +171,7 @@ export default class ServerInterface {
         const url = '/users/' + id
         const data = { username: username, password: password, name: name, email: email }
         const request = new Request(url, {
-            method: 'put',
+            method: 'PATCH',
             body: JSON.stringify(data),
             headers: {
                 'Accept': 'application/json, text/plain, */*',
@@ -242,7 +242,7 @@ export default class ServerInterface {
     }
 
 
-/** ** -- GROUP FUNCTIONS --------------------------- */
+    /** ** -- GROUP FUNCTIONS --------------------------- */
     /**
      * create a group in db and set state
      * @param name
@@ -329,11 +329,10 @@ export default class ServerInterface {
      * @param group
      */
     static addUsersToGroup(users, group) {
-        const url = '/group'
-        const currUser = getState('user')
+        const url = '/group/' + group._id
         const data = { addUsers: users }
         const request = new Request(url, {
-            method: 'patch',
+            method: 'PATCH',
             body: JSON.stringify(data),
             headers: {
                 'Accept': 'application/json, text/plain, */*',
@@ -348,12 +347,13 @@ export default class ServerInterface {
                 return null;
             }
         }).then((json) => {
-            let groups = getState('groups')
-            if (groups === undefined) {
-                groups = []
-            }
-            groups.push(json)
-            setState('groups', groups)
+            getState('groups').map(group => {
+                if (group._id === json._id) {
+                    return json;
+                } else {
+                    return group;
+                }
+            })
         }).catch((error) => {
             console.log(error);
         })
