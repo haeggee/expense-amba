@@ -240,8 +240,8 @@ function PayBill(props) {
 									MenuProps={MenuProps}>
 									<MenuItem key={currentUser.username} value={currentUser}>You</MenuItem>
 									{groupMembers.map(function (member) {
-										if (member.user.username !== currentUser.username) {
-											return (<MenuItem key={member.user.username} value={member.user}>{member.user.username}</MenuItem>)
+										if (member.username !== currentUser.username) {
+											return (<MenuItem key={member.username} value={member}>{member.username}</MenuItem>)
 										}
 									})}
 								</Select>
@@ -404,8 +404,8 @@ function PayPerson(props) {
 						>
 
 							{groupMembers.map(function (member) {
-								if (user.username !== member.user.username) {
-									return (<MenuItem value={member.user}>{member.user.username}</MenuItem>)
+								if (user.username !== member.username) {
+									return (<MenuItem value={member}>{member.username}</MenuItem>)
 								}
 							})}
 						</Select>
@@ -451,6 +451,9 @@ export default function PaymentDialog(props) {
 	// what group we are looking at
 	const group = props.group;
 
+	// group members of the group
+	const members = props.groupMembers
+
 	// the current user that is logged in
 	const user = props.currentUser;
 
@@ -481,8 +484,8 @@ export default function PaymentDialog(props) {
 
 				</AppBar>
 
-				<PayBill currentIndex={tabIndex} index={0} createBillHandler={createBillHandler} group={group} groupMembers={group.groupMembers} currentUser={user} closeHandler={closeHandler} />
-				<PayPerson currentIndex={tabIndex} index={1} groupMembers={group.groupMembers} group={group} currentUser={user} payPersonHandler={payPersonHandler} closeHandler={closeHandler} />
+				<PayBill currentIndex={tabIndex} index={0} createBillHandler={createBillHandler} group={group} groupMembers={members} currentUser={user} closeHandler={closeHandler} />
+				<PayPerson currentIndex={tabIndex} index={1} groupMembers={members} group={group} currentUser={user} payPersonHandler={payPersonHandler} closeHandler={closeHandler} />
 
 			</Dialog>
 		</div>

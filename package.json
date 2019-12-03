@@ -27,7 +27,8 @@
     "react-uid": "^2.2.0",
     "reactide-config": "^1.0.2",
     "statezero": "^0.5.4",
-    "webfontloader": "^1.6.28"
+    "webfontloader": "^1.6.28",
+    "date-and-time": "^0.6.3"
   },
   "scripts": {
     "start-react": "react-scripts start",
