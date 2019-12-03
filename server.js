@@ -274,28 +274,6 @@ app.delete('/bills/:id', (req, res) => {
     })
 })
 
-// a PATCH route for changing properties of a resource.
-// (alternatively, a PUT is used more often for replacing entire resources).
-app.patch('/user/:id', (req, res) => {
-    const id = req.params.id
-    // for best practice
-    if (!ObjectID.isValid(id)) {
-        res.status(404).send()
-    }
-    const { name, username, password, email, groups } = req.body
-    const body = { name, username, password, email, groups }
-    // Update the student by their id.
-    User.findByIdAndUpdate(id, { $set: body }, { new: true }).then((user) => {
-        if (!user) {
-            res.status(404).send()
-        } else {
-            res.send(user)
-        }
-    }).catch((error) => {
-        res.status(400).send() // bad request for changing the user
-    })
-
-})
 
 
 /** User routes below **/
@@ -315,6 +293,24 @@ app.post('/users', (req, res) => {
             res.status(400).send(err)
         }
     )
+})
+
+// patch to change user attributes
+app.patch('/users', (req, res) => {
+
+    const { name, username, password, email } = req.body
+    const body = { name, username, password, email }
+    // Update the student by their id.
+    User.findOneAndUpdate({ username: username }, body).then((user) => {
+        if (!user) {
+            res.status(404).send()
+        } else {
+            res.send(user)
+        }
+    }).catch((error) => {
+        res.status(400).send() // bad request for changing the user
+    })
+
 })
 
 
@@ -362,9 +358,6 @@ app.get('/users', (req, res) => {
 
 // The various redirects will ensure a proper flow between login and dashboard
 // pages so that your users have a proper experience on the front-end.
-
-//***             open question: redirects do not work together with react-router-dom;
-//***             will probably have to use redirect features of react-router-dom*/
 
 // static js directory
 app.use("/js", express.static(__dirname + '/public/js'))

@@ -154,7 +154,7 @@ function DialogContents(props) {
                             )}
                             MenuProps={MenuProps}>
                             {users.map(function (user) {
-                                if (user.username !== currentUser.username) {
+                                if (user.username !== currentUser.username && user.username !== "admin") {
                                     return (<MenuItem key={user.username} value={user}>{user.username}</MenuItem>)
                                 }
                             })}
