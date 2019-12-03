@@ -151,12 +151,17 @@ export function Overview(props) {
   };
 
   const deleteCurrentGroup = () => {
-    currentGroups.splice(selectedIndex, 1);
+    // must slice to make shallow copy because currentGroups is read only.
+    const newGroups = currentGroups.slice();
+    const deletedGroups = newGroups.splice(selectedIndex, 1);
+
     // since the groupid identifies the highlight in in the list, update ids
-    for (let i = 0; i < currentGroups.length; i++) {
-      currentGroups[i].groupID = i;
-    }
+    //for (let i = 0; i < newGroups.length; i++) {
+      //newGroups[i].groupID = i;
+    //}
+    ServerInterface.requestGroupDeletion(deletedGroups[0])
     setSelectedIndex(0);
+    setGroups(newGroups);
     closeDeleteGroupDialog();
   };
   // openPayments indicates whether or not to open the payments dialog popup

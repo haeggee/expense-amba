@@ -299,6 +299,31 @@ export default class ServerInterface {
     }
 
     /**
+     * Removes a group.
+     * @param group The group to remove.
+     */
+    static requestGroupDeletion(group) {
+        let url = "/group/"
+        url += group._id;
+
+        const request = new Request(url, {
+            method: 'delete',
+        })
+
+        fetch(request).then((res) => {
+            if (res.status === 200) {
+                return res.json();
+            } else {
+                alert('Group deletion failed. Please try again.')
+                return null;
+            }
+        }).then((json) => {
+        }).catch((error) => {
+            console.log(error);
+        })
+    }
+
+    /**
      * add a list of users to the group and set state
      * @param users
      * @param group

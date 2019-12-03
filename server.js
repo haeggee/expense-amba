@@ -198,7 +198,9 @@ app.delete('/group/:id', (req, res) => {
         else {
             // remove all the bills in the group
             group.bills.forEach(billId => {
-                Bill.findByIdAndRemove(billId)
+                Bill.findByIdAndRemove(billId).catch((error) => {
+                    console.log(error)
+                })
             })
             res.send(group)
         }
