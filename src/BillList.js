@@ -55,23 +55,23 @@ export function BillList(props) {
                         >
                             <Typography className={classes.firstheading}>
                                 {bill.title} <br/>
-                                <span className={classes.subtitle}>paid by: <strong>{bill.payer.name}</strong></span>
+                                <span className={classes.subtitle}>paid by: <strong>{bill.payer}</strong></span>
                             </Typography>
                             <Typography className={classes.secondheading}>
                                 CAD${bill.amount} <br/>
-                                <span className={classes.subtitle}>{bill.date.toDateString()}</span>
+                                <span className={classes.subtitle}>{bill.date}</span>
                             </Typography>
                         </ExpansionPanelSummary>
                         <ExpansionPanelDetails>
                             <Divider />
                             <Typography className={classes.description}> Paid for: {/*bill.toPayeesString()*/} </Typography>
-                            <ul>{bill.payees.map((payee, index) => {
+                            <ul>{/*bill.payees.map((payee, index) => {
                                 return (
                                     <li>
                                         {payee.name}: CAD${(bill.amount / bill.payees.length).toFixed(2)}
                                     </li>
                                 )
-                            })}
+                            })*/}
                             </ul>
                         </ExpansionPanelDetails>
                         <ExpansionPanelActions>

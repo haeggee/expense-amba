@@ -360,7 +360,6 @@ export default class ServerInterface {
     }
 
 /** ** -- BILL FUNCTIONS --------------------------- */
-    //TODO: set states accordingly
     static requestBillCreation(group, title, amount, date, payer, payees) {
         const url = '/bills'
         const data = {
@@ -388,8 +387,32 @@ export default class ServerInterface {
             }
         }).then((json) => {
             const bills = getState('bills')
-            bills.push(json)
-            setState(bills)
+            const newBills = [json, ...bills]
+            setState("bills", newBills)
+
+            // Go through each group until we find the one this bill is a part of.
+            const groups = getState('groups')
+            const newGroups = []
+            for (let i = 0; i < groups.length; i ++) {
+                const group = groups[i]
+                // found the group, add to the groups bills array
+                if (group._id === json.group) {
+                    const newBills = [json, ...group.bills]
+                    // create a copy of the old group but with the new bill added.
+                    // gotta create a new object because group is read only.
+                    const newGroup = {
+                        _id: group._id,
+                        name: group.name,
+                        groupMembers: group.groupMembers,
+                        bills: newBills
+                    }
+                    newGroups.push(newGroup)
+                } else {
+                    newGroups.push(group)
+                }
+            }
+            setState('groups', newGroups)
+
         }).catch((error) => {
             console.log(error);
         })

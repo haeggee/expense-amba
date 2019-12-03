@@ -14,9 +14,7 @@ import CreateAddMemberDialog from './GUI/AddMemberDialog';
 import DeleteIcon from '@material-ui/icons/Delete'
 import DeleteGroupDialog from './GUI/DeleteGroupDialog'
 import ServerInterface from './ServerInterface'
-import { UserContext } from "./UserContext"
 import { getState, subscribe } from "statezero"
-import Group from "./Group";
 import { useHistory } from 'react-router-dom'
 
 const useStyles = makeStyles(theme => ({
@@ -122,15 +120,66 @@ export function Overview(props) {
   if (user && user.username === 'admin') {
     history.push('/admin')
   }
+
+  // all the users in the database
+  const [users, setUsers] = React.useState(undefined)
+
+  // all the group members of the currently selected group.
   const [members, setMembers] = React.useState(undefined)
 
   // it appears that this is continuously being called. Making server calls over and over again is not efficient.
   // only do it once. If you uncomment out the if statement below, there is a server call every second, which is not good.
-  if (members === undefined) {
+  if (users === undefined) {
     ServerInterface.getAllUsers((result) => {
-      setMembers(result)
+      setUsers(result)
+
+      // update the people currently in this group
+      if (currentGroups.length > 0) {
+        // supply result instead of users because setUsers is asynchronous so it may not be set yet
+        updateGroupMembers(currentGroups[0], result)
+      } else {
+        setMembers([])
+      }
     })
   }
+
+  /**
+   * Updates the group members in this group.
+   */
+  const updateGroupMembers = (group, users) => {
+    // obtain the group members for this new group
+    let newMembers = []
+
+    console.log("updating group members")
+    console.log(group)
+    console.log(users)
+
+    if (users === undefined) {
+      setMembers([])
+      return
+    }
+
+    for (let i = 0; i < group.groupMembers.length; i ++) {
+      for (let j = 0; j < users.length; j ++) {
+        if (group.groupMembers[i].user === users[j]._id) {
+          newMembers.push(users[j])
+        }
+      }
+    }
+    setMembers(newMembers)
+  }
+
+  const [currentGroups, setGroups] = React.useState(getState('groups'));
+  subscribe((groups) => {
+    setGroups(groups)
+  }, "groups")
+
+  // similarly, only call this once in the beginning
+ /* if (members === undefined ) {
+    if (currentGroups !== undefined && currentGroups.length >= 0) {
+      updateGroupMembers(currentGroups[0])
+    }
+  }*/
 
   // openDeleteGroup indicates whether or not to open the delete group dialog
 
@@ -163,6 +212,8 @@ export function Overview(props) {
     setSelectedIndex(0);
     setGroups(newGroups);
     closeDeleteGroupDialog();
+    if (newGroups.length <= 0) {return}
+    updateGroupMembers(newGroups[selectedIndex], users)
   };
   // openPayments indicates whether or not to open the payments dialog popup
 
@@ -223,6 +274,7 @@ export function Overview(props) {
     setGroups(newGroups);
 
     setSelectedIndex(newGroups.length - 1);
+    updateGroupMembers(group, users)
     console.log(group)
   }
 
@@ -231,7 +283,7 @@ export function Overview(props) {
    * @param {group} The group this bill should be created in.
    * @param {title} The title of the bill.
    * @param {amount} The total amount of the bill.
-   * @param {members} The people involved in this bill. 
+   * @param {users} The people involved in this bill.
    * @param {date} The date this bill is created on. 
    */
   function createBillHandler(group, title, amount, members, date) {
@@ -260,9 +312,6 @@ export function Overview(props) {
     // onGroupCreated()
   }
 
-  const [currentGroups, setGroups] = React.useState(getState('groups'));
-  subscribe((groups) => { setGroups(groups) }, 'groups')
-
   /*
   index of the current group
   */
@@ -272,6 +321,12 @@ export function Overview(props) {
 
   const handleListItemClick = (event, index) => {
     setSelectedIndex(index);
+
+    if (currentGroups.length <= 0) {
+      setMembers([])
+      return
+    }
+    updateGroupMembers(currentGroups[index], users)
   };
 
   // which tab we are on
@@ -325,7 +380,7 @@ export function Overview(props) {
                           <strong>{currentGroups[selectedIndex].name}</strong>
                         </Typography>
                         <Typography variant="subtitle1" className={classes.subtitle}>
-                          <em>Members:</em> {groupMembersString(currentGroups[selectedIndex], user, members)}
+                          <em>Members:</em> {groupMembersString(currentGroups[selectedIndex], user, users)}
                           <Box component="span" m={1}>
                             <Fab display="flex" flexDirection="row-reverse" size="small" color="third"
                               aria-label="add" onClick={openAddMembersDialog}>
@@ -374,11 +429,12 @@ export function Overview(props) {
                     currentUser={user}
                     createBillHandler={createBillHandler}
                     payPersonHandler={payPersonHandler}
+                    groupMembers={members}
                   />
                   <CreateAddMemberDialog
                     open={openAddMembers}
                     closeHandler={closeAddMembersDialog}
-                    users={members}
+                    users={users}
                     group={currentGroups[selectedIndex]}
                   />
                   <DeleteGroupDialog
@@ -407,7 +463,7 @@ export function Overview(props) {
             <CreateGroupDialog
               open={openGroup}
               closeHandler={closeGroupDialog}
-              users={members}
+              users={users}
               currentUser={user}
               groups={currentGroups}
               groupCreatedListener={createGroupHandler}
