@@ -39,6 +39,7 @@ export default class ServerInterface {
         return users[0]
     }
 
+/** ** -- USER FUNCTIONS --------------------------- */
     /**
      * Makes server call to get user with userID of DB
      * @param  id 
@@ -136,6 +137,95 @@ export default class ServerInterface {
             });
     }
 
+
+    /**
+     * get all users from the server.
+     * Note that users will only contain 'username' and 'name' fields for security reasons
+     * @param setter: callback function
+     */
+    static getAllUsers(setter) {
+        const url = '/users'
+        console.log("getting users")
+        const request = new Request(url, {
+            method: 'get',
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json'
+            },
+        })
+        fetch(request).then((res) => {
+            // console.log("got request " + res.status)
+            if (res.status === 200) {
+                return res.json()
+            } else {
+                alert('Cannot fetch all users.')
+                return null;
+            }
+        }).then((json) => {
+            setter(json)
+        }).catch((error) => {
+            console.log(error);
+        })
+    }
+
+    static modifyUser(username, name, email, password, callback) {
+        const url = '/users'
+        const data = { username: username, password: password, name: name, email: email }
+        const request = new Request(url, {
+            method: 'patch',
+            body: JSON.stringify(data),
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json'
+            },
+        })
+        fetch(request).then((res) => {
+            if (res.status === 200) {
+                return res.json();
+            } else {
+                return null;
+            }
+        }).then((json) => {
+            if (json) {
+                callback(true) // show success to admin page
+            } else {
+                callback(false) // show failure to admin page
+            }
+        }).catch((error) => {
+            callback(false)
+            console.log(error);
+        })
+    }
+
+    static deleteUser(username, callback) {
+        const url = '/users'
+        const data = { username: username }
+        const request = new Request(url, {
+            method: 'delete',
+            body: JSON.stringify(data),
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json'
+            },
+        })
+        fetch(request).then((res) => {
+            if (res.status === 200) {
+                return res.json();
+            } else {
+                return null;
+            }
+        }).then((json) => {
+            if (json) {
+                callback(true) // show success to admin page
+            } else {
+                callback(false) // show failure to admin page
+            }
+        }).catch((error) => {
+            callback(false)
+            console.log(error);
+        })
+    }
+
     /**
      * Check if cookie exists, and set data accordingly.
      */
@@ -154,6 +244,8 @@ export default class ServerInterface {
         })
     }
 
+
+/** ** -- GROUP FUNCTIONS --------------------------- */
     /**
      * create a group in db and set state
      * @param name
@@ -244,36 +336,7 @@ export default class ServerInterface {
         })
     }
 
-    /**
-     * get all users from the server.
-     * Note that users will only contain 'username' and 'name' fields for security reasons
-     * @param setter: callback function
-     */
-    static getAllUsers(setter) {
-        const url = '/users'
-        console.log("getting users")
-        const request = new Request(url, {
-            method: 'get',
-            headers: {
-                'Accept': 'application/json, text/plain, */*',
-                'Content-Type': 'application/json'
-            },
-        })
-        fetch(request).then((res) => {
-            console.log("got request " + res.status)
-            if (res.status === 200) {
-                return res.json()
-            } else {
-                alert('Cannot fetch all users.')
-                return null;
-            }
-        }).then((json) => {
-            setter(json)
-        }).catch((error) => {
-            console.log(error);
-        })
-    }
-
+/** ** -- BILL FUNCTIONS --------------------------- */
     //TODO: set states accordingly
     static requestBillCreation(group, title, amount, date, payer, payees) {
         const url = '/bills'

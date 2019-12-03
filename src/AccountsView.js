@@ -31,6 +31,8 @@ export function Accountsview(props) {
 	let history = useHistory();
 
 	const user = getState('user')
+	
+	console.log(user)
 
 	const [values, setValues] = React.useState({
 		editable: false,
@@ -41,6 +43,7 @@ export function Accountsview(props) {
 		if (values.editable === false) {
 			setValues({ editable: true, editButtonText: "Save" })
 		} else {
+			// server call
 			setValues({ editable: false, editButtonText: "Edit" })
 		}
 	};
@@ -87,7 +90,7 @@ export function Accountsview(props) {
 
 				<Box flexDirection="row">
 					<CustomButton className={className.editbutton} onClick={handleEditClick}>{values.editButtonText}</CustomButton>
-					<CustomButton className={className.donebutton} onClick={handleDoneClick}>Done</CustomButton>
+					<CustomButton className={className.donebutton} onClick={handleDoneClick}>Cancel</CustomButton>
 				</Box>
 
 			</Grid>

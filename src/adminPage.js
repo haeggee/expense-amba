@@ -13,6 +13,7 @@ import User from './User';
 import Group from './Group';
 import { getState, subscribe } from "statezero"
 import { useHistory } from "react-router-dom";
+import ServerInterface from "./ServerInterface";
 
 
 const cardStyle = makeStyles({
@@ -50,37 +51,29 @@ export function AdminPage(props) {
         history.push('/overview')
     }
 
-    /* Mock data for users, later requires a server call to get and set users
-     from database. Currently defined as local state for front end, so doesnt change the data in actual users
-     */
+    const [userList, setUserList] = React.useState([])
 
-    const user = new User('user', 'user', 'user', 'user')
-    const Maria = new User('Maria', 'Maria', 'Maria', 'Maria')
-    const James = new User('James', 'James', 'James', 'James')
-    const Bob = new User('Bob', 'Bob', 'Bob', 'Bob')
-    const Thomas = new User('Thomas', 'Thomas', 'Thomas', 'Thomas')
-    const Jennifer = new User('Jennifer', 'Jennifer', 'Jennifer', 'Jennifer')
-    const [userList, setUserList] = React.useState([user, Maria, James, Bob, Thomas, Jennifer])
+    // get all users beside admin to have local check before making server call
+    if (userList.length === 0) {
+        ServerInterface.getAllUsers((users) => {
+            setUserList(users.filter((el) => el.username !== "admin"))
+        })
+    }
 
-    /* Mock data for groups, later requires a server call to get and set groups
-     from database. Currently defined as local state for front end, so doesnt change the data in actual users
-     */
-    const Family = new Group(1, 'Family', [user, Bob, Maria, James, Thomas, Jennifer], null, null)
-    const TO = new Group(2, 'TO', [user, James, Maria, Thomas, Jennifer], null, null)
-    const Team42 = new Group(3, 'Team 42', [user, Bob], null, null)
-    const [groupList, setGroupList] = React.useState([Family, TO, Team42])
-
-
-    //other data
+    // error messages
     const [UserErrorText, setUserErrorText] = React.useState({ a: "" })
     const [UserModifyText, setUserModifyText] = React.useState({ a: "" })
-    const [GroupErrorText, setGroupErrorText] = React.useState({ a: "" })
 
     const [userClicked, setuserClicked] = React.useState({ username: "" });
-    const [groupClicked, setgroupClicked] = React.useState({ groupName: "" });
+
+    const [modifyUsername, setModifyUsername] = React.useState("")
+    const [modifyName, setModifyName] = React.useState("")
+    const [modifyMail, setModifyMail] = React.useState("")
+    const [modifyPassword, setModifyPassword] = React.useState("")
 
     // Functions handling clicks
     const _handleUserClick = e => {
+        console.log(userList)
         let givenUsername = userClicked.username
         let index = null;
         for (let i = 0; i < userList.length; i++) {
@@ -89,55 +82,40 @@ export function AdminPage(props) {
             }
         }
         if (index != null) {
-            let newUserL = userList.splice(index, 1)
-            setUserList(newUserL)
-            setUserErrorText({ a: "Deleted the User" })
-            setUserModifyText({ a: "" })
-            setGroupErrorText({ a: "" })
+            ServerInterface.deleteUser(givenUsername, (success) => {
+                if (success) {
+                    setUserErrorText({ a: "Deleted the User" })
+                    setUserModifyText({ a: "" })
+                    // delete user from the local userlist
+                    setUserList(userList.filter(user => user.username !== givenUsername))
+                } else {
+                    setUserErrorText({ a: "Deleting the user failed" })
+                    setUserModifyText({ a: "" })
+                }
+            })
         }
         else {
             setUserErrorText({ a: "The user doesn't exist" })
             setUserModifyText({ a: "" })
-            setGroupErrorText({ a: "" })
         }
     }
 
-    const _handleGroupClick = e => {
-
-        const givenGrpName = groupClicked.groupName
-        let index = null;
-        for (let i = 0; i < groupList.length; i++) {
-            if (groupList[i].name === givenGrpName) {
-                index = i
-            }
-        }
-        if (index != null) {
-            let newGroupL = groupList.splice(index, 1)
-            setGroupList(newGroupL)
-            setGroupErrorText({ a: "Deleted the Group" })
-            setUserErrorText({ a: "" })
-            setUserModifyText({ a: "" })
-        }
-        else {
-            setGroupErrorText({ a: "The group doesn't exist" })
-            setUserErrorText({ a: "" })
-            setUserModifyText({ a: "" })
-        }
-    }
 
     const _handleModifyClick = e => {
-        setUserModifyText({ a: "Modified the User" })
-        setUserErrorText({ a: "" })
-        setGroupErrorText({ a: "" })
-        // Functionality to be added - Gets the users by server call and modifies the values
+        ServerInterface.modifyUser(modifyUsername, modifyName, modifyMail, modifyPassword,
+            (success) => {
+                if (success) {
+                    setUserModifyText({ a: "Modified the User" })
+                    setUserErrorText({ a: "" })
+                } else {
+                    setUserModifyText({ a: "Modifying the user failed" })
+                    setUserErrorText({ a: "" })
+                }
+            })
     }
 
     const DeleteTextHandler = e => {
         setuserClicked({ username: e.target.value })
-    }
-
-    const GroupDeleteHandler = e => {
-        setgroupClicked({ groupName: e.target.value })
     }
 
     //Returned DOM
@@ -171,30 +149,21 @@ export function AdminPage(props) {
                 </Card>
                 <Card raised="true" className={styles.card}>
                     <CardContent>
-                        <h3>Delete a group</h3>
-                        <Divider />
-                        <br />
-                        <h4 className={styles.alignLeft}> Group name</h4>
-                        <TextField fullWidth variant="outlined" id={GroupDeleteHandler} />
-                        <CustomButton className={styles.buttonStyle} onClick={_handleGroupClick}>Delete Group Account</CustomButton>
-                        <Typography color='error'>
-                            {GroupErrorText.a}
-                        </Typography>
-                    </CardContent>
-                </Card>
-                <Card raised="true" className={styles.card}>
-                    <CardContent>
                         <h3>Modify an account</h3>
                         <Divider />
                         <br />
                         <h4 className={styles.alignLeft}> User Name</h4>
-                        <TextField fullWidth variant="outlined" />
+                        <TextField fullWidth variant="outlined"
+                            value={modifyUsername} onChange={e => setModifyUsername(e.target.value)} />
                         <h4 className={styles.alignLeft}> Set Name</h4>
-                        <TextField fullWidth label="Name" variant="outlined" />
+                        <TextField fullWidth label="Name" variant="outlined"
+                            value={modifyName} onChange={e => setModifyName(e.target.value)} />
                         <h4 className={styles.alignLeft}> Set Email</h4>
-                        <TextField fullWidth label="Email" variant="outlined" />
+                        <TextField fullWidth label="Email" variant="outlined"
+                            value={modifyMail} onChange={e => setModifyMail(e.target.value)} />
                         <h4 className={styles.alignLeft}> Set Password</h4>
-                        <TextField fullWidth label="Password" variant="outlined" />
+                        <TextField fullWidth label="Password" variant="outlined"
+                            value={modifyPassword} onChange={e => setModifyPassword(e.target.value)} />
                         <CustomButton className={styles.buttonStyle} onClick={_handleModifyClick}>Modify User Account</CustomButton>
                         <Typography color='error'>
                             {UserModifyText.a}
