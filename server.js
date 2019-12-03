@@ -186,6 +186,31 @@ app.patch('/group/:id', (req, res) => {
     }
 })
 
+// put call to change group info
+app.put('/group/:id', (req, res) => {
+    const id = req.params.id
+    // for best practice
+    if (!ObjectID.isValid(id)) {
+        res.status(404).send()
+    }
+    const { name, groupMembers, bills } = req.body
+
+    const body = { name, groupMembers, bills }
+    console.log(id)
+    console.log(body)
+    // Update the group by their id.
+    Group.findByIdAndUpdate(id, { $set: body }, { new: true }).then((group) => {
+        if (!group) {
+            res.status(404).send()
+        } else {
+            res.send(group)
+        }
+    }).catch((error) => {
+        res.status(400).send() // bad request for changing the group
+    })
+
+})
+
 /// a DELETE route to remove a group by their id.
 app.delete('/group/:id', (req, res) => {
     const id = req.params.id
@@ -257,7 +282,6 @@ app.post('/bills', (req, res) => {
 app.get('/bills', (req, res) => {
 
     Bill.find({}, function(err, bills) {
-        console.log(bills)
         res.send(bills);
     });
 })

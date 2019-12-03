@@ -124,7 +124,7 @@ export function Overview(props) {
   // all the users in the database
   const [users, setUsers] = React.useState(undefined)
 
-  // all the group members of the currently selected group.
+  // all the group members of the currently selected group. Contains the user information.
   const [members, setMembers] = React.useState(undefined)
 
   // all the bills in the database (more efficient to only get bills for a certain group, but this is easier)
@@ -150,7 +150,6 @@ export function Overview(props) {
   if (bills === undefined) {
     setBills([])
     ServerInterface.getAllBills((result) => {
-      console.log(result)
       setBills(result)
     })
   }
@@ -276,7 +275,6 @@ export function Overview(props) {
 
     setSelectedIndex(newGroups.length - 1);
     updateGroupMembers(group, users)
-    console.log(group)
   }
 
   /**
@@ -287,16 +285,14 @@ export function Overview(props) {
    * @param {users} The people involved in this bill.
    * @param {date} The date this bill is created on. 
    */
-  function createBillHandler(group, title, amount, members, date) {
-    ServerInterface.requestBillCreation(group, title, amount, date, user, members)
+  function createBillHandler(group, title, amount, payees, date) {
+    ServerInterface.requestBillCreation(group, title, amount, date, user, payees)
     ServerInterface.getAllBills((result) => {
-      console.log(result)
       setBills(result)
     })
   }
 
   function deleteBillHandler(bill) {
-    console.log("deleting bill")
     ServerInterface.requestBillDeletion(bill)
     let newBills = []
     for (let i = 0; i < bills.length; i ++) {
@@ -319,7 +315,8 @@ export function Overview(props) {
         newGroups.push({
           _id: bill.group,
           name:  currentGroups[i].name,
-          bills: newGroupBills
+          bills: newGroupBills,
+          groupMembers: currentGroups[i].groupMembers
         })
       } else {
         newGroups.push(currentGroups[i])

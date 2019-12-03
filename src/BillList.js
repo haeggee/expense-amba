@@ -39,10 +39,15 @@ export function BillList(props) {
 
     const [changed, setChanged] = useState(false)
 
-    const deleteBill = bill => {
+    const deleteBill = billInfo => {
         return () => {
-            deleteBillHandler(bill)
-            setChanged(!changed)
+            // get the right bill
+            for (let i = 0; i <  bills.length; i ++) {
+                if (bills[i]._id === billInfo._id) {
+                    deleteBillHandler(bills[i])
+                    setChanged(!changed)
+                }
+            }
         }
     }
 
@@ -70,6 +75,7 @@ export function BillList(props) {
                         _id: bills[j]._id,
                         title: bills[j].title,
                         amount: bills[j].amount,
+                        group: bills[j].group,
                         date: newDate
                     }
 
@@ -94,10 +100,6 @@ export function BillList(props) {
             }
         }
     }
-
-    console.log(billsInfo)
-    console.log(bills)
-    console.log(group)
 
     return (
         <div className={classes.container} hidden={index !== value}>

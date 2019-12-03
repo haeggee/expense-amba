@@ -19,7 +19,7 @@ function getMembersNames(group) {
 
 	let names = [];
 	for (let i = 0; i < group.groupMembers.length; i ++) {
-		names.push(group.groupMembers[i].user.name);
+		names.push(group.groupMembers[i].user);
 	}
 	return names;
 }
@@ -34,7 +34,7 @@ function getMoneyOwedBy(group) {
 
 	let money = [];
 	for (let i = 0; i < group.groupMembers.length; i ++) {
-		const debt = group.groupMembers[i].debt
+		const debt = group.groupMembers[i].balance
 		if (debt < 0){
 			money.push(0)
 		}
@@ -55,7 +55,7 @@ function getMoneyOwedTo(group) {
 
 	let money = [];
 	for (let i = 0; i < group.groupMembers.length; i ++) {
-		const debt = group.groupMembers[i].debt
+		const debt = group.groupMembers[i].balance
 		if (debt > 0){
 			money.push(0)
 		}
@@ -74,7 +74,7 @@ function getMaxAmountOwed(group) {
 	}
 
 	return group.groupMembers.reduce((max, member) => {
-		const amount = Math.abs(member.debt)
+		const amount = Math.abs(member.balance)
 		return max > amount ? max : amount
 	}, 5);
 }

@@ -359,6 +359,33 @@ export default class ServerInterface {
         })
     }
 
+    static updateGroup(group) {
+        let url = "/group/"
+        url += group._id
+        const data = { name: group.name, groupMembers: group.groupMembers, bills: group.bills }
+        const request = new Request(url, {
+            method: 'put',
+            body: JSON.stringify(data),
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json'
+            },
+        })
+
+        fetch(request).then((res) => {
+            if (res.status === 200) {
+                return res.json();
+            } else {
+                alert('Group update failed.')
+                return null;
+            }
+        }).then((json) => {
+
+        }).catch((error) => {
+            console.log(error);
+        })
+    }
+
 /** ** -- BILL FUNCTIONS --------------------------- */
     static requestBillCreation(group, title, amount, date, payer, payees) {
         const url = '/bills'
@@ -398,22 +425,60 @@ export default class ServerInterface {
                 // found the group, add to the groups bills array
                 if (group._id === json.group) {
                     const newBills = [json._id, ...group.bills]
-                    console.log(json)
+
+                    // update balances for each group member
+                    let newGroupMembers = []
+                    const payment = +(amount/payees.length)
+                    for (let j = 0; j < group.groupMembers.length; j ++) {
+                        let memberFound = false
+                        let payerPayedForHimself = false
+                        for (let k = 0; k < payees.length; k ++) {
+                            if (payees[k]._id === group.groupMembers[j].user) {
+                                // payer is also paying for himself
+                                if (group.groupMembers[j].user === payer._id) {
+                                    newGroupMembers.push({
+                                        user: group.groupMembers[j].user,
+                                        balance: group.groupMembers[j].balance + payment - amount
+                                    })
+                                    payerPayedForHimself = true
+                                } else {
+                                    newGroupMembers.push({
+                                        user: group.groupMembers[j].user,
+                                        balance: group.groupMembers[j].balance + payment
+                                    })
+                                }
+                                memberFound = true
+                            }
+                        }
+
+                        if (group.groupMembers[j].user === payer._id && !payerPayedForHimself) {
+                            newGroupMembers.push({
+                                user: group.groupMembers[j].user,
+                                balance: group.groupMembers[j].balance - amount
+                            })
+                        }
+                        if (!memberFound) {
+                            newGroupMembers.push(group.groupMembers[j])
+                        }
+                    }
+
                     // create a copy of the old group but with the new bill added.
                     // gotta create a new object because group is read only.
                     const newGroup = {
                         _id: group._id,
                         name: group.name,
-                        groupMembers: group.groupMembers,
+                        groupMembers: newGroupMembers,
                         bills: newBills
                     }
                     newGroups.push(newGroup)
+                    this.updateGroup(newGroup)
                 } else {
                     newGroups.push(group)
                 }
             }
-            console.log(newGroups)
+
             setState('groups', newGroups)
+
 
         }).catch((error) => {
             console.log(error);
@@ -449,7 +514,6 @@ export default class ServerInterface {
         })
     }
 
-
     static requestBillDeletion(bill) {
         let url = "/bills/"
         url += bill._id
@@ -466,14 +530,67 @@ export default class ServerInterface {
             }
         }).then((json) => {
 
-          /*  const bills = getState("bills")
-            let newBills = []
-            for (let i = 0; i < bills.length; i ++) {
-                if (json._id !== bills[i]._id) {
-                    newBills.push(bills[i])
+            // Go through each group until we find the one this bill is a part of.
+            const groups = getState('groups')
+
+            const newGroups = []
+            for (let i = 0; i < groups.length; i ++) {
+                const group = groups[i]
+                // found the group
+                if (group._id === bill.group) {
+
+                    // update balances for each group member
+                    let newGroupMembers = []
+                    const payment = +(bill.amount/bill.payees.length)
+                    for (let j = 0; j < group.groupMembers.length; j ++) {
+                        let memberFound = false
+                        let payerPayedForHimself = false
+                        for (let k = 0; k < bill.payees.length; k ++) {
+
+                            if (bill.payees[k] === group.groupMembers[j].user) {
+                                // payer is also paying for himself
+                                if (group.groupMembers[j].user === bill.payer) {
+                                    newGroupMembers.push({
+                                        user: group.groupMembers[j].user,
+                                        balance: group.groupMembers[j].balance - payment + bill.amount
+                                    })
+                                    payerPayedForHimself = true
+                                } else {
+                                    newGroupMembers.push({
+                                        user: group.groupMembers[j].user,
+                                        balance: group.groupMembers[j].balance - payment
+                                    })
+                                }
+                                memberFound = true
+                            }
+                        }
+
+                        if (group.groupMembers[j].user === bill.payer._id && !payerPayedForHimself) {
+                            newGroupMembers.push({
+                                user: group.groupMembers[j].user,
+                                balance: group.groupMembers[j].balance + bill.amount
+                            })
+                        }
+                        if (!memberFound) {
+                            newGroupMembers.push(group.groupMembers[j])
+                        }
+                    }
+
+                    // create a copy of the old group but with the new bill added.
+                    // gotta create a new object because group is read only.
+                    const newGroup = {
+                        _id: group._id,
+                        name: group.name,
+                        groupMembers: newGroupMembers,
+                        bills: group.bills
+                    }
+                    newGroups.push(newGroup)
+                    this.updateGroup(newGroup)
+                } else {
+                    newGroups.push(group)
                 }
             }
-            setState("bills", newBills)*/
+            setState('groups', newGroups)
         }).catch((error) => {
             console.log(error);
         })
