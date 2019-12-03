@@ -11,15 +11,20 @@ const useStyles = makeStyles(theme => ({
 }))
 
 // returns string array representing names of all members of the group
-function getMembersNames(group) {
+function getMembersNames(group, members) {
 	// the group is null, so we are not supposed to display anything
-	if (group == null) {
+	if (group == null || members === undefined) {
 		return ["No group"];
 	}
 
 	let names = [];
 	for (let i = 0; i < group.groupMembers.length; i ++) {
-		names.push(group.groupMembers[i].user);
+		for (let j = 0; j < members.length; j ++) {
+			if (group.groupMembers[i].user === members[j]._id) {
+				names.push(members[j].name)
+				break
+			}
+		}
 	}
 	return names;
 }
@@ -80,7 +85,7 @@ function getMaxAmountOwed(group) {
 }
 
 export function Balances(props) {
-    const { group, value, index } = props;
+    const { group, value, index, members } = props;
     const classes = useStyles();
 	
 	const state = {
@@ -129,7 +134,7 @@ export function Balances(props) {
 		  }
 		},
 		xaxis: {
-		  categories: getMembersNames(group),
+		  categories: getMembersNames(group, members),
 		  title: {
 			text: 'Money'
 		  },

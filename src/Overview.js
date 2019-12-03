@@ -14,7 +14,7 @@ import CreateAddMemberDialog from './GUI/AddMemberDialog';
 import DeleteIcon from '@material-ui/icons/Delete'
 import DeleteGroupDialog from './GUI/DeleteGroupDialog'
 import ServerInterface from './ServerInterface'
-import { getState, subscribe } from "statezero"
+import { setState, getState, subscribe } from "statezero"
 import { useHistory } from 'react-router-dom'
 import { setEmptyState } from "./actions/helpers";
 
@@ -446,6 +446,7 @@ export function Overview(props) {
                     group={currentGroups[selectedIndex]}
                     value={tabIndex}
                     index={0}
+                    members={members}
                   />
 
                   <BillList
