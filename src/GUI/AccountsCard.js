@@ -23,12 +23,13 @@ export function AccountsCard(props) {
 	const editable = props.editable
 	const value = props.value
 	const type = props.type
+	const onChange = props.onChange
 	
 	return (
 		<Card className={classes.card} raised={true}>
 			<CardContent>
 				<h4>{ title }</h4>
-				<TextField disabled={!editable} type={type} fullWidth defaultValue={value} variant="outlined" />
+				<TextField disabled={!editable} type={type} fullWidth defaultValue={value} variant="outlined" onChange={onChange}/>
 			</CardContent>
 		</Card>
 	)
