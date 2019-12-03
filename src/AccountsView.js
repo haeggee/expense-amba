@@ -8,7 +8,8 @@ import Grid from "@material-ui/core/Grid"
 import { CustomHeader } from "./GUI/Header"
 import { useHistory } from "react-router-dom";
 import { UserContext } from "./UserContext";
-import {getState} from "statezero/src"
+import { getState, subscribe, setState } from "statezero"
+import ServerInterface from "./ServerInterface";
 
 // themes and styles class
 const themes = makeStyles({
@@ -30,21 +31,54 @@ export function Accountsview(props) {
 	const className = themes()
 	let history = useHistory();
 
-	const user = getState('user')
-	
-	console.log(user)
+	// get current user
+	const [user, setUser] = React.useState(getState('user'))
+
+	// admin should not see this page
+	if (user && user.username === 'admin') {
+		history.push('/admin')
+	}
 
 	const [values, setValues] = React.useState({
 		editable: false,
 		editButtonText: "Edit"
 	});
 
+	// values for textfields
+	const [username, setUsername] = React.useState(user ? user.username : "")
+	const [name, setName] = React.useState(user ? user.name : "")
+	const [email, setEmail] = React.useState(user ? user.email : "")
+	const [password, setPassword] = React.useState("")
+
+
+	// set user if state changes
+	subscribe((newUser) => {
+		if (newUser) {
+			setUser(newUser);
+			setUsername(newUser.username)
+			setName(newUser.name)
+			setEmail(newUser.email)
+			setPassword("")
+		}
+	}, "user");
+
 	const handleEditClick = () => {
 		if (values.editable === false) {
 			setValues({ editable: true, editButtonText: "Save" })
 		} else {
 			// server call
-			setValues({ editable: false, editButtonText: "Edit" })
+			ServerInterface.modifyUser(user._id, username, name, email, password,
+				(success) => {
+					if (success) {
+						// make another call to server to get modified
+						// user object s.t. global state of user (and username, ...)
+						// is coherent with database
+						ServerInterface.getUserById(user._id)
+						setValues({ editable: false, editButtonText: "Edit" })
+					} else {
+						alert("Modifying the account failed")
+					}
+				})
 		}
 	};
 
@@ -53,19 +87,19 @@ export function Accountsview(props) {
 	};
 
 	function onNameChange(event) {
-		user.name = event.target.value
+		setName(event.target.value)
 	}
 
 	function onUserNameChange(event) {
-		user.username = event.target.value
+		setUsername(event.target.value)
 	}
 
 	function onPasswordChange(event) {
-		user.password = event.target.value
+		setPassword(event.target.value)
 	}
 
 	function onEmailChange(event) {
-		user.email = event.target.value
+		setEmail(event.target.value)
 	}
 
 	return (
@@ -83,10 +117,10 @@ export function Accountsview(props) {
 
 
 				<h2>Account settings</h2>
-				<AccountsCard title="Username" value={user.username} editable={values.editable} onChange={onUserNameChange} />
-				<AccountsCard title="Name" value={user.name} editable={values.editable} onChange={onNameChange} />
-				<AccountsCard title="Email" value={user.email} editable={values.editable} onChange={onEmailChange} />
-				<AccountsCard title="Password" value={user.password} type="password" editable={values.editable} onChange={onPasswordChange} />
+				<AccountsCard title="Username" value={username} editable={values.editable} onChange={onUserNameChange} />
+				<AccountsCard title="Name" value={name} editable={values.editable} onChange={onNameChange} />
+				<AccountsCard title="Email" value={email} editable={values.editable} onChange={onEmailChange} />
+				<AccountsCard title="Password" value={password} type="password" editable={values.editable} onChange={onPasswordChange} />
 
 				<Box flexDirection="row">
 					<CustomButton className={className.editbutton} onClick={handleEditClick}>{values.editButtonText}</CustomButton>

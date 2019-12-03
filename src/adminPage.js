@@ -75,14 +75,14 @@ export function AdminPage(props) {
     const _handleUserClick = e => {
         console.log(userList)
         let givenUsername = userClicked.username
-        let index = null;
+        let id = null;
         for (let i = 0; i < userList.length; i++) {
             if (userList[i].username === givenUsername) {
-                index = i
+                id = userList[i]._id
             }
         }
-        if (index != null) {
-            ServerInterface.deleteUser(givenUsername, (success) => {
+        if (id != null) {
+            ServerInterface.deleteUser(id, (success) => {
                 if (success) {
                     setUserErrorText({ a: "Deleted the User" })
                     setUserModifyText({ a: "" })
@@ -102,7 +102,13 @@ export function AdminPage(props) {
 
 
     const _handleModifyClick = e => {
-        ServerInterface.modifyUser(modifyUsername, modifyName, modifyMail, modifyPassword,
+        let id = null;
+        for (let i = 0; i < userList.length; i++) {
+            if (userList[i].username === modifyUsername) {
+                id = userList[i]._id
+            }
+        }
+        ServerInterface.modifyUser(id, modifyUsername, modifyName, modifyMail, modifyPassword,
             (success) => {
                 if (success) {
                     setUserModifyText({ a: "Modified the User" })

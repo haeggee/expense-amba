@@ -8,6 +8,9 @@ const app = express();
 // mongoose and mongo connection
 const { mongoose } = require('./db/mongoose')
 
+// bcrypt to hash password for patch user route
+const bcrypt = require('bcryptjs')
+
 // import the mongoose models
 const { Bill } = require('./models/Bill')
 const { User } = require('./models/User')
@@ -274,8 +277,6 @@ app.delete('/bills/:id', (req, res) => {
     })
 })
 
-
-
 /** User routes below **/
 // Set up a POST route to *create* a user of the web app 
 app.post('/users', (req, res) => {
@@ -295,13 +296,25 @@ app.post('/users', (req, res) => {
     )
 })
 
-// patch to change user attributes
-app.patch('/users', (req, res) => {
-
+// put call to change user attributes
+app.put('/users/:id', (req, res) => {
+    console.log(req.body)
+    const id = req.params.id
+    // for best practice
+    if (!ObjectID.isValid(id)) {
+        res.status(404).send()
+    }
     const { name, username, password, email } = req.body
-    const body = { name, username, password, email }
+
+    // need to encrypt password here 
+    // generate a salt
+    const salt = bcrypt.genSaltSync(10)
+    const hash = bcrypt.hashSync(password, salt)
+
+
+    const body = { name, username, password: hash, email }
     // Update the student by their id.
-    User.findOneAndUpdate({ username: username }, body).then((user) => {
+    User.findByIdAndUpdate(id, { $set: body }, { new: true }).then((user) => {
         if (!user) {
             res.status(404).send()
         } else {
@@ -313,6 +326,10 @@ app.patch('/users', (req, res) => {
 
 })
 
+
+app.delete('/users/:id', (req, res) => {
+
+})
 
 /// a GET route to get a user by their id.
 app.get('/users/:id', (req, res) => {

@@ -64,7 +64,7 @@ export default class ServerInterface {
      * @param {String} password 
      */
     static userLogin(username, password) {
-        const url = '/users/login'
+        const url = 'http://localhost:3001/users/login'
         const data = { username: username, password: password }
         const request = new Request(url, {
             method: 'post',
@@ -168,11 +168,11 @@ export default class ServerInterface {
         })
     }
 
-    static modifyUser(username, name, email, password, callback) {
-        const url = '/users'
+    static modifyUser(id, username, name, email, password, callback) {
+        const url = '/users/' + id
         const data = { username: username, password: password, name: name, email: email }
         const request = new Request(url, {
-            method: 'patch',
+            method: 'put',
             body: JSON.stringify(data),
             headers: {
                 'Accept': 'application/json, text/plain, */*',
@@ -187,9 +187,9 @@ export default class ServerInterface {
             }
         }).then((json) => {
             if (json) {
-                callback(true) // show success to admin page
+                callback(true) // show success to caller
             } else {
-                callback(false) // show failure to admin page
+                callback(false) // show failure to caller
             }
         }).catch((error) => {
             callback(false)
@@ -197,12 +197,10 @@ export default class ServerInterface {
         })
     }
 
-    static deleteUser(username, callback) {
-        const url = '/users'
-        const data = { username: username }
+    static deleteUser(id, callback) {
+        const url = '/users/' + id
         const request = new Request(url, {
             method: 'delete',
-            body: JSON.stringify(data),
             headers: {
                 'Accept': 'application/json, text/plain, */*',
                 'Content-Type': 'application/json'
