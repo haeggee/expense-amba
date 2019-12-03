@@ -19,6 +19,7 @@ import Input from '@material-ui/core/Input';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormHelperText from '@material-ui/core/FormHelperText';
+import ServerInterface from '../ServerInterface';
 
 /*
 Some styles for this part only
@@ -57,11 +58,14 @@ function DialogContents(props) {
 
     // current group
     const group = props.group;
-
+    
     // get members that are not in the group already
     const filteredUsers = users.filter(user => {
+        if(user.username === 'admin') {
+            return false;
+        }
         for (let i = 0; i < group.groupMembers.length; i++) {
-            if (group.groupMembers[i].user.username === user.username) {
+            if (group.groupMembers[i].user === user._id) {
                 return false;
             }
         }
@@ -72,7 +76,7 @@ function DialogContents(props) {
      */
     const addMembers = function () {
         if (members.length !== 0) {
-            group.addMembers(members)
+            ServerInterface.addUsersToGroup(members, group)
             closeHandler();
         } else {
             setError(true);

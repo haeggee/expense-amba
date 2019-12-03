@@ -167,7 +167,6 @@ app.patch('/group/:id', (req, res) => {
     const id = req.params.id
     if (!ObjectID.isValid(id)) {
         res.status(404).send()
-
     } else {
         const userIDs = req.body.addUsers.map((user) => user._id)
         Group.findById(id).then(group => {
@@ -176,9 +175,10 @@ app.patch('/group/:id', (req, res) => {
                 Group.findByIdAndUpdate(id, { $addToSet: { groupMembers: { $each: groupMembers } } }, { new: true }).then(result => {
                     return result.populate('groupMembers.user', ['name', 'username']).execPopulate()
                 }).then(result => {
-                    res.send(result)
+                    User.updateMany({ _id: { $in: userIDs } }, { $addToSet: { groups: group._id } }).then((updatedusers) => {
+                        res.send(result)
+                    })
                 })
-                User.updateMany({ _id: { $in: userIDs } }, { $addToSet: { groups: group._id } })
             })
         }).catch(error => {
             res.status(404).send(error)
@@ -301,7 +301,7 @@ app.post('/users', (req, res) => {
 })
 
 // put call to change user attributes
-app.put('/users/:id', (req, res) => {
+app.patch('/users/:id', (req, res) => {
     console.log(req.body)
     const id = req.params.id
     // for best practice
@@ -362,7 +362,7 @@ app.get('/users/:id', (req, res) => {
 // get all users
 app.get('/users', (req, res) => {
 
-    User.find({}, function(err, users) {
+    User.find({}, function (err, users) {
         res.send(users);
     });
 })

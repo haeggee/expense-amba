@@ -15,9 +15,10 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import DeleteGroupDialog from './GUI/DeleteGroupDialog'
 import ServerInterface from './ServerInterface'
 import { UserContext } from "./UserContext"
-import { getState, subscribe } from "statezero"
+import { getState, subscribe, setState } from "statezero"
 import Group from "./Group";
 import { useHistory } from 'react-router-dom'
+import { setEmptyState } from "./actions/helpers";
 
 const useStyles = makeStyles(theme => ({
   gridcontainer: {
@@ -162,6 +163,7 @@ export function Overview(props) {
     ServerInterface.requestGroupDeletion(deletedGroups[0])
     setSelectedIndex(0);
     setGroups(newGroups);
+    setState('groups', newGroups)
     closeDeleteGroupDialog();
   };
   // openPayments indicates whether or not to open the payments dialog popup
