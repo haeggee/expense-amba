@@ -312,7 +312,7 @@ export function Overview(props) {
         const newGroupBills = []
         // only keep the bills that we didnt delete
         for (let j = 0; j <  currentGroups[i].bills.length; j ++) {
-          if (currentGroups[i].bills[j]._id !== bill._id) {
+          if (currentGroups[i].bills[j] !== bill._id) {
             newGroupBills.push(currentGroups[i].bills[j])
           }
         }
