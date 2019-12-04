@@ -328,7 +328,7 @@ export default class ServerInterface {
      * @param users
      * @param group
      */
-    static addUsersToGroup(users, group) {
+    static addUsersToGroup(users, group, callback) {
         const url = '/group/' + group._id
         const data = { addUsers: users }
         const request = new Request(url, {
@@ -347,13 +347,43 @@ export default class ServerInterface {
                 return null;
             }
         }).then((json) => {
-            getState('groups').map(group => {
+            /*getState('groups').map(group => {
                 if (group._id === json._id) {
                     return json;
                 } else {
                     return group;
                 }
-            })
+            })*/
+
+            const groups = getState("groups")
+            console.log(json)
+
+            let newGroups = []
+            for (let i = 0; i < groups.length; i ++) {
+                const group = groups[i]
+                // found the group we were looking for
+                if (group._id === json._id) {
+                    let newMembers = []
+                    for (let j = 0; j < users.length; j ++) {
+                        newMembers.push({
+                            user: users[j]._id,
+                            balance: 0
+                        })
+                    }
+                    const newGroup = {
+                        name: group.name,
+                        bills: group.bills,
+                        groupMembers: [...newMembers, ...group.groupMembers]
+                    }
+                    console.log(newGroup)
+                    newGroups.push(newGroup)
+                    callback(newGroup)
+                } else {
+                    newGroups.push(groups[i])
+                }
+            }
+            setState("groups", newGroups)
+
         }).catch((error) => {
             console.log(error);
         })

@@ -58,6 +58,7 @@ function DialogContents(props) {
 
     // current group
     const group = props.group;
+    const addNewMemberHandler = props.addNewMemberHandler
     
     // get members that are not in the group already
     const filteredUsers = users.filter(user => {
@@ -76,7 +77,7 @@ function DialogContents(props) {
      */
     const addMembers = function () {
         if (members.length !== 0) {
-            ServerInterface.addUsersToGroup(members, group)
+            addNewMemberHandler(members, group)
             closeHandler();
         } else {
             setError(true);
@@ -165,6 +166,7 @@ export default function CreateAddMemberDialog(props) {
 
     // the current group
     const group = props.group;
+    const addNewMemberHandler = props.addNewMemberHandler
 
     return (
         <div>
@@ -183,7 +185,7 @@ export default function CreateAddMemberDialog(props) {
                     </Toolbar>
                 </AppBar>
 
-                <DialogContents users={users} group={group} closeHandler={closeHandler} />
+                <DialogContents users={users} group={group} closeHandler={closeHandler} addNewMemberHandler={addNewMemberHandler}/>
 
             </Dialog>
         </div>
