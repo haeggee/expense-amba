@@ -6,7 +6,7 @@ const express = require('express')
 const app = express();
 
 // mongoose and mongo connection
-const { mongoose } = require('./db/mongoose')
+const {mongoose} = require('./db/mongoose')
 
 // bcrypt to hash password for patch user route
 const bcrypt = require('bcryptjs')
@@ -369,17 +369,20 @@ app.delete('/users/:id', (req, res) => {
         res.status(404).send()
     }
     else{
-        User.findByIdAndDelete(id).then(user => {
-            console.log(user)
+        User.findById(id).then(user => {
             if (!user) {
                 res.status(404).send()
             } else {
-                Group.find({_id: {$in: user.groups}}).then(groups => {
+
+                Group.find({_id: {$in: user.groups}}).populate('bills').then(groups => {
                     groups.forEach(group => {
-                        const idx = group.members.findIndex(member => member.user === user._id)
-                        group.members.slice(idx, idx + 1)
+                        const idx = group.groupMembers.findIndex(member => {
+                            return member.user.equals(user._id)
+                        })
+                        group.groupMembers.slice(idx, idx + 1)
+                        console.log(group)
                         group.bills = group.bills.filter(bill => {
-                            return !(bill.payer === user._id || bill.payees.includes(user._id))
+                            return !(bill.payer.equals(user._id) || bill.payees.includes(user._id))
                         })
                         group.save()
                     })
@@ -387,7 +390,7 @@ app.delete('/users/:id', (req, res) => {
                 })//.catch(error => res.status(500).send(error))
 
             }
-        }).catch(error => {
+         }).catch(error => {
             res.status(404).send(error)
         })
     }
