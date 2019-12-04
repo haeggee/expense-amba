@@ -362,7 +362,9 @@ export function Overview(props) {
    */
   function createGroupHandler(name, groupUsers) {
     let groupID = ServerInterface.getNextGroupID();
-    ServerInterface.requestGroupCreation(name, groupUsers);
+    ServerInterface.requestGroupCreation(name, groupUsers, (newGroup) => {
+      updateGroupMembers(newGroup, users)
+    });
     // create group with bills array initially empty.
     // const group = new Group(groupID, name, groupUsers, [])
     // onGroupCreated()
