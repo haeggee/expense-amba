@@ -248,8 +248,10 @@ export default class ServerInterface {
      * @param name
      * @param users :An array of users to be added to the group.
      *               Current user will be automatically added if not in the array
+     * @param callback: the function that accepts the new group that gets created and gets notified when database
+     * operations are complete.
      */
-    static requestGroupCreation(name, users) {
+    static requestGroupCreation(name, users, callback) {
         const url = '/group'
         const currUser = getState('user')
         if (!users.find(user => user._id === currUser._id)) {
@@ -277,9 +279,6 @@ export default class ServerInterface {
             if (groups === undefined) {
                 groups = []
             }
-            // this isnt working
-            // groups.push(json)
-            // user.groups.push(json)
             const newGroups = [json, ...groups]
             const newUserGroups = [json, ...user.groups]
             const newUser = {
@@ -290,6 +289,7 @@ export default class ServerInterface {
                 email: user.email,
                 groups: newUserGroups
             }
+            callback(json)
             setState('groups', newGroups)
             setState('user', newUser)
         }).catch((error) => {
@@ -300,6 +300,7 @@ export default class ServerInterface {
     /**
      * Removes a group.
      * @param group The group to remove.
+     * @param callback: the function that gets notified when database operations are complete.
      */
     static requestGroupDeletion(group, callback) {
         let url = "/group/"
@@ -327,6 +328,8 @@ export default class ServerInterface {
      * add a list of users to the group and set state
      * @param users
      * @param group
+     * @param callback The function that accepts the group that was modified and callback gets notified when database
+     * operations are complete.
      */
     static addUsersToGroup(users, group, callback) {
         const url = '/group/' + group._id
@@ -347,22 +350,17 @@ export default class ServerInterface {
                 return null;
             }
         }).then((json) => {
-            /*getState('groups').map(group => {
-                if (group._id === json._id) {
-                    return json;
-                } else {
-                    return group;
-                }
-            })*/
 
             const groups = getState("groups")
 
+            // update the array of groups
             let newGroups = []
             for (let i = 0; i < groups.length; i ++) {
                 const group = groups[i]
-                // found the group we were looking for
+                // found the group we added to
                 if (group._id === json._id) {
                     let newMembers = []
+                    // add new members to array
                     for (let j = 0; j < users.length; j ++) {
                         newMembers.push({
                             user: users[j]._id,
@@ -378,6 +376,7 @@ export default class ServerInterface {
                     newGroups.push(newGroup)
                     callback(newGroup)
                 } else {
+                    // didnt modify anything in this group, just copy without changes
                     newGroups.push(groups[i])
                 }
             }
@@ -388,6 +387,10 @@ export default class ServerInterface {
         })
     }
 
+    /**
+     * Updates specified group.
+     * @param group The group that we are updating.
+     */
     static updateGroup(group) {
         let url = "/group/"
         url += group._id
@@ -449,6 +452,8 @@ export default class ServerInterface {
             const newBills = [json, ...bills]
             setState("bills", newBills)
 
+            console.log(data)
+
             // Go through each group until we find the one this bill is a part of.
             const groups = getState('groups')
             const newGroups = []
@@ -489,7 +494,7 @@ export default class ServerInterface {
                                 balance: group.groupMembers[j].balance - amount
                             })
                         }
-                        if (!memberFound) {
+                        else if (!memberFound) {
                             newGroupMembers.push(group.groupMembers[j])
                         }
                     }
@@ -510,7 +515,6 @@ export default class ServerInterface {
             }
 
             setState('groups', newGroups)
-
 
         }).catch((error) => {
             console.log(error);
@@ -571,6 +575,9 @@ export default class ServerInterface {
                 // found the group
                 if (group._id === bill.group) {
 
+                    console.log(bill)
+                    console.log(group)
+
                     // update balances for each group member
                     let newGroupMembers = []
                     const payment = +(bill.amount/bill.payees.length)
@@ -597,13 +604,13 @@ export default class ServerInterface {
                             }
                         }
 
-                        if (group.groupMembers[j].user === bill.payer._id && !payerPayedForHimself) {
+                        if (group.groupMembers[j].user === bill.payer && !payerPayedForHimself) {
                             newGroupMembers.push({
                                 user: group.groupMembers[j].user,
                                 balance: group.groupMembers[j].balance + bill.amount
                             })
                         }
-                        if (!memberFound) {
+                        else if (!memberFound) {
                             newGroupMembers.push(group.groupMembers[j])
                         }
                     }
