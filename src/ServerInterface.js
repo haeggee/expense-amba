@@ -283,7 +283,7 @@ export default class ServerInterface {
             const newGroups = [json, ...groups]
             const newUserGroups = [json, ...user.groups]
             const newUser = {
-                id_: user._id,
+                _id: user._id,
                 name: user.name,
                 username: user.username,
                 password: user.password,
@@ -356,7 +356,6 @@ export default class ServerInterface {
             })*/
 
             const groups = getState("groups")
-            console.log(json)
 
             let newGroups = []
             for (let i = 0; i < groups.length; i ++) {
@@ -371,12 +370,11 @@ export default class ServerInterface {
                         })
                     }
                     const newGroup = {
-                        id_: group._id,
+                        _id: group._id,
                         name: group.name,
                         bills: group.bills,
                         groupMembers: [...newMembers, ...group.groupMembers]
                     }
-                    console.log(newGroup)
                     newGroups.push(newGroup)
                     callback(newGroup)
                 } else {
@@ -428,6 +426,9 @@ export default class ServerInterface {
             payees: payees,
             group: group
         }
+        console.log(group)
+        console.log(payer)
+        console.log(payees)
         const request = new Request(url, {
             method: 'post',
             body: JSON.stringify(data),

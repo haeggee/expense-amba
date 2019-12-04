@@ -174,7 +174,6 @@ export function Overview(props) {
         }
       }
     }
-    console.log(newMembers)
     setMembers(newMembers)
   }
 
