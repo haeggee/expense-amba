@@ -371,6 +371,7 @@ export default class ServerInterface {
                         })
                     }
                     const newGroup = {
+                        id_: group._id,
                         name: group.name,
                         bills: group.bills,
                         groupMembers: [...newMembers, ...group.groupMembers]
