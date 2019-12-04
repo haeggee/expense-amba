@@ -73,7 +73,7 @@ export function AdminPage(props) {
 
     // Functions handling clicks
     const _handleUserClick = e => {
-        console.log(userList)
+        // console.log(userList)
         let givenUsername = userClicked.username
         let id = null;
         for (let i = 0; i < userList.length; i++) {
