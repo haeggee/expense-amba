@@ -275,16 +275,6 @@ export function Overview(props) {
     }
   };
 
-
-  // function that should be notified when user creates a new group in the create group dialog
-  function onGroupCreated(group) {
-    const newGroups = currentGroups;
-    setGroups(newGroups);
-
-    setSelectedIndex(newGroups.length - 1);
-    updateGroupMembers(group, users)
-  }
-
   /**
    * Adds new member to group.
    * @param members
@@ -361,13 +351,9 @@ export function Overview(props) {
    * @param groupUsers
    */
   function createGroupHandler(name, groupUsers) {
-    let groupID = ServerInterface.getNextGroupID();
     ServerInterface.requestGroupCreation(name, groupUsers, (newGroup) => {
       updateGroupMembers(newGroup, users)
     });
-    // create group with bills array initially empty.
-    // const group = new Group(groupID, name, groupUsers, [])
-    // onGroupCreated()
   }
 
   /*

@@ -1,43 +1,8 @@
-import User from "./User"
-import Group from "./Group"
-import Bill from "./Bills"
-
 import { setEmptyState } from "./actions/helpers";
 import { getState, setState } from "statezero"
 
 
 export default class ServerInterface {
-
-    static userList = [new User("Alice`s username", "password", "fucker", "Alice.gmail.com"),
-    new User("Bob`s username", "password", "Bob", "Bob.gmail.com"),
-    new User("Jame`s username", "password", "James", "James.gmail.com"),
-    new User("Maria`s username", "password", "Maria", "Maria.gmail.com"),
-    new User("Thoma`s username", "password", "Thomas", "Thomas.gmail.com"),
-    new User("Jennifer`s username", "password", "Jennifer", "Jennifer.gmail.com")]
-
-    static billsGroup0 =
-        [new Bill(0, "Uber", 20.0, new Date('2019-10-01'), this.userList[0], this.userList),
-        new Bill(1, "Dinner", 35.0, new Date('2019-10-12'), this.userList[1], [this.userList[0], this.userList[1], this.userList[2]]),
-        new Bill(2, "Movie tickets", 15.0, new Date('2019-10-25'), this.userList[4], [this.userList[4], this.userList[0], this.userList[5]])]
-
-    static groupList = [new Group(0, "Family", this.userList, this.billsGroup0,
-        [0, 0, 0, 0, 0, 0]),
-    new Group(1, "TO", [this.userList[0], this.userList[2], this.userList[3], this.userList[4], this.userList[5]], [], []),
-    new Group(2, "Team 42", [this.userList[0], this.userList[1]], [], [])]
-
-    static _largestGroupID = 2
-
-    static _largestBillID = 2
-
-    static getNextGroupID() {
-        this._largestGroupID++
-        return this._largestGroupID
-    }
-
-    static getUserByUsername(username) {
-        const users = this.userList.filter(value => value.username === username)
-        return users[0]
-    }
 
     /** ** -- USER FUNCTIONS --------------------------- */
     /**
@@ -58,6 +23,7 @@ export default class ServerInterface {
             console.log(error);
         })
     }
+
     /**
      * Make server call to login after user input
      * @param {String} username 
@@ -128,13 +94,12 @@ export default class ServerInterface {
     static userLogout() {
         const url = "/users/logout";
 
-        fetch(url)
-            .then(res => {
-                setEmptyState();
-            })
-            .catch(error => {
-                console.log(error);
-            });
+        fetch(url).then(res => {
+            setEmptyState();
+        })
+        .catch(error => {
+            console.log(error);
+        });
     }
 
 
@@ -167,6 +132,15 @@ export default class ServerInterface {
         })
     }
 
+    /**
+     * Update the user with the provided properties.
+     * @param id
+     * @param username
+     * @param name
+     * @param email
+     * @param password
+     * @param callback
+     */
     static modifyUser(id, username, name, email, password, callback) {
         const url = '/users/' + id
         const data = { username: username, password: password, name: name, email: email }
@@ -196,6 +170,11 @@ export default class ServerInterface {
         })
     }
 
+    /**
+     * Delete the user with the id.
+     * @param id
+     * @param callback The callback that gets notified of success or failure.
+     */
     static deleteUser(id, callback) {
         const url = '/users/' + id
         const request = new Request(url, {
@@ -367,6 +346,8 @@ export default class ServerInterface {
                             balance: 0
                         })
                     }
+                    // create a new group that is an exact duplicate of the old one, except it has the new group members
+                    // we have to do this since the old group is read only
                     const newGroup = {
                         _id: group._id,
                         name: group.name,
@@ -419,6 +400,16 @@ export default class ServerInterface {
     }
 
 /** ** -- BILL FUNCTIONS --------------------------- */
+
+    /**
+     * Creates a new bill with the given properties.
+     * @param group
+     * @param title
+     * @param amount
+     * @param date
+     * @param payer
+     * @param payees
+     */
     static requestBillCreation(group, title, amount, date, payer, payees) {
         const url = '/bills'
         const data = {
@@ -429,9 +420,6 @@ export default class ServerInterface {
             payees: payees,
             group: group
         }
-        console.log(group)
-        console.log(payer)
-        console.log(payees)
         const request = new Request(url, {
             method: 'post',
             body: JSON.stringify(data),
@@ -448,30 +436,40 @@ export default class ServerInterface {
                 return null;
             }
         }).then((json) => {
+            // update the bills in the front end.
             const bills = getState('bills')
             const newBills = [json, ...bills]
             setState("bills", newBills)
 
-            console.log(data)
-
-            // Go through each group until we find the one this bill is a part of.
             const groups = getState('groups')
+
+            // Go through each group and copy into newGroups array
             const newGroups = []
             for (let i = 0; i < groups.length; i ++) {
                 const group = groups[i]
-                // found the group, add to the groups bills array
+
+                // found the group that the bill was added to, update the groups bills array
                 if (group._id === json.group) {
                     const newBills = [json._id, ...group.bills]
 
                     // update balances for each group member
                     let newGroupMembers = []
                     const payment = +(amount/payees.length)
+
+                    // loop through each group member
                     for (let j = 0; j < group.groupMembers.length; j ++) {
-                        let memberFound = false
+
+                        // whether or not the current group member participated in the bill as a payee
+                        let memberParticipated = false
                         let payerPayedForHimself = false
+
+                        // loop through each user that participated in the bill
                         for (let k = 0; k < payees.length; k ++) {
+
+                            // current group member participated in the bill
                             if (payees[k]._id === group.groupMembers[j].user) {
-                                // payer is also paying for himself
+
+                                // the current group member is also a payer; this means that he paid for himself
                                 if (group.groupMembers[j].user === payer._id) {
                                     newGroupMembers.push({
                                         user: group.groupMembers[j].user,
@@ -479,22 +477,26 @@ export default class ServerInterface {
                                     })
                                     payerPayedForHimself = true
                                 } else {
+                                    // update group members balance
                                     newGroupMembers.push({
                                         user: group.groupMembers[j].user,
                                         balance: group.groupMembers[j].balance + payment
                                     })
                                 }
-                                memberFound = true
+                                // current member is a payee
+                                memberParticipated = true
                             }
                         }
 
+                        // the current group member is the payer and he didnt pay for himself
                         if (group.groupMembers[j].user === payer._id && !payerPayedForHimself) {
                             newGroupMembers.push({
                                 user: group.groupMembers[j].user,
                                 balance: group.groupMembers[j].balance - amount
                             })
                         }
-                        else if (!memberFound) {
+                        // the current group member didnt participate in the bill, so just copy without changes
+                        else if (!memberParticipated) {
                             newGroupMembers.push(group.groupMembers[j])
                         }
                     }
@@ -508,12 +510,15 @@ export default class ServerInterface {
                         bills: newBills
                     }
                     newGroups.push(newGroup)
+                    // save changes to the modified group in db
                     this.updateGroup(newGroup)
                 } else {
+                    // this group was unchanged
                     newGroups.push(group)
                 }
             }
 
+            // update the front end
             setState('groups', newGroups)
 
         }).catch((error) => {
@@ -523,7 +528,7 @@ export default class ServerInterface {
 
     /**
      * get all bills from the server.
-     * @param setter: callback function
+     * @param setter: callback function that gets sent all the bills when db operations are finished.
      */
     static getAllBills(setter) {
         const url = '/bills'
@@ -543,13 +548,16 @@ export default class ServerInterface {
             }
         }).then((json) => {
             setter(json)
-            //setState("bills", json)
 
         }).catch((error) => {
             console.log(error);
         })
     }
 
+    /**
+     * Deletes the bill
+     * @param bill The bill to delete.
+     */
     static requestBillDeletion(bill) {
         let url = "/bills/"
         url += bill._id
@@ -566,28 +574,36 @@ export default class ServerInterface {
             }
         }).then((json) => {
 
-            // Go through each group until we find the one this bill is a part of.
             const groups = getState('groups')
 
             const newGroups = []
+
+            // go though each group and copy them into newGroups
             for (let i = 0; i < groups.length; i ++) {
+
                 const group = groups[i]
-                // found the group
+
+                // current group is the one that the bill was deleted from. we must now update it to remove bill reference.
                 if (group._id === bill.group) {
 
-                    console.log(bill)
-                    console.log(group)
-
-                    // update balances for each group member
+                    // must update balances for each group member since bill was deleted
                     let newGroupMembers = []
                     const payment = +(bill.amount/bill.payees.length)
+
+                    // go through all the group members
                     for (let j = 0; j < group.groupMembers.length; j ++) {
-                        let memberFound = false
+
+                        // whether or not the current group member participated in the bill
+                        let memberParticipated = false
                         let payerPayedForHimself = false
+
+                        // go through all the payees in the bill
                         for (let k = 0; k < bill.payees.length; k ++) {
 
+                            // current group member was a payee in the bill
                             if (bill.payees[k] === group.groupMembers[j].user) {
-                                // payer is also paying for himself
+
+                                // current group member was a payee AND a payer (so he payed for himself)
                                 if (group.groupMembers[j].user === bill.payer) {
                                     newGroupMembers.push({
                                         user: group.groupMembers[j].user,
@@ -595,22 +611,25 @@ export default class ServerInterface {
                                     })
                                     payerPayedForHimself = true
                                 } else {
+                                    // current group member was merely a payee, update balances
                                     newGroupMembers.push({
                                         user: group.groupMembers[j].user,
                                         balance: group.groupMembers[j].balance - payment
                                     })
                                 }
-                                memberFound = true
+                                memberParticipated = true
                             }
                         }
 
+                        // group member was a payer who did not pay for himself
                         if (group.groupMembers[j].user === bill.payer && !payerPayedForHimself) {
                             newGroupMembers.push({
                                 user: group.groupMembers[j].user,
                                 balance: group.groupMembers[j].balance + bill.amount
                             })
                         }
-                        else if (!memberFound) {
+                        // member did not participate, so just copy without changes
+                        else if (!memberParticipated) {
                             newGroupMembers.push(group.groupMembers[j])
                         }
                     }
@@ -624,11 +643,14 @@ export default class ServerInterface {
                         bills: group.bills
                     }
                     newGroups.push(newGroup)
+                    // update the changes in the db
                     this.updateGroup(newGroup)
                 } else {
+                    // the bill was not for this group, copy without changes
                     newGroups.push(group)
                 }
             }
+            // update front end
             setState('groups', newGroups)
         }).catch((error) => {
             console.log(error);
