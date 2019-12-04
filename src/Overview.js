@@ -174,6 +174,7 @@ export function Overview(props) {
         }
       }
     }
+    console.log(newMembers)
     setMembers(newMembers)
   }
 
@@ -264,9 +265,15 @@ export function Overview(props) {
 
   /*
   Handles closing dialog when Dialog requests it.
+  Also update members.
   */
   const closeAddMembersDialog = () => {
     setOpenAddMembers(false)
+    if (currentGroups.length > 0) {
+      updateGroupMembers(currentGroups[selectedIndex], users)
+    } else {
+      setMembers([])
+    }
   };
 
 
@@ -277,6 +284,17 @@ export function Overview(props) {
 
     setSelectedIndex(newGroups.length - 1);
     updateGroupMembers(group, users)
+  }
+
+  /**
+   * Adds new member to group.
+   * @param members
+   * @param group
+   */
+  function addNewMemberHandler(members, group) {
+    ServerInterface.addUsersToGroup(members, group, (newGroup) => {
+      updateGroupMembers(newGroup, users)
+    })
   }
 
   /**
@@ -479,6 +497,7 @@ export function Overview(props) {
                     closeHandler={closeAddMembersDialog}
                     users={users}
                     group={currentGroups[selectedIndex]}
+                    addNewMemberHandler={addNewMemberHandler}
                   />
                   <DeleteGroupDialog
                     open={openDeleteGroup}
