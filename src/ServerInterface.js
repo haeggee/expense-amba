@@ -249,7 +249,7 @@ export default class ServerInterface {
      * @param users :An array of users to be added to the group.
      *               Current user will be automatically added if not in the array
      */
-    static requestGroupCreation(name, users) {
+    static requestGroupCreation(name, users, callback) {
         const url = '/group'
         const currUser = getState('user')
         if (!users.find(user => user._id === currUser._id)) {
@@ -290,6 +290,7 @@ export default class ServerInterface {
                 email: user.email,
                 groups: newUserGroups
             }
+            callback(json)
             setState('groups', newGroups)
             setState('user', newUser)
         }).catch((error) => {
@@ -473,7 +474,6 @@ export default class ServerInterface {
                                         balance: group.groupMembers[j].balance + payment - amount
                                     })
                                     payerPayedForHimself = true
-                                    console.log(payees[k])
                                 } else {
                                     newGroupMembers.push({
                                         user: group.groupMembers[j].user,
@@ -485,7 +485,6 @@ export default class ServerInterface {
                         }
 
                         if (group.groupMembers[j].user === payer._id && !payerPayedForHimself) {
-                            console.log(payer)
                             newGroupMembers.push({
                                 user: group.groupMembers[j].user,
                                 balance: group.groupMembers[j].balance - amount
