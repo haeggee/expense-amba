@@ -132,7 +132,7 @@ function PayBill(props) {
 				otherUserIncluded = true;
 			}
 		}
-		if (title.length !== 0 && amount > 0 && otherUserIncluded) {
+		if (title.length !== 0 && amount > 0 && otherUserIncluded && getDecimalPlaces(amount / members.length) <= 2) {
 			const billMembers = members;
 			createBillHandler(group, title, amount, billMembers, selectedDate);
 			closeHandler();
