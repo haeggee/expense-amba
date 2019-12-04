@@ -313,7 +313,7 @@ app.delete('/bills/:id', (req, res) => {
 })
 
 /** User routes below **/
-// Set up a POST route to *create* a user of the web app 
+// Set up a POST route to *create* a user of the web app
 app.post('/users', (req, res) => {
     const user = new User({
         name: req.body.name,
@@ -342,7 +342,7 @@ app.patch('/users/:id', (req, res) => {
     }
     const { name, username, password, email } = req.body
 
-    // need to encrypt password here 
+    // need to encrypt password here
     // generate a salt
     const salt = bcrypt.genSaltSync(10)
     const hash = bcrypt.hashSync(password, salt)
@@ -364,7 +364,33 @@ app.patch('/users/:id', (req, res) => {
 
 
 app.delete('/users/:id', (req, res) => {
+    const id = req.params.id
+    if (!ObjectID.isValid(id)){
+        res.status(404).send()
+    }
+    else{
+        User.findByIdAndDelete(id).then(user => {
+            console.log(user)
+            if (!user) {
+                res.status(404).send()
+            } else {
+                Group.find({_id: {$in: user.groups}}).then(groups => {
+                    groups.forEach(group => {
+                        const idx = group.members.findIndex(member => member.user === user._id)
+                        group.members.slice(idx, idx + 1)
+                        group.bills = group.bills.filter(bill => {
+                            return !(bill.payer === user._id || bill.payees.includes(user._id))
+                        })
+                        group.save()
+                    })
+                    res.send(user)
+                })//.catch(error => res.status(500).send(error))
 
+            }
+        }).catch(error => {
+            res.status(404).send(error)
+        })
+    }
 })
 
 /// a GET route to get a user by their id.
@@ -393,7 +419,6 @@ app.get('/users/:id', (req, res) => {
 
 // get all users
 app.get('/users', (req, res) => {
-
     User.find({}, function (err, users) {
         res.send(users);
     });
