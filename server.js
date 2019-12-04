@@ -196,8 +196,8 @@ app.put('/group/:id', (req, res) => {
     const { name, groupMembers, bills } = req.body
 
     const body = { name, groupMembers, bills }
-    console.log(id)
-    console.log(body)
+    // console.log(id)
+    // console.log(body)
     // Update the group by their id.
     Group.findByIdAndUpdate(id, { $set: body }, { new: true }).then((group) => {
         if (!group) {
@@ -334,7 +334,7 @@ app.post('/users', (req, res) => {
 
 // put call to change user attributes
 app.patch('/users/:id', (req, res) => {
-    console.log(req.body)
+    // console.log(req.body)
     const id = req.params.id
     // for best practice
     if (!ObjectID.isValid(id)) {
@@ -370,7 +370,7 @@ app.delete('/users/:id', (req, res) => {
     }
     else{
         User.findByIdAndDelete(id).then(user => {
-            console.log(user)
+            // console.log(user)
             if (!user) {
                 res.status(404).send()
             } else {
