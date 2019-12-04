@@ -473,6 +473,7 @@ export default class ServerInterface {
                                         balance: group.groupMembers[j].balance + payment - amount
                                     })
                                     payerPayedForHimself = true
+                                    console.log(payees[k])
                                 } else {
                                     newGroupMembers.push({
                                         user: group.groupMembers[j].user,
@@ -484,12 +485,13 @@ export default class ServerInterface {
                         }
 
                         if (group.groupMembers[j].user === payer._id && !payerPayedForHimself) {
+                            console.log(payer)
                             newGroupMembers.push({
                                 user: group.groupMembers[j].user,
                                 balance: group.groupMembers[j].balance - amount
                             })
                         }
-                        if (!memberFound) {
+                        else if (!memberFound) {
                             newGroupMembers.push(group.groupMembers[j])
                         }
                     }
