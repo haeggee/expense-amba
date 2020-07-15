@@ -1,3 +1,4 @@
+Note: This repository was created for a project for the course CSC309: Programming on the Web, Fall Term 2019, University of Toronto. 
 # team42: AM.BA app
 
 ## Summary
